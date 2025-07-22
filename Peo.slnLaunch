@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\Peo.Web.Api\\Peo.Web.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

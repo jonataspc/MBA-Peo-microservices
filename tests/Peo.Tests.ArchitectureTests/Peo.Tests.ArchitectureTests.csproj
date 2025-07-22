@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="ArchitectTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="NetArchTest.eNhancedEdition" Version="1.4.4" />
+    
+    <PackageReference Include="xunit" Version="2.6.6" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Peo.Faturamento.Application\Peo.Faturamento.Application.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Faturamento.Infra.Data\Peo.Faturamento.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Faturamento.Integrations.Paypal\Peo.Faturamento.Integrations.Paypal.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Application\Peo.GestaoConteudo.Application.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Infra.Data\Peo.GestaoConteudo.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Core.Infra.Data\Peo.Core.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Core.Web\Peo.Core.Web.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Identity.Application\Peo.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Identity.Domain\Peo.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Faturamento.Domain\Peo.Faturamento.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Domain\Peo.GestaoConteudo.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Identity.Infra.Data\Peo.Identity.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Application\Peo.GestaoAlunos.Application.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Domain\Peo.GestaoAlunos.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Core\Peo.Core.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Infra.Data\Peo.GestaoAlunos.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Web.Api\Peo.Web.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
