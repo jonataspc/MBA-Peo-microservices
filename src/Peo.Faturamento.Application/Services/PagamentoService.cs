@@ -96,6 +96,8 @@ public class PagamentoService(
                pagamento.MatriculaId,
                pagamento.Valor,
                pagamento.DataPagamento!));
+
+
         }
         else
         {
