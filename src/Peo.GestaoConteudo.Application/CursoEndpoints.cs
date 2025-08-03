@@ -17,6 +17,7 @@ namespace Peo.GestaoConteudo.Application
             .MapEndpoint<UseCases.Curso.Cadastrar.Endpoint>()
             .MapEndpoint<UseCases.Curso.ObterPorId.Endpoint>()
             .MapEndpoint<UseCases.Curso.ObterTodos.Endpoint>()
+            .MapEndpoint<UseCases.Curso.ObterConteudoProgramatico.Endpoint>()
             .MapEndpoint<UseCases.Aula.ObterTodos.Endpoint>()
             .MapEndpoint<UseCases.Aula.Cadastrar.Endpoint>();
         }
