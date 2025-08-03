@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddExceptionHandler();
 builder.Services.AddIdentity(builder.Configuration)
+                .AddGestaoConteudo(builder.Configuration)
                 .AddSwagger()
                 .SetupWebApi(builder.Configuration);
 
@@ -17,6 +18,7 @@ app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.AddIdentityEndpoints();
+app.AddGestaoConteudoEndpoints();
 // demais endpoints podem ser adicionados aqui
 
 app.UseExceptionHandler();
