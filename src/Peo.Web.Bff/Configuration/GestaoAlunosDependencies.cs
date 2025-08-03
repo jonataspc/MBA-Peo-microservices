@@ -1,10 +1,8 @@
-using Polly;
-using Polly.Extensions.Http;
-using Polly.Retry;
 using Peo.Web.Bff.Services.GestaoAlunos;
 using Peo.Web.Bff.Services.GestaoAlunos.Dtos;
 using Peo.Web.Bff.Services.Handlers;
 using Peo.Web.Bff.Services.Helpers;
+using Polly;
 
 namespace Peo.Web.Bff.Configuration
 {
@@ -25,35 +23,38 @@ namespace Peo.Web.Bff.Configuration
 
         public static WebApplication AddGestaoAlunosEndpoints(this WebApplication app)
         {
-            // Matricula endpoints
-            app.MapPost("/v1/estudante/matricula/", async (MatriculaCursoRequest request, GestaoAlunosService service, CancellationToken ct) =>
+            var endpoints = app
+            .MapGroup("v1/estudante")
+            .WithTags("Estudantes");
+
+            endpoints.MapPost("/matricula/", async (MatriculaCursoRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.MatricularCursoAsync(request, ct);
             });
 
-            app.MapPost("/v1/estudante/matricula/pagamento", async (PagamentoMatriculaRequest request, GestaoAlunosService service, CancellationToken ct) =>
+            endpoints.MapPost("/matricula/pagamento", async (PagamentoMatriculaRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.PagarMatriculaAsync(request, ct);
             });
 
-            app.MapPost("/v1/estudante/matricula/concluir", async (ConcluirMatriculaRequest request, GestaoAlunosService service, CancellationToken ct) =>
+            endpoints.MapPost("/matricula/concluir", async (ConcluirMatriculaRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.ConcluirMatriculaAsync(request, ct);
             });
 
             // Aula endpoints
-            app.MapPost("/v1/estudante/matricula/aula/iniciar", async (IniciarAulaRequest request, GestaoAlunosService service, CancellationToken ct) =>
+            endpoints.MapPost("/matricula/aula/iniciar", async (IniciarAulaRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.IniciarAulaAsync(request, ct);
             });
 
-            app.MapPost("/v1/estudante/matricula/aula/concluir", async (ConcluirAulaRequest request, GestaoAlunosService service, CancellationToken ct) =>
+            endpoints.MapPost("/matricula/aula/concluir", async (ConcluirAulaRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.ConcluirAulaAsync(request, ct);
             });
 
             // Certificados endpoint
-            app.MapGet("/v1/estudante/certificados", async (GestaoAlunosService service, CancellationToken ct) =>
+            endpoints.MapGet("/certificados", async (GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.ObterCertificadosAsync(ct);
             });
@@ -61,4 +62,4 @@ namespace Peo.Web.Bff.Configuration
             return app;
         }
     }
-} 
+}

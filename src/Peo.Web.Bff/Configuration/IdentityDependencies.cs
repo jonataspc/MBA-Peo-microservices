@@ -23,17 +23,21 @@ namespace Peo.Web.Bff.Configuration
 
         public static WebApplication AddIdentityEndpoints(this WebApplication app)
         {
-            app.MapPost("/v1/identity/register", async (RegisterRequest request, IdentityService service, CancellationToken ct) =>
+            var endpoints = app
+            .MapGroup("v1/identity")
+            .WithTags("Identity");
+
+            endpoints.MapPost("/register", async (RegisterRequest request, IdentityService service, CancellationToken ct) =>
             {
                 return await service.RegisterAsync(request, ct);
             });
 
-            app.MapPost("/v1/identity/login", async (LoginRequest request, IdentityService service, CancellationToken ct) =>
+            endpoints.MapPost("/login", async (LoginRequest request, IdentityService service, CancellationToken ct) =>
             {
                 return await service.LoginAsync(request, ct);
             });
 
-            app.MapPost("/v1/identity/refresh-token", async (RefreshTokenRequest request, IdentityService service, CancellationToken ct) =>
+            endpoints.MapPost("/refresh-token", async (RefreshTokenRequest request, IdentityService service, CancellationToken ct) =>
             {
                 return await service.RefreshTokenAsync(request, ct);
             });

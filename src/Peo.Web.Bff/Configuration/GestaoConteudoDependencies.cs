@@ -23,29 +23,31 @@ namespace Peo.Web.Bff.Configuration
 
         public static WebApplication AddGestaoConteudoEndpoints(this WebApplication app)
         {
-            // Curso endpoints
-            app.MapPost("/v1/conteudo/curso/", async (CursoRequest request, GestaoConteudoService service, CancellationToken ct) =>
+            var endpoints = app
+            .MapGroup("v1/conteudo")
+            .WithTags("Conteúdo");
+
+            endpoints.MapPost("/curso/", async (CursoRequest request, GestaoConteudoService service, CancellationToken ct) =>
             {
                 return await service.CadastrarCursoAsync(request, ct);
             });
 
-            app.MapGet("/v1/conteudo/curso/", async (GestaoConteudoService service, CancellationToken ct) =>
+            endpoints.MapGet("/curso/", async (GestaoConteudoService service, CancellationToken ct) =>
             {
                 return await service.ObterTodosCursosAsync(ct);
             });
 
-            app.MapGet("/v1/conteudo/curso/{id:guid}", async (Guid id, GestaoConteudoService service, CancellationToken ct) =>
+            endpoints.MapGet("/curso/{id:guid}", async (Guid id, GestaoConteudoService service, CancellationToken ct) =>
             {
                 return await service.ObterCursoPorIdAsync(id, ct);
             });
 
-            // Aula endpoints
-            app.MapGet("/v1/conteudo/curso/{cursoId:guid}/aula", async (Guid cursoId, GestaoConteudoService service, CancellationToken ct) =>
+            endpoints.MapGet("/curso/{cursoId:guid}/aula", async (Guid cursoId, GestaoConteudoService service, CancellationToken ct) =>
             {
                 return await service.ObterAulasDoCursoAsync(cursoId, ct);
             });
 
-            app.MapPost("/v1/conteudo/curso/{cursoId:guid}/aula", async (Guid cursoId, AulaRequest request, GestaoConteudoService service, CancellationToken ct) =>
+            endpoints.MapPost("/curso/{cursoId:guid}/aula", async (Guid cursoId, AulaRequest request, GestaoConteudoService service, CancellationToken ct) =>
             {
                 return await service.CadastrarAulaAsync(cursoId, request, ct);
             });
@@ -53,4 +55,4 @@ namespace Peo.Web.Bff.Configuration
             return app;
         }
     }
-} 
+}
