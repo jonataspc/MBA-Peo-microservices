@@ -1,5 +1,8 @@
 using Peo.Web.Bff.Services.GestaoConteudo;
 using Peo.Web.Bff.Services.GestaoConteudo.Dtos;
+using Peo.Web.Bff.Services.Handlers;
+using Peo.Web.Bff.Services.Helpers;
+using Polly;
 
 namespace Peo.Web.Bff.Configuration
 {
@@ -10,7 +13,10 @@ namespace Peo.Web.Bff.Configuration
             services.AddScoped<GestaoConteudoService>();
 
             services.AddHttpClient<GestaoConteudoService>(c =>
-                c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:GestaoConteudo")!));
+                c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:GestaoConteudo")!))
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                .AddPolicyHandler(PollyExtensions.WaitAndRetry())
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             return services;
         }

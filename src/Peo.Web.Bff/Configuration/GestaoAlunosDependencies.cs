@@ -1,5 +1,10 @@
+using Polly;
+using Polly.Extensions.Http;
+using Polly.Retry;
 using Peo.Web.Bff.Services.GestaoAlunos;
 using Peo.Web.Bff.Services.GestaoAlunos.Dtos;
+using Peo.Web.Bff.Services.Handlers;
+using Peo.Web.Bff.Services.Helpers;
 
 namespace Peo.Web.Bff.Configuration
 {
@@ -10,7 +15,10 @@ namespace Peo.Web.Bff.Configuration
             services.AddScoped<GestaoAlunosService>();
 
             services.AddHttpClient<GestaoAlunosService>(c =>
-                c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:GestaoAlunos")!));
+                c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:GestaoAlunos")!))
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                .AddPolicyHandler(PollyExtensions.WaitAndRetry())
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             return services;
         }

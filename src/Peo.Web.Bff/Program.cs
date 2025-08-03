@@ -9,6 +9,7 @@ builder.Services.AddIdentity(builder.Configuration)
                 .AddGestaoConteudo(builder.Configuration)
                 .AddGestaoAlunos(builder.Configuration)
                 .AddSwagger()
+                .AddApiServices()
                 .SetupWebApi(builder.Configuration);
 
 var app = builder.Build();

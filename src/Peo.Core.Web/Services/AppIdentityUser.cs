@@ -1,9 +1,8 @@
-﻿
-
-using IdentityModel;
+﻿using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Peo.Core.Interfaces.Services;
+using Peo.Core.Web.Extensions;
 using System.Security.Claims;
 
 namespace Peo.Core.Web.Services
@@ -72,6 +71,21 @@ namespace Peo.Core.Web.Services
         public string? GetRemoteIpAddress()
         {
             return _accessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        }
+
+        public HttpContext GetHttpContext()
+        {
+            return _accessor.HttpContext!;
+        }
+
+        public string GetUserToken()
+        {
+            return IsAuthenticated() ? _accessor!.HttpContext!.User.GetUserToken()! : "";
+        }
+
+        public string GetUserRefreshToken()
+        {
+            return IsAuthenticated() ? _accessor!.HttpContext!.User.GetUserRefreshToken()! : "";
         }
     }
 }
