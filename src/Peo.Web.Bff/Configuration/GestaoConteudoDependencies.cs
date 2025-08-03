@@ -11,6 +11,7 @@ namespace Peo.Web.Bff.Configuration
         public static IServiceCollection AddGestaoConteudo(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<GestaoConteudoService>();
+            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             services.AddHttpClient<GestaoConteudoService>(c =>
                 c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:GestaoConteudo")!))

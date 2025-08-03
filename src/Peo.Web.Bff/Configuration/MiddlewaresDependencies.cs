@@ -7,7 +7,7 @@ namespace Peo.Web.Bff.Configuration
     {
         public static WebApplicationBuilder AddExceptionHandler(this WebApplicationBuilder builder)
         {
-            if (builder.Environment.IsDevelopment())
+            if (!builder.Environment.IsDevelopment())
             {
                 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
                 builder.Services.AddProblemDetails();

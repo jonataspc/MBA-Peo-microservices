@@ -22,7 +22,10 @@ app.UseHttpsRedirection();
 app.AddIdentityEndpoints();
 app.AddGestaoConteudoEndpoints();
 app.AddGestaoAlunosEndpoints();
-// demais endpoints podem ser adicionados aqui
 
-app.UseExceptionHandler();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler();
+}
+
 await app.RunAsync();

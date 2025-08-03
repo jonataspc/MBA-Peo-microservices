@@ -1,42 +1,41 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Peo.Core.Interfaces.Services;
 using System.Reflection;
 
 namespace Peo.Core.Infra.ServiceBus.Services
 {
     public static class MassTransitConfiguration
     {
-        public static IServiceCollection AddServiceBus(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddServiceBus(this IServiceCollection services, IConfiguration configuration, Assembly[]? consumers = null)
         {
-            var rabbitMqSettings = configuration.GetSection("RabbitMQ").Get<RabbitMqSettings>();
-
             services.AddMassTransit(x =>
             {
                 // Configure consumers
-                x.AddConsumers(Assembly.GetExecutingAssembly());
+                if (consumers is not null)
+                {
+                    x.AddConsumers(consumers);
+                }
 
                 // Configure RabbitMQ
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(rabbitMqSettings?.Host ?? "localhost", "/", h =>
+                    cfg.Host(configuration.GetConnectionString("messaging"));
+                    cfg.ConfigureJsonSerializerOptions(o =>
                     {
-                        h.Username(rabbitMqSettings?.Username ?? "guest");
-                        h.Password(rabbitMqSettings?.Password ?? "guest");
-                    });
-
+                        o.IncludeFields = true;
+                        return o;
+                    }
+                    );
                     cfg.ConfigureEndpoints(context);
                 });
             });
 
+            // Register the IMessageBus implementation
+            services.AddScoped<IMessageBus, MassTransitMessageBus>();
+
             return services;
         }
-    }
-
-    public class RabbitMqSettings
-    {
-        public string Host { get; set; } = "localhost";
-        public string Username { get; set; } = "guest";
-        public string Password { get; set; } = "guest";
     }
 }

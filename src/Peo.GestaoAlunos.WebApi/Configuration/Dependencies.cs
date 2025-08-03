@@ -3,6 +3,7 @@ using Peo.Core.Dtos;
 using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
+using Peo.GestaoAlunos.Application.Consumers;
 using Peo.GestaoAlunos.Application.DiConfig;
 using Peo.GestaoAlunos.Application.Endpoints;
 using Peo.GestaoAlunos.Infra.Data.DiConfig;
@@ -17,7 +18,7 @@ namespace Peo.GestaoAlunos.WebApi.Configuration
                     .AddServicesForGestaoAlunos()
                     .AddAppSettings(configuration)
                     .AddMediator()
-                    .AddServiceBus(configuration)
+                    .AddServiceBus(configuration, [typeof(PagamentoComFalhaEventConsumer).Assembly])
                     .AddApiServices();
 
             return services;

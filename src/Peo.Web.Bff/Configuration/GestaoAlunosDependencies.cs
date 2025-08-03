@@ -11,6 +11,7 @@ namespace Peo.Web.Bff.Configuration
         public static IServiceCollection AddGestaoAlunos(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<GestaoAlunosService>();
+            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             services.AddHttpClient<GestaoAlunosService>(c =>
                 c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:GestaoAlunos")!))

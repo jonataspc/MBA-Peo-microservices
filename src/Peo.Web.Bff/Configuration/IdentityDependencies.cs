@@ -11,6 +11,7 @@ namespace Peo.Web.Bff.Configuration
         public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IdentityService>();
+            services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             services.AddHttpClient<IdentityService>(c =>
                 c.BaseAddress = new Uri(configuration.GetValue<string>("Endpoints:Identity")!))
