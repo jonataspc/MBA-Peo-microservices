@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
-using Peo.Core.Communication.Mediator;
 using Peo.Core.Dtos;
 using Peo.Core.Interfaces.Data;
+using Peo.Core.Interfaces.Services;
 using Peo.Core.Messages.IntegrationEvents;
 using Peo.Faturamento.Domain.Dtos;
 using Peo.Faturamento.Domain.Entities;
@@ -14,7 +14,7 @@ namespace Peo.Faturamento.Application.Services;
 public class PagamentoService(
     IRepository<Pagamento> pagamentoRepository,
     IBrokerPagamentoService paymentBrokerService,
-    IMediatorHandler mediatorHandler,
+    IMessageBus messageBus,
     ILogger<PagamentoService> logger) : IPagamentoService
 {
     private async Task<Pagamento> CriarPagamentoAsync(Guid matriculaId, decimal valor)
@@ -92,7 +92,7 @@ public class PagamentoService(
         {
             pagamento.ConfirmarPagamento(new CartaoCreditoData() { Hash = result.Hash });
 
-            await mediatorHandler.PublicarEventoAsync(new PagamentoMatriculaConfirmadoEvent(
+            await messageBus.PublishAsync(new PagamentoMatriculaConfirmadoEvent(
                pagamento.MatriculaId,
                pagamento.Valor,
                pagamento.DataPagamento!));
@@ -101,7 +101,7 @@ public class PagamentoService(
         {
             pagamento.MarcarComoFalha(result.Details);
 
-            await mediatorHandler.PublicarEventoAsync(new PagamentoComFalhaEvent(
+            await messageBus.PublishAsync(new PagamentoComFalhaEvent(
                pagamento.MatriculaId,
                result.Details));
         }

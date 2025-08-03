@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Peo.Core.Communication.Mediator;
 using Peo.Core.Dtos;
+using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
 using Peo.Identity.Application.DiConfig;
@@ -23,6 +24,7 @@ namespace Peo.Identity.WebApi.Configuration
                     .AddIdentity()
                     .AddAppSettings(configuration)
                     .AddMediator()
+                    .AddServiceBus(configuration)
                     .AddApiServices();
 
             return services;

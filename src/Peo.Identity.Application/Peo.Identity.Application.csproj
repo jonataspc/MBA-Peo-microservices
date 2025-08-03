@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
     <ProjectReference Include="..\Peo.Identity.Domain\Peo.Identity.Domain.csproj" />
+	<ProjectReference Include="..\Peo.Core.Infra.ServiceBus\Peo.Core.Infra.ServiceBus.csproj" />
   </ItemGroup>
 
 </Project>

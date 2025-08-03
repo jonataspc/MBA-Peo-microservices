@@ -1,5 +1,6 @@
 ﻿using Peo.Core.Communication.Mediator;
 using Peo.Core.Dtos;
+using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
 using Peo.Faturamento.Application.DiConfig;
@@ -17,6 +18,7 @@ namespace Peo.Faturamento.WebApi.Configuration
                     .AddServicesForFaturamento()
                     .AddAppSettings(configuration)
                     .AddMediator()
+                    .AddServiceBus(configuration)
                     .AddApiServices()
                     .AddExternalServices();
 
