@@ -11,12 +11,12 @@
 
   <ItemGroup>
 	<PackageReference Include="IdentityModel" Version="7.0.0" />
-	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
-	<PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
-	<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.1" />
+	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.3" />
 	<PackageReference Include="Vernou.Swashbuckle.HttpResultsAdapter" Version="1.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
   </ItemGroup>
 
   <ItemGroup>

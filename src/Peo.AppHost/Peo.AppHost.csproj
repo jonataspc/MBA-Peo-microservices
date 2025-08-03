@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
 
@@ -12,7 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.0" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
     <ProjectReference Include="..\Peo.GestaoAlunos.WebApi\Peo.GestaoAlunos.WebApi.csproj" />
     <ProjectReference Include="..\Peo.GestaoConteudo.WebApi\Peo.GestaoConteudo.WebApi.csproj" />
     <ProjectReference Include="..\Peo.Identity.WebApi\Peo.Identity.WebApi.csproj" />
+    <ProjectReference Include="..\Peo.Web.Bff\Peo.Web.Bff.csproj" />
     <ProjectReference Include="..\Peo.Web.Spa\Peo.Web.Spa.csproj" />
   </ItemGroup>
 
