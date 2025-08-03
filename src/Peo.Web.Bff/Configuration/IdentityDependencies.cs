@@ -19,8 +19,17 @@ namespace Peo.Web.Bff.Configuration
         {
             app.MapPost("/v1/identity/register", async (RegisterRequest request, IdentityService service, CancellationToken ct) =>
             {
-                var result = await service.RegisterAsync(request, ct);
-                return result.IsSuccess ? Results.NoContent() : Results.BadRequest(result.Error);
+                return await service.RegisterAsync(request, ct);
+            });
+
+            app.MapPost("/v1/identity/login", async (LoginRequest request, IdentityService service, CancellationToken ct) =>
+            {
+                return await service.LoginAsync(request, ct);
+            });
+
+            app.MapPost("/v1/identity/refresh-token", async (RefreshTokenRequest request, IdentityService service, CancellationToken ct) =>
+            {
+                return await service.RefreshTokenAsync(request, ct);
             });
 
             return app;
