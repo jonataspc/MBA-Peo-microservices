@@ -7,6 +7,7 @@ builder.AddServiceDefaults();
 builder.AddExceptionHandler();
 builder.Services.AddIdentity(builder.Configuration)
                 .AddGestaoConteudo(builder.Configuration)
+                .AddGestaoAlunos(builder.Configuration)
                 .AddSwagger()
                 .SetupWebApi(builder.Configuration);
 
@@ -19,6 +20,7 @@ app.UseHttpsRedirection();
 
 app.AddIdentityEndpoints();
 app.AddGestaoConteudoEndpoints();
+app.AddGestaoAlunosEndpoints();
 // demais endpoints podem ser adicionados aqui
 
 app.UseExceptionHandler();
