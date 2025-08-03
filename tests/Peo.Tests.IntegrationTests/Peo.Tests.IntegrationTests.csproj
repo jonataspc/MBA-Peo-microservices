@@ -29,11 +29,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Peo.Faturamento.Domain\Peo.Faturamento.Domain.csproj" />
     <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Application\Peo.GestaoAlunos.Application.csproj" />
-    <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Domain\Peo.GestaoAlunos.Domain.csproj" />    
+    <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Domain\Peo.GestaoAlunos.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Application\Peo.GestaoConteudo.Application.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Domain\Peo.GestaoConteudo.Domain.csproj" />    
     <ProjectReference Include="..\..\src\Peo.Identity.Application\Peo.Identity.Application.csproj" />
-    <ProjectReference Include="..\..\src\Peo.Identity.Domain\Peo.Identity.Domain.csproj" />    
-    <ProjectReference Include="..\..\src\Peo.Web.Api\Peo.Web.Api.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Identity.Domain\Peo.Identity.Domain.csproj" />
   </ItemGroup>
 
 </Project>

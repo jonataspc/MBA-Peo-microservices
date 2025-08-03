@@ -44,7 +44,6 @@
     <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Domain\Peo.GestaoAlunos.Domain.csproj" />
     <ProjectReference Include="..\..\src\Peo.Core\Peo.Core.csproj" />
     <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Infra.Data\Peo.GestaoAlunos.Infra.Data.csproj" />
-    <ProjectReference Include="..\..\src\Peo.Web.Api\Peo.Web.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

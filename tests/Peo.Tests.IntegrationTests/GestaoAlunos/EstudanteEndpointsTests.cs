@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Peo.Core.DomainObjects.Result;
 using Peo.GestaoAlunos.Application.Dtos.Requests;
 using Peo.GestaoAlunos.Application.Dtos.Responses;

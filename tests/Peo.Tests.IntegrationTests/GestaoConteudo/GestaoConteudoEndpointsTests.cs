@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Peo.GestaoConteudo.Application.Dtos;
-using Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar;
 using Peo.GestaoConteudo.Domain.Entities;
 using Peo.Identity.Application.Endpoints.Requests;
 using Peo.Identity.Application.Endpoints.Responses;
@@ -160,7 +160,7 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
     public async Task CadastrarAula_ComRequisicaoValida_DeveCadastrarAula()
     {
         // Arrange
-        var comando = new Command
+        var comando = new Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar.Command
         {
             Titulo = "Aula Teste",
             Descricao = "Descrição da Aula Teste",
@@ -174,7 +174,7 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
 
         // Assert
         resposta.StatusCode.Should().Be(HttpStatusCode.OK);
-        var resultado = await resposta.Content.ReadFromJsonAsync<Response>();
+        var resultado = await resposta.Content.ReadFromJsonAsync<Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar.Response>();
         resultado.Should().NotBeNull();
         resultado!.AulaId.Should().NotBe(Guid.Empty);
     }
@@ -183,7 +183,7 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
     public async Task CadastrarAula_ComRequisicaoInvalida_DeveRetornarErroValidacao()
     {
         // Arrange
-        var comando = new Command
+        var comando = new Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar.Command
         {
             Titulo = "", // Título inválido
             Descricao = "Descrição da Aula Teste",

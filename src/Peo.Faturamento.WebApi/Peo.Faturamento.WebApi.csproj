@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>50a5f25e-fe19-4fd1-a24c-61c7c99fb547</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="IdentityModel" Version="7.0.0" />
+	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.1" />
+	<PackageReference Include="Vernou.Swashbuckle.HttpResultsAdapter" Version="1.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
+    <ProjectReference Include="..\Peo.Faturamento.Application\Peo.Faturamento.Application.csproj" />
+    <ProjectReference Include="..\Peo.Faturamento.Domain\Peo.Faturamento.Domain.csproj" />
+    <ProjectReference Include="..\Peo.Faturamento.Infra.Data\Peo.Faturamento.Infra.Data.csproj" />
+    <ProjectReference Include="..\Peo.Faturamento.Integrations.Paypal\Peo.Faturamento.Integrations.Paypal.csproj" />
+    <ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

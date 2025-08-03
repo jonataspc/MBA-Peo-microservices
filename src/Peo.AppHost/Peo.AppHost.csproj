@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>306c04cc-cf73-41f6-b32b-9b30df6da233</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Peo.Faturamento.WebApi\Peo.Faturamento.WebApi.csproj" />
+    <ProjectReference Include="..\Peo.GestaoAlunos.WebApi\Peo.GestaoAlunos.WebApi.csproj" />
+    <ProjectReference Include="..\Peo.GestaoConteudo.WebApi\Peo.GestaoConteudo.WebApi.csproj" />
+    <ProjectReference Include="..\Peo.Identity.WebApi\Peo.Identity.WebApi.csproj" />
+    <ProjectReference Include="..\Peo.Web.Spa\Peo.Web.Spa.csproj" />
+  </ItemGroup>
+
+</Project>
