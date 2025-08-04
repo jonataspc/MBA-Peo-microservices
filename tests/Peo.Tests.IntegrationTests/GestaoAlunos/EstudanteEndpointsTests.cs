@@ -1,6 +1,7 @@
+extern alias GestaoAlunosWebApi;
+
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Peo.Core.DomainObjects.Result;
 using Peo.GestaoAlunos.Application.Dtos.Requests;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
@@ -11,12 +12,13 @@ using Peo.Identity.Application.Endpoints.Responses;
 using Peo.Tests.IntegrationTests.Setup;
 using System.Net;
 using System.Net.Http.Json;
+using Peo.Tests.IntegrationTests.Factories;
 
 namespace Peo.Tests.IntegrationTests.GestaoAlunos;
 
-public class EstudanteEndpointsTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<GestaoAlunosWebApi.Program>>, IAsyncLifetime
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly IntegrationTestFactory<GestaoAlunosWebApi.Program> _factory;
     private readonly HttpClient _client;
     private readonly TestDatabaseSetup _testDb;
     private Guid _testUserId = Guid.CreateVersion7();
@@ -26,7 +28,7 @@ public class EstudanteEndpointsTests : IClassFixture<WebApplicationFactory<Progr
     private Matricula? _testMatricula;
     private Matricula? _testMatriculaNaoPaga;
 
-    public EstudanteEndpointsTests(WebApplicationFactory<Program> factory)
+    public EstudanteEndpointsTests(IntegrationTestFactory<GestaoAlunosWebApi.Program> factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();
@@ -35,6 +37,8 @@ public class EstudanteEndpointsTests : IClassFixture<WebApplicationFactory<Progr
 
     public async Task InitializeAsync()
     {
+        await _testDb.InitializeAsync();
+
         _testEstudante = await _testDb.CriarEstudanteTesteAsync(_testUserId);
 
         var curso = await _testDb.CriarCursoTesteAsync(instrutorId: _testEstudante.UsuarioId);
