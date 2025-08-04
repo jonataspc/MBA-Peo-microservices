@@ -254,7 +254,7 @@ public class PagamentoServiceTests
         // Arrange
         var matriculaId = Guid.CreateVersion7();
         _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>()))
-            .ReturnsAsync((IEnumerable<Pagamento>)null);
+            .ReturnsAsync((IEnumerable<Pagamento>)null!);
 
         // Act
         var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId);
