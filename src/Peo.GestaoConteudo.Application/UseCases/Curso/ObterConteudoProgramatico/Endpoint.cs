@@ -15,7 +15,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Curso.ObterConteudoProgramatic
     {
         public static void Map(IEndpointRouteBuilder app)
         {
-            app.MapGet("/curso/{id:guid}/contudoprogramatico", HandleGetById)
+            app.MapGet("/curso/{id:guid}/conteudo-programatico", HandleGetById)
              .WithSummary("Obter conteudo programatico por IdCurso")
              .RequireAuthorization(AccessRoles.Admin);
         }
