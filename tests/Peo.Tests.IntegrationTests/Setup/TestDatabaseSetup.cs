@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Peo.Core.DomainObjects;
 using Peo.Core.Entities;
 using Peo.Core.Interfaces.Data;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Infra.Data.Contexts;
 using Peo.GestaoConteudo.Domain.Entities;
 using Peo.Identity.Domain.Interfaces.Data;
+using Peo.Identity.Infra.Data.Contexts;
 
 namespace Peo.Tests.IntegrationTests.Setup;
 
@@ -151,5 +154,12 @@ public class TestDatabaseSetup
         // Adicione lógica de limpeza aqui se necessário
         _escopo.Dispose();
         await Task.CompletedTask;
+    }
+
+    internal async Task InitializeAsync()
+    {
+        await _escopo.ServiceProvider.GetRequiredService<GestaoEstudantesContext>().Database.MigrateAsync();
+
+        await _escopo.ServiceProvider.GetRequiredService<IdentityContext>().Database.MigrateAsync();
     }
 }

@@ -2,6 +2,7 @@ using FluentAssertions;
 using NetArchTest.Rules;
 using Peo.Core.Dtos;
 using Peo.Core.Interfaces.Data;
+using Peo.Core.Web.Services;
 using Peo.Faturamento.Application.Services;
 using Peo.Faturamento.Domain.Dtos;
 using Peo.Faturamento.Infra.Data.Helpers;
@@ -34,7 +35,7 @@ public class ArchitectTests
     {
         var list = new List<Assembly>
         {
-            typeof(Peo.Web.Api.Services.AppIdentityUser).Assembly,
+            typeof(AppIdentityUser).Assembly,
             typeof(Peo.Core.Web.Api.IEndpoint).Assembly,
             typeof(Peo.Core.Infra.Data.Contexts.Base.DbContextBase ).Assembly,
             typeof(GestaoAlunosDbMigrationHelpers).Assembly,

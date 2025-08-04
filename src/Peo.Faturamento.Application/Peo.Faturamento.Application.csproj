@@ -9,7 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
     <ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
-    <ProjectReference Include="..\Peo.Faturamento.Domain\Peo.Faturamento.Domain.csproj" />    
+    <ProjectReference Include="..\Peo.Faturamento.Domain\Peo.Faturamento.Domain.csproj" />
+	<ProjectReference Include="..\Peo.Core.Infra.ServiceBus\Peo.Core.Infra.ServiceBus.csproj" />
   </ItemGroup>
 
 </Project> 

@@ -8,8 +8,17 @@
 
   <ItemGroup>
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	<PackageReference Include="IdentityModel" Version="7.0.0" />
 	<PackageReference Include="MiniValidation" Version="0.9.2" />
+	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
 	<ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.3" />
+		<PackageReference Include="Vernou.Swashbuckle.HttpResultsAdapter" Version="1.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
+	</ItemGroup>
 
 </Project>

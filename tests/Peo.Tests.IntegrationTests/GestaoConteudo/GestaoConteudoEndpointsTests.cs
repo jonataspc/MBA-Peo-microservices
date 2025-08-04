@@ -1,11 +1,14 @@
+extern alias GestaoConteudoWebApi;
+
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Org.BouncyCastle.Ocsp;
 using Peo.GestaoConteudo.Application.Dtos;
-using Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar;
 using Peo.GestaoConteudo.Domain.Entities;
 using Peo.Identity.Application.Endpoints.Requests;
 using Peo.Identity.Application.Endpoints.Responses;
+using Peo.Tests.IntegrationTests.Factories;
 using Peo.Tests.IntegrationTests.Setup;
 using System.Net;
 using System.Net.Http.Json;
@@ -13,15 +16,15 @@ using CursoCadastrar = Peo.GestaoConteudo.Application.UseCases.Curso.Cadastrar;
 
 namespace Peo.Tests.IntegrationTests.GestaoConteudo;
 
-public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+public class GestaoConteudoEndpointsTests : IClassFixture<IntegrationTestFactory<GestaoConteudoWebApi.Program>>, IAsyncLifetime
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly IntegrationTestFactory<GestaoConteudoWebApi.Program> _factory;
     private readonly HttpClient _client;
     private readonly TestDatabaseSetup _testDb;
     private Guid _testUserId = Guid.CreateVersion7();
     private Curso? _cursoTeste;
 
-    public GestaoConteudoEndpointsTests(WebApplicationFactory<Program> factory)
+    public GestaoConteudoEndpointsTests(IntegrationTestFactory<GestaoConteudoWebApi.Program> factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();
@@ -30,6 +33,8 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
 
     public async Task InitializeAsync()
     {
+        await _testDb.InitializeAsync();
+
         await _testDb.CriarUsuarioAdmin(_testUserId);
 
         // Create test course
@@ -44,6 +49,8 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
 
         // Act
         var response = await _client.PostAsJsonAsync("/v1/identity/login", request);
+
+        var xxx = await response.Content.ReadAsStringAsync();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -77,6 +84,8 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
 
         // Act
         var resposta = await _client.PostAsJsonAsync("/v1/conteudo/curso/", comando);
+
+        var xxx = await resposta.Content.ReadAsStringAsync();
 
         // Assert
         resposta.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -160,7 +169,7 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
     public async Task CadastrarAula_ComRequisicaoValida_DeveCadastrarAula()
     {
         // Arrange
-        var comando = new Command
+        var comando = new Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar.Command
         {
             Titulo = "Aula Teste",
             Descricao = "Descrição da Aula Teste",
@@ -174,7 +183,7 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
 
         // Assert
         resposta.StatusCode.Should().Be(HttpStatusCode.OK);
-        var resultado = await resposta.Content.ReadFromJsonAsync<Response>();
+        var resultado = await resposta.Content.ReadFromJsonAsync<Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar.Response>();
         resultado.Should().NotBeNull();
         resultado!.AulaId.Should().NotBe(Guid.Empty);
     }
@@ -183,7 +192,7 @@ public class GestaoConteudoEndpointsTests : IClassFixture<WebApplicationFactory<
     public async Task CadastrarAula_ComRequisicaoInvalida_DeveRetornarErroValidacao()
     {
         // Arrange
-        var comando = new Command
+        var comando = new Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar.Command
         {
             Titulo = "", // Título inválido
             Descricao = "Descrição da Aula Teste",

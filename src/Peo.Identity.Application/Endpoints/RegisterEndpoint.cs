@@ -27,7 +27,7 @@ namespace Peo.Identity.Application.Endpoints
         {
             if (!MiniValidator.TryValidate(request, out var errors))
             {
-                return Results.ValidationProblem(errors);
+                return TypedResults.ValidationProblem(errors);
             }
 
             var user = new IdentityUser
@@ -45,7 +45,7 @@ namespace Peo.Identity.Application.Endpoints
                 var roleResult = await userManager.AddToRoleAsync(user, AccessRoles.Aluno);
                 if (!roleResult.Succeeded)
                 {
-                    return Results.BadRequest(new { Description = "Failed to assign role", Content = roleResult.Errors });
+                    return TypedResults.BadRequest(new { Description = "Failed to assign role", Content = roleResult.Errors });
                 }
 
                 await userService.AddAsync(
@@ -55,7 +55,7 @@ namespace Peo.Identity.Application.Endpoints
                 return TypedResults.NoContent();
             }
 
-            return Results.BadRequest(new { Description = "Errors", Content = result.Errors });
+            return TypedResults.BadRequest(new { Description = "Errors", Content = result.Errors });
         }
     }
 }

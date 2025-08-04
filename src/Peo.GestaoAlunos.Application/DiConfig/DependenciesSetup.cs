@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Peo.Core.Interfaces.Services.Acls;
 using Peo.Core.Messages.IntegrationEvents;
 using Peo.GestaoAlunos.Application.Commands.Aula;
 using Peo.GestaoAlunos.Application.Commands.Matricula;
@@ -35,6 +36,11 @@ namespace Peo.GestaoAlunos.Application.DiConfig
 
             // Application services
             services.AddScoped<IEstudanteService, EstudanteService>();
+
+            // Anti-corruption layers
+            //TODO! usar troca de mensagens para integrar com o sistema de conteudo
+            services.AddScoped<ICursoAulaService>(x => { return null!; });
+            services.AddScoped<IDetalhesUsuarioService>(x => { return null!; });
 
             return services;
         }

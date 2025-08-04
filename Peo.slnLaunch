@@ -3,7 +3,7 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Path": "src\\Peo.Web.Api\\Peo.Web.Api.csproj",
+        "Path": "src\\Peo.AppHost\\Peo.AppHost.csproj",
         "Action": "Start"
       }
     ]

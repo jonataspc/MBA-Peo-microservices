@@ -1,22 +1,25 @@
+extern alias IdentityWebApi;
+
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Peo.Identity.Application.Endpoints.Requests;
 using Peo.Identity.Application.Endpoints.Responses;
+using Peo.Tests.IntegrationTests.Factories;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace Peo.Tests.IntegrationTests.Identity;
 
-public class IdentityEndpointsTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+public class IdentityEndpointsTests : IClassFixture<IntegrationTestFactory<IdentityWebApi.Program>>, IAsyncLifetime
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly IntegrationTestFactory<IdentityWebApi.Program> _factory;
     private readonly HttpClient _client;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IServiceScope _scope;
 
-    public IdentityEndpointsTests(WebApplicationFactory<Program> factory)
+    public IdentityEndpointsTests(IntegrationTestFactory<IdentityWebApi.Program> factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();

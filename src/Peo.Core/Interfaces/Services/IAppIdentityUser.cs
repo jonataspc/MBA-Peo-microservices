@@ -1,4 +1,6 @@
-﻿namespace Peo.Core.Interfaces.Services
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Peo.Core.Interfaces.Services
 {
     public interface IAppIdentityUser
     {
@@ -15,5 +17,11 @@
         string? GetLocalIpAddress();
 
         bool IsAdmin();
+
+        HttpContext GetHttpContext();
+
+        string GetUserToken();
+
+        string GetUserRefreshToken();
     }
 }
