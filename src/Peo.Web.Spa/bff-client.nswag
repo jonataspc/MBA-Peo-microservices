@@ -1,0 +1,17 @@
+{
+  "runtime": "WinX64",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "$(OpenApi)"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "output": "Services/PeoApiClientService.cs",
+      "namespace": "Peo.Web.Spa.Services",
+      "className": "PeoApiClient",
+      "injectHttpClient": true,
+      "disposeHttpClient": false
+    }
+  }
+}

@@ -1,14 +1,83 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.7" PrivateAssets="all" />
-  </ItemGroup>
+		<!-- NSwag.MSBuild em uso -->
+		<NSwagPackageVersion>14.5.0</NSwagPackageVersion>
+
+		<!-- Raiz do pacote (preferir PkgNSwag_MSBuild fornecido pelo NuGet) -->
+		<NSwagRoot Condition=" '$(PkgNSwag_MSBuild)' != '' ">$(PkgNSwag_MSBuild)</NSwagRoot>
+		<NSwagRoot Condition=" '$(NSwagRoot)' == '' ">$(NuGetPackageRoot)nswag.msbuild\$(NSwagPackageVersion)</NSwagRoot>
+
+		<!-- Candidatos -->
+		<NSwagExeWin>$(NSwagRoot)\tools\Win\NSwag.exe</NSwagExeWin>
+		<NSwagExeNet90>$(NSwagRoot)\tools\Net90\any\dotnet-nswag.dll</NSwagExeNet90>
+		<NSwagExeNet80>$(NSwagRoot)\tools\Net80\any\dotnet-nswag.dll</NSwagExeNet80>
+		<NSwagExeNet70>$(NSwagRoot)\tools\Net70\any\dotnet-nswag.dll</NSwagExeNet70>
+		<NSwagExeNet60>$(NSwagRoot)\tools\Net60\any\dotnet-nswag.dll</NSwagExeNet60>
+
+		<!-- Monta o comando final: Win EXE -> Net90 -> Net80 -> Net70 -> Net60 -->
+		<NSwagCmd Condition="Exists('$(NSwagExeWin)')">"$(NSwagExeWin)" run bff-client.nswag</NSwagCmd>
+		<NSwagCmd Condition="'$(NSwagCmd)'=='' and Exists('$(NSwagExeNet90)')">dotnet "$(NSwagExeNet90)" run bff-client.nswag</NSwagCmd>
+		<NSwagCmd Condition="'$(NSwagCmd)'=='' and Exists('$(NSwagExeNet80)')">dotnet "$(NSwagExeNet80)" run bff-client.nswag</NSwagCmd>
+		<NSwagCmd Condition="'$(NSwagCmd)'=='' and Exists('$(NSwagExeNet70)')">dotnet "$(NSwagExeNet70)" run bff-client.nswag</NSwagCmd>
+		<NSwagCmd Condition="'$(NSwagCmd)'=='' and Exists('$(NSwagExeNet60)')">dotnet "$(NSwagExeNet60)" run bff-client.nswag</NSwagCmd>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Services\Faturamento\**" />
+	  <Compile Remove="Services\GestaoAluno\**" />
+	  <Compile Remove="Services\GestaoConteudo\**" />
+	  <Compile Remove="Services\Identity\**" />
+	  <Content Remove="Services\Faturamento\**" />
+	  <Content Remove="Services\GestaoAluno\**" />
+	  <Content Remove="Services\GestaoConteudo\**" />
+	  <Content Remove="Services\Identity\**" />
+	  <EmbeddedResource Remove="Services\Faturamento\**" />
+	  <EmbeddedResource Remove="Services\GestaoAluno\**" />
+	  <EmbeddedResource Remove="Services\GestaoConteudo\**" />
+	  <EmbeddedResource Remove="Services\Identity\**" />
+	  <None Remove="Services\Faturamento\**" />
+	  <None Remove="Services\GestaoAluno\**" />
+	  <None Remove="Services\GestaoConteudo\**" />
+	  <None Remove="Services\Identity\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.7" PrivateAssets="all" />
+		<PackageReference Include="NSwag.MSBuild" Version="14.5.0" PrivateAssets="All" />
+	</ItemGroup>
+
+	<Target Name="GeneratePeoClient" AfterTargets="Build">
+		<PropertyGroup>
+			<!-- Caminhos absolutos -->
+			<NSwagConfig>$(ProjectDir)bff-client.nswag</NSwagConfig>
+			<OpenApiFile>$(SolutionDir)src\Peo.Web.Bff\openapi.json</OpenApiFile>
+		</PropertyGroup>
+
+		<!-- Se existir o EXE (WinX64), usa ele -->
+		<Exec Condition="Exists('$(NSwagExeWin)')" WorkingDirectory="$(ProjectDir)" Command="&quot;$(NSwagExeWin)&quot; run &quot;$(NSwagConfig)&quot; /variables:OpenApi=&quot;$(OpenApiFile)&quot;" />
+
+		<!-- Senão, cai pro DLL (Net80) -->
+		<Exec Condition="!Exists('$(NSwagExeWin)') and Exists('$(NSwagExeNet80)')" WorkingDirectory="$(ProjectDir)" Command="dotnet &quot;$(NSwagExeNet80)&quot; run &quot;$(NSwagConfig)&quot; /variables:OpenApi=&quot;$(OpenApiFile)&quot;" />
+	</Target>
+
+
+	<ItemGroup>
+		<Folder Include="Models\Faturamento\" />
+		<Folder Include="Models\GestaoAluno\" />
+		<Folder Include="Models\GestaoConteudo\" />
+		<Folder Include="Models\Identity\" />
+		<Folder Include="Services\" />
+		<Folder Include="Shared\" />
+		<Folder Include="Pages\Identity\" />
+		<Folder Include="Pages\Faturamento\" />
+		<Folder Include="Pages\GestaoAluno\" />
+		<Folder Include="Pages\GestaoConteudo\" />
+	</ItemGroup>
 
 </Project>

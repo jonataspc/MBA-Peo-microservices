@@ -1,0 +1,980 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Plataforma de Educação Online - WebAPI",
+    "version": "v1"
+  },
+  "paths": {
+    "/v1/conteudo/curso": {
+      "post": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.CursoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.CursoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.CursoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/conteudo/curso/{id}": {
+      "get": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.CursoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/conteudo/curso/{cursoId}/aula": {
+      "get": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.AulaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.AulaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.AulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.MatriculaCursoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.MatriculaCursoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/pagamento": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.PagamentoMatriculaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.PagamentoMatriculaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/concluir": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.ConcluirMatriculaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.ConcluirMatriculaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/aula/iniciar": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.IniciarAulaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.ProgressoAulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/aula/concluir": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.ConcluirAulaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.ProgressoAulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/certificados": {
+      "get": {
+        "tags": [
+          "Estudantes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.CertificadoEstudanteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/register": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.Identity.Dtos.RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/login": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.Identity.Dtos.LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.Identity.Dtos.LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/refresh-token": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Peo.Web.Bff.Services.Identity.Dtos.RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Peo.Web.Bff.Services.Identity.Dtos.RefreshTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.CartaoCredito": {
+        "required": [
+          "cvv",
+          "dataVencimento",
+          "nomeTitular",
+          "numero"
+        ],
+        "type": "object",
+        "properties": {
+          "numero": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "nomeTitular": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "dataVencimento": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "cvv": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.CertificadoEstudanteResponse": {
+        "type": "object",
+        "properties": {
+          "certificadoId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conteudo": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataEmissao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "numeroCertificado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.ConcluirAulaRequest": {
+        "required": [
+          "aulaId",
+          "matriculaId"
+        ],
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.ConcluirMatriculaRequest": {
+        "required": [
+          "matriculaId"
+        ],
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.ConcluirMatriculaResponse": {
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.IniciarAulaRequest": {
+        "required": [
+          "aulaId",
+          "matriculaId"
+        ],
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.MatriculaCursoRequest": {
+        "required": [
+          "cursoId"
+        ],
+        "type": "object",
+        "properties": {
+          "cursoId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.MatriculaCursoResponse": {
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.PagamentoMatriculaRequest": {
+        "required": [
+          "dadosCartao",
+          "matriculaId"
+        ],
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dadosCartao": {
+            "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoAlunos.Dtos.CartaoCredito"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.PagamentoMatriculaResponse": {
+        "type": "object",
+        "properties": {
+          "pagamentoId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoAlunos.Dtos.ProgressoAulaResponse": {
+        "type": "object",
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataInicio": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoConteudo.Dtos.ArquivoAulaRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoConteudo.Dtos.ArquivoAulaResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoConteudo.Dtos.AulaRequest": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlVideo": {
+            "type": "string",
+            "nullable": true
+          },
+          "duracao": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "arquivos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.ArquivoAulaRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoConteudo.Dtos.AulaResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlVideo": {
+            "type": "string",
+            "nullable": true
+          },
+          "duracao": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "arquivos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Peo.Web.Bff.Services.GestaoConteudo.Dtos.ArquivoAulaResponse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoConteudo.Dtos.CursoRequest": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "instrutorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conteudoProgramatico": {
+            "type": "string",
+            "nullable": true
+          },
+          "preco": {
+            "type": "number",
+            "format": "double"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.GestaoConteudo.Dtos.CursoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomeInstrutor": {
+            "type": "string",
+            "nullable": true
+          },
+          "conteudoProgramatico": {
+            "type": "string",
+            "nullable": true
+          },
+          "preco": {
+            "type": "number",
+            "format": "double"
+          },
+          "estaPublicado": {
+            "type": "boolean"
+          },
+          "dataPublicacao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.Identity.Dtos.LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.Identity.Dtos.LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.Identity.Dtos.RefreshTokenRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.Identity.Dtos.RefreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Peo.Web.Bff.Services.Identity.Dtos.RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Please enter a valid token",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

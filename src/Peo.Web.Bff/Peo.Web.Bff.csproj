@@ -1,24 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-	<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />	
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
-    <ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
-    <ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
-  </ItemGroup>
+	<Target Name="GenerateOpenApiDoc" AfterTargets="Build">
+		<Exec Command="dotnet swagger tofile --output $(ProjectDir)openapi.json $(TargetDir)$(AssemblyName).dll v1" />
+	</Target>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
+		<ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
+		<ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
+	</ItemGroup>
 
 </Project>
