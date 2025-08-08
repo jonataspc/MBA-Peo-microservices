@@ -1,24 +1,65 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<!-- NSwag doc do BFF -->
+		<BffNswagConfig>$(MSBuildProjectDirectory)\bff-openapi.nswag</BffNswagConfig>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-	<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />
+	<!-- Blindagem contra RID herdado de projetos WASM -->
+	<PropertyGroup>
+		<RuntimeIdentifier></RuntimeIdentifier>
+		<RuntimeIdentifiers></RuntimeIdentifiers>
+		<SelfContained>false</SelfContained>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+		<PackageReference Include="NSwag.MSBuild" Version="14.5.0" PrivateAssets="All" />
+		<PackageReference Include="NSwag.AspNetCore" Version="14.5.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
-    <ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
-    <ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
+		<ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
+		<ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<!-- 1) Gera openapi.json via NSwag (aspNetCoreToOpenApi) após build do BFF -->
+	<Target Name="GenerateOpenApiDoc"
+			AfterTargets="Build"
+			Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(BffNswagConfig)')">
+		<PropertyGroup>
+			<_NswagNet90>$(UserProfile)\.nuget\packages\nswag.msbuild\14.5.0\tools\Net90\dotnet-nswag.dll</_NswagNet90>
+			<_NswagDoc>$(BffNswagConfig)</_NswagDoc>
+		</PropertyGroup>
+		<Exec WorkingDirectory="$(MSBuildProjectDirectory)"
+			  Command="dotnet &quot;$(_NswagNet90)&quot; run &quot;$(_NswagDoc)&quot;" />
+	</Target>
+
+	<!-- 2) Gera o client da SPA (PeoApiClient.cs) na pasta Services -->
+	<PropertyGroup>
+		<!-- Caminhos RELATIVOS ao BFF (não dependem de SolutionDir) -->
+		<SpaClientNswag>$(MSBuildProjectDirectory)\..\Peo.Web.Spa\bff-client.nswag</SpaClientNswag>
+		<SpaOpenApi>$(MSBuildProjectDirectory)\openapi.json</SpaOpenApi>
+		<SpaWorkingDir>$(MSBuildProjectDirectory)\..\Peo.Web.Spa</SpaWorkingDir>
+	</PropertyGroup>
+
+	<Target Name="GenerateSpaClientFromBff"
+			AfterTargets="GenerateOpenApiDoc"
+			Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(SpaClientNswag)') AND Exists('$(SpaOpenApi)')">
+		<PropertyGroup>
+			<_NswagNet90>$(UserProfile)\.nuget\packages\nswag.msbuild\14.5.0\tools\Net90\dotnet-nswag.dll</_NswagNet90>
+		</PropertyGroup>
+		<Exec WorkingDirectory="$(SpaWorkingDir)"
+			  Command="dotnet &quot;$(_NswagNet90)&quot; run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+	</Target>
 
 </Project>
