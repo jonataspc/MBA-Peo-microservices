@@ -12,6 +12,12 @@ builder.Services.AddIdentity(builder.Configuration)
                 .AddApiServices()
                 .SetupWebApi(builder.Configuration);
 
+builder.Services.AddOpenApiDocument(o =>
+{
+    o.DocumentName = "v1"; // nome que vamos pedir ao gerador
+    o.Title = "Plataforma de Educação Online - WebAPI";
+});
+
 var app = builder.Build();
 
 app.UseCustomSwagger(builder.Environment);

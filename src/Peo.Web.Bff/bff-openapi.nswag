@@ -1,0 +1,22 @@
+{
+  "runtime": "Net90",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "aspNetCoreToOpenApi": {
+      "project": "Peo.Web.Bff.csproj",
+      "documentName": "v1",
+      "msBuildProjectExtensionsPath": null,
+      "configuration": "Debug",
+      "runtime": null,
+      "targetFramework": "net9.0",
+      "noBuild": true,
+      "msBuildOutputPath": null,
+      "verbose": true,
+      "workingDirectory": null,
+      "aspNetCoreEnvironment": null,
+      "output": "openapi.json",
+      "newLineBehavior": "Auto"
+    }
+  },
+  "codeGenerators": {}
+}

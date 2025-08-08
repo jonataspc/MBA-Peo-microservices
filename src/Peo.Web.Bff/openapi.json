@@ -1,0 +1,988 @@
+{
+  "x-generator": "NSwag v14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Plataforma de Educação Online - WebAPI",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/identity/register": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "PostV1IdentityRegister",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/login": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "PostV1IdentityLogin",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/refresh-token": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "operationId": "PostV1IdentityRefreshToken",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/conteudo/curso": {
+      "post": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "operationId": "PostV1ConteudoCurso",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CursoRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CursoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "operationId": "GetV1ConteudoCursoAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CursoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/conteudo/curso/{id}": {
+      "get": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "operationId": "GetV1ConteudoCurso",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CursoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/conteudo/curso/{cursoId}/aula": {
+      "get": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "operationId": "GetV1ConteudoCursoAula",
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AulaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "operationId": "PostV1ConteudoCursoAula",
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AulaRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "PostV1EstudanteMatricula",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatriculaCursoRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatriculaCursoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/pagamento": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "PostV1EstudanteMatriculaPagamento",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PagamentoMatriculaRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagamentoMatriculaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/concluir": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "PostV1EstudanteMatriculaConcluir",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConcluirMatriculaRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConcluirMatriculaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/aula/iniciar": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "PostV1EstudanteMatriculaAulaIniciar",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IniciarAulaRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressoAulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/matricula/aula/concluir": {
+      "post": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "PostV1EstudanteMatriculaAulaConcluir",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConcluirAulaRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressoAulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estudante/certificados": {
+      "get": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "GetV1EstudanteCertificados",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CertificadoEstudanteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "RefreshTokenResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "CursoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomeInstrutor": {
+            "type": "string",
+            "nullable": true
+          },
+          "conteudoProgramatico": {
+            "type": "string",
+            "nullable": true
+          },
+          "preco": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "estaPublicado": {
+            "type": "boolean"
+          },
+          "dataPublicacao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CursoRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "instrutorId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "conteudoProgramatico": {
+            "type": "string",
+            "nullable": true
+          },
+          "preco": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "tags": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AulaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlVideo": {
+            "type": "string"
+          },
+          "duracao": {
+            "type": "string",
+            "format": "duration"
+          },
+          "arquivos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArquivoAulaResponse"
+            }
+          }
+        }
+      },
+      "ArquivoAulaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "AulaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlVideo": {
+            "type": "string"
+          },
+          "duracao": {
+            "type": "string",
+            "format": "duration"
+          },
+          "arquivos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArquivoAulaRequest"
+            }
+          }
+        }
+      },
+      "ArquivoAulaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "MatriculaCursoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "MatriculaCursoRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cursoId"
+        ],
+        "properties": {
+          "cursoId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          }
+        }
+      },
+      "PagamentoMatriculaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pagamentoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "mensagem": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PagamentoMatriculaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "matriculaId",
+          "dadosCartao"
+        ],
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          },
+          "dadosCartao": {
+            "$ref": "#/components/schemas/CartaoCredito"
+          }
+        }
+      },
+      "CartaoCredito": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "numero",
+          "nomeTitular",
+          "dataVencimento",
+          "cvv"
+        ],
+        "properties": {
+          "numero": {
+            "type": "string",
+            "minLength": 1
+          },
+          "nomeTitular": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dataVencimento": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cvv": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "ConcluirMatriculaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "ConcluirMatriculaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "matriculaId"
+        ],
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          }
+        }
+      },
+      "ProgressoAulaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "dataInicio": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "IniciarAulaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "matriculaId",
+          "aulaId"
+        ],
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          }
+        }
+      },
+      "ConcluirAulaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "matriculaId",
+          "aulaId"
+        ],
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "guid",
+            "minLength": 1
+          }
+        }
+      },
+      "CertificadoEstudanteResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "certificadoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "conteudo": {
+            "type": "string"
+          },
+          "dataEmissao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "numeroCertificado": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}
