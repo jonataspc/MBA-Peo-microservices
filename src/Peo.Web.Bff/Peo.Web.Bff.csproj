@@ -1,24 +1,79 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<BffNswagConfig>$(MSBuildProjectDirectory)\bff-openapi.nswag</BffNswagConfig>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RuntimeIdentifier></RuntimeIdentifier>
+		<RuntimeIdentifiers></RuntimeIdentifiers>
+		<SelfContained>false</SelfContained>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-	<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+		<PackageReference Include="NSwag.MSBuild" Version="14.5.0" PrivateAssets="All" />
+		<PackageReference Include="NSwag.AspNetCore" Version="14.5.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
-    <ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
-    <ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Peo.Core.Web\Peo.Core.Web.csproj" />
+		<ProjectReference Include="..\Peo.Core\Peo.Core.csproj" />
+		<ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
+	</ItemGroup>
 
+	<!-- 1) Gera openapi.json (BFF) -->
+	<Target Name="GenerateOpenApiDoc"
+			AfterTargets="Build"
+			Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(BffNswagConfig)')">
+		<PropertyGroup>
+			<_NSwagExe Condition="'$(NSwagExe_Net90)' != ''">$(NSwagExe_Net90)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net80)' != ''">$(NSwagExe_Net80)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net60)' != ''">$(NSwagExe_Net60)</_NSwagExe>
+		</PropertyGroup>
+
+		<!-- usa o comando completo fornecido pelo pacote (sem prefixar 'dotnet') -->
+		<Exec Condition="'$(_NSwagExe)' != ''"
+			  WorkingDirectory="$(MSBuildProjectDirectory)"
+			  Command="$(_NSwagExe) run &quot;$(BffNswagConfig)&quot;" />
+
+		<!-- fallback via tool -->
+		<Exec Condition="'$(_NSwagExe)' == ''"
+			  WorkingDirectory="$(MSBuildProjectDirectory)"
+			  Command="dotnet nswag run &quot;$(BffNswagConfig)&quot;" />
+	</Target>
+
+	<!-- 2) Gera o client da SPA -->
+	<PropertyGroup>
+		<SpaClientNswag>$(MSBuildProjectDirectory)\..\Peo.Web.Spa\bff-client.nswag</SpaClientNswag>
+		<SpaOpenApi>$(MSBuildProjectDirectory)\openapi.json</SpaOpenApi>
+		<SpaWorkingDir>$(MSBuildProjectDirectory)\..\Peo.Web.Spa</SpaWorkingDir>
+	</PropertyGroup>
+
+	<Target Name="GenerateSpaClientFromBff"
+			AfterTargets="GenerateOpenApiDoc"
+			Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(SpaClientNswag)') AND Exists('$(SpaOpenApi)')">
+		<PropertyGroup>
+			<_NSwagExe Condition="'$(NSwagExe_Net90)' != ''">$(NSwagExe_Net90)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net80)' != ''">$(NSwagExe_Net80)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net60)' != ''">$(NSwagExe_Net60)</_NSwagExe>
+		</PropertyGroup>
+
+		<!-- ✅ sem 'dotnet' antes -->
+		<Exec Condition="'$(_NSwagExe)' != ''"
+			  WorkingDirectory="$(SpaWorkingDir)"
+			  Command="$(_NSwagExe) run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+
+		<!-- fallback via tool (opcional manter o restore) -->
+		<Exec Condition="'$(_NSwagExe)' == ''"
+			  WorkingDirectory="$(SpaWorkingDir)"
+			  Command="dotnet nswag run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+	</Target>
 </Project>
