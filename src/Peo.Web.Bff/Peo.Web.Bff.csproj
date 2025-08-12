@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
@@ -7,11 +6,9 @@
 		<UserSecretsId>764257ac-1e66-4781-8bb8-1e2d305bb2d5</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
-		<!-- NSwag doc do BFF -->
 		<BffNswagConfig>$(MSBuildProjectDirectory)\bff-openapi.nswag</BffNswagConfig>
 	</PropertyGroup>
 
-	<!-- Blindagem contra RID herdado de projetos WASM -->
 	<PropertyGroup>
 		<RuntimeIdentifier></RuntimeIdentifier>
 		<RuntimeIdentifiers></RuntimeIdentifiers>
@@ -32,21 +29,29 @@
 		<ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
 	</ItemGroup>
 
-	<!-- 1) Gera openapi.json via NSwag (aspNetCoreToOpenApi) após build do BFF -->
+	<!-- 1) Gera openapi.json (BFF) -->
 	<Target Name="GenerateOpenApiDoc"
 			AfterTargets="Build"
 			Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(BffNswagConfig)')">
 		<PropertyGroup>
-			<_NswagNet90>$(UserProfile)\.nuget\packages\nswag.msbuild\14.5.0\tools\Net90\dotnet-nswag.dll</_NswagNet90>
-			<_NswagDoc>$(BffNswagConfig)</_NswagDoc>
+			<_NSwagExe Condition="'$(NSwagExe_Net90)' != ''">$(NSwagExe_Net90)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net80)' != ''">$(NSwagExe_Net80)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net60)' != ''">$(NSwagExe_Net60)</_NSwagExe>
 		</PropertyGroup>
-		<Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-			  Command="dotnet &quot;$(_NswagNet90)&quot; run &quot;$(_NswagDoc)&quot;" />
+
+		<!-- usa o comando completo fornecido pelo pacote (sem prefixar 'dotnet') -->
+		<Exec Condition="'$(_NSwagExe)' != ''"
+			  WorkingDirectory="$(MSBuildProjectDirectory)"
+			  Command="$(_NSwagExe) run &quot;$(BffNswagConfig)&quot;" />
+
+		<!-- fallback via tool -->
+		<Exec Condition="'$(_NSwagExe)' == ''"
+			  WorkingDirectory="$(MSBuildProjectDirectory)"
+			  Command="dotnet nswag run &quot;$(BffNswagConfig)&quot;" />
 	</Target>
 
-	<!-- 2) Gera o client da SPA (PeoApiClient.cs) na pasta Services -->
+	<!-- 2) Gera o client da SPA -->
 	<PropertyGroup>
-		<!-- Caminhos RELATIVOS ao BFF (não dependem de SolutionDir) -->
 		<SpaClientNswag>$(MSBuildProjectDirectory)\..\Peo.Web.Spa\bff-client.nswag</SpaClientNswag>
 		<SpaOpenApi>$(MSBuildProjectDirectory)\openapi.json</SpaOpenApi>
 		<SpaWorkingDir>$(MSBuildProjectDirectory)\..\Peo.Web.Spa</SpaWorkingDir>
@@ -56,10 +61,19 @@
 			AfterTargets="GenerateOpenApiDoc"
 			Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(SpaClientNswag)') AND Exists('$(SpaOpenApi)')">
 		<PropertyGroup>
-			<_NswagNet90>$(UserProfile)\.nuget\packages\nswag.msbuild\14.5.0\tools\Net90\dotnet-nswag.dll</_NswagNet90>
+			<_NSwagExe Condition="'$(NSwagExe_Net90)' != ''">$(NSwagExe_Net90)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net80)' != ''">$(NSwagExe_Net80)</_NSwagExe>
+			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net60)' != ''">$(NSwagExe_Net60)</_NSwagExe>
 		</PropertyGroup>
-		<Exec WorkingDirectory="$(SpaWorkingDir)"
-			  Command="dotnet &quot;$(_NswagNet90)&quot; run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
-	</Target>
 
+		<!-- ✅ sem 'dotnet' antes -->
+		<Exec Condition="'$(_NSwagExe)' != ''"
+			  WorkingDirectory="$(SpaWorkingDir)"
+			  Command="$(_NSwagExe) run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+
+		<!-- fallback via tool (opcional manter o restore) -->
+		<Exec Condition="'$(_NSwagExe)' == ''"
+			  WorkingDirectory="$(SpaWorkingDir)"
+			  Command="dotnet nswag run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+	</Target>
 </Project>
