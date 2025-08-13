@@ -1,0 +1,145 @@
+﻿@page "/register"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using Peo.Web.Spa.Services   @* ajuste se o namespace do WebApiClient for outro *@
+
+@inject WebApiClient Api
+@inject ISnackbar Snackbar
+@inject NavigationManager Nav
+
+@attribute [AllowAnonymous]
+
+@code {
+    private readonly RegisterModel Model = new();
+    private bool _busy;
+    private bool _showPassword;
+    private bool _showConfirm;
+
+    private async Task SubmitAsync()
+    {
+        if (_busy) return;
+
+        if (Model.Password != Model.ConfirmPassword)
+        {
+            Snackbar.Add("As senhas não conferem.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            _busy = true;
+
+            var req = new RegisterRequest
+            {
+                Name = Model.Name,
+                Email = Model.Email,
+                Password = Model.Password
+            };
+
+            // Sucesso esperado pelo client gerado: 200 OK sem body
+            await Api.PostV1IdentityRegisterAsync(req);
+
+            Snackbar.Add("Conta criada com sucesso! Faça o login.", Severity.Success);
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (ApiException<object> ex)
+        {
+            Snackbar.Add(string.IsNullOrWhiteSpace(ex.Response) ? "Falha ao registrar (400)." : ex.Response, Severity.Error);
+        }
+        catch (ApiException ex)
+        {
+            Snackbar.Add($"Erro {ex.StatusCode}: {ex.Response}", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro inesperado: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class RegisterModel
+    {
+        [Required(ErrorMessage = "Informe o nome")]
+        [MinLength(2, ErrorMessage = "Nome muito curto")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Informe o e-mail")]
+        [EmailAddress(ErrorMessage = "E-mail inválido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Informe a senha")]
+        [MinLength(6, ErrorMessage = "Mínimo de 6 caracteres")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Confirme a senha")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}
+
+<MudPaper Class="mx-auto my-12 pa-6" MaxWidth="420px" Elevation="2">
+    <MudText Typo="Typo.h5" Class="mb-4">Criar conta</MudText>
+
+    <EditForm Model="@Model" OnValidSubmit="SubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <MudText Typo="Typo.caption" Class="mb-1 mud-primary-text">Nome</MudText>
+        <MudTextField @bind-Value="Model.Name"
+                      Placeholder="Seu nome"
+                      For="@(() => Model.Name)"
+                      Required="true"
+                      Disabled="@_busy" />
+
+        <MudText Typo="Typo.caption" Class="mt-3 mb-1 mud-primary-text">E-mail</MudText>
+        <MudTextField @bind-Value="Model.Email"
+                      Placeholder="seu@email.com"
+                      For="@(() => Model.Email)"
+                      InputType="InputType.Email"
+                      Required="true"
+                      Disabled="@_busy" />
+
+        <MudText Typo="Typo.caption" Class="mt-3 mb-1 mud-primary-text">Senha</MudText>
+        <MudTextField @bind-Value="Model.Password"
+                      Placeholder="••••••••"
+                      For="@(() => Model.Password)"
+                      InputType="@(_showPassword? InputType.Text: InputType.Password)"
+                      Required="true"
+                      Disabled="@_busy"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@(_showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                      OnAdornmentClick="@(() => _showPassword = !_showPassword)" />
+
+        <MudText Typo="Typo.caption" Class="mt-3 mb-1 mud-primary-text">Confirmar senha</MudText>
+        <MudTextField @bind-Value="Model.ConfirmPassword"
+                      Placeholder="••••••••"
+                      For="@(() => Model.ConfirmPassword)"
+                      InputType="@(_showConfirm? InputType.Text: InputType.Password)"
+                      Required="true"
+                      Disabled="@_busy"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@(_showConfirm? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                      OnAdornmentClick="@(() => _showConfirm = !_showConfirm)" />
+
+
+        <MudButton Class="mt-4"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   ButtonType="ButtonType.Submit"
+                   Disabled="@_busy" FullWidth="true">
+            @if (_busy)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+            }
+            Criar conta
+        </MudButton>
+    </EditForm>
+
+    <div class="mt-4">
+        <MudLink Href="/login">Já tenho conta</MudLink>
+    </div>
+</MudPaper>

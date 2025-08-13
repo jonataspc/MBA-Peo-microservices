@@ -5,6 +5,30 @@
       {
         "Path": "src\\Peo.AppHost\\Peo.AppHost.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "src\\Peo.Faturamento.WebApi\\Peo.Faturamento.WebApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Peo.GestaoAlunos.WebApi\\Peo.GestaoAlunos.WebApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Peo.GestaoConteudo.WebApi\\Peo.GestaoConteudo.WebApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Peo.Identity.WebApi\\Peo.Identity.WebApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Peo.Web.Spa\\Peo.Web.Spa.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Peo.Web.Bff\\Peo.Web.Bff.csproj",
+        "Action": "Start"
       }
     ]
   }
