@@ -1,0 +1,129 @@
+﻿@page "/login"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@using Peo.Web.Spa.Services.Identity.Login
+
+@inject IAuthService Auth
+@inject ISnackbar Snackbar
+@inject NavigationManager Nav
+
+@attribute [AllowAnonymous]
+
+@code {
+    [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    private readonly LoginModel Model = new();
+    private bool _busy;
+    private bool _showPassword;
+
+    // Evita open-redirect: só permite ReturnUrl que comece com "/"
+    private string SafeReturnUrl =>
+        !string.IsNullOrWhiteSpace(ReturnUrl) && ReturnUrl.StartsWith('/')
+            ? ReturnUrl
+            : "/";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthStateTask is not null)
+        {
+            var state = await AuthStateTask;
+            if (state.User.Identity?.IsAuthenticated == true)
+            {
+                Nav.NavigateTo(SafeReturnUrl, forceLoad: true);
+            }
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_busy) return;
+
+        try
+        {
+            _busy = true;
+            var ok = await Auth.LoginAsync(Model.Email, Model.Password);
+
+            if (ok)
+            {
+                Snackbar.Add("Bem-vindo!", Severity.Success);
+                Nav.NavigateTo(SafeReturnUrl, true);
+            }
+            else
+            {
+                Snackbar.Add("Credenciais inválidas.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            Snackbar.Add("Falha ao entrar. Tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class LoginModel
+    {
+        [Required(ErrorMessage = "Informe o e-mail")]
+        [EmailAddress(ErrorMessage = "E-mail inválido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Informe a senha")]
+        public string Password { get; set; } = string.Empty;
+    }
+}
+
+<MudPaper Class="mx-auto my-12 pa-6" MaxWidth="420px" Elevation="2">
+    <MudText Typo="Typo.h5" Class="mb-4">Entrar</MudText>
+
+    <EditForm Model="@Model" OnValidSubmit="SubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <MudText Typo="Typo.caption" Class="mb-1 mud-primary-text">E-mail</MudText>
+        <MudTextField @bind-Value="Model.Email"
+                      Placeholder="seu@email.com"
+                      For="@(() => Model.Email)"
+                      InputType="InputType.Email"
+                      Autocomplete="Autocomplete.Email"
+                      Required="true"
+                      Disabled="@_busy" />
+ 
+        <MudText Typo="Typo.caption" Class="mt-3 mb-1 mud-primary-text">Senha</MudText>
+        <MudTextField @bind-Value="Model.Password"
+                      Placeholder="••••••••"
+                      For="@(() => Model.Password)"
+                      InputType="@(_showPassword? InputType.Text: InputType.Password)"
+                      Autocomplete="Autocomplete.CurrentPassword"
+                      Required="true"
+                      Disabled="@_busy"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@(_showPassword? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                      OnAdornmentClick="@(() => _showPassword = !_showPassword)" />
+
+        <MudButton Class="mt-4"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   ButtonType="ButtonType.Submit"
+                   Disabled="@_busy" FullWidth="true">
+            @if (_busy)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+            }
+            Entrar
+        </MudButton>
+    </EditForm>
+
+    <div class="mt-4">
+        <MudLink Href="/register">Criar conta</MudLink>
+        <MudText Class="mx-2" Inline="true">•</MudText>
+        <MudLink Href="/forgot">Esqueci minha senha</MudLink>
+    </div>
+</MudPaper>

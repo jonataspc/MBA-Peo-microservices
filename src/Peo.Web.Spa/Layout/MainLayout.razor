@@ -1,16 +1,219 @@
-﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+﻿@using Peo.Web.Spa.Services.Identity.Home
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+@inject ISnackbar Snackbar
+@inject ThemeService Theme
+@inject IAuthService Auth
+@inject NavigationManager Nav
+@inject AuthenticationStateProvider AuthStateProvider
 
-        <article class="content px-4">
+@implements IDisposable
+
+<MudThemeProvider @ref="_provider" Theme="_theme" @bind-IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <AuthorizeView>
+        <Authorized>
+            <MudAppBar Elevation="0" Dense="true">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+                <MudText Typo="Typo.h6">Minha App</MudText>
+                <MudSpacer />
+
+                <MudSpacer />
+                <!-- Alternar tema -->
+                <MudIconButton Icon="@(_isDarkMode? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
+                               AriaLabel="Alternar tema"
+                               OnClick="ToggleThemeAsync" />
+
+                <!-- Menu do usuário com Logout -->
+                <MudMenu AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopRight">
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.AccountCircle">
+                            Conta
+                        </MudButton>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MudMenuItem OnClick="@IrParaPerfil" Icon="@Icons.Material.Filled.Person">Perfil</MudMenuItem>
+                        <MudMenuItem OnClick="@LogoutAsync" Icon="@Icons.Material.Filled.Logout">Sair</MudMenuItem>
+                    </ChildContent>
+                </MudMenu>
+
+            </MudAppBar>
+
+            <MudDrawer @bind-Open="_drawerOpen" Variant="DrawerVariant.Responsive" Elevation="1" Anchor="Anchor.Start">
+                <NavMenu />
+            </MudDrawer>
+        </Authorized>
+    </AuthorizeView>
+
+    <MudMainContent>
+        <div class="content px-4">
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private MudThemeProvider? _provider;
+    private bool _isDarkMode;
+    private bool _drawerOpen = true;
+    private string? _userLabel;
+
+    // Se seu App usa AuthenticationStateProvider, podemos exibir o nome/email
+    [CascadingParameter] private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Theme.Changed += OnThemeChanged;
+        AuthStateProvider.AuthenticationStateChanged += OnAuthChanged;
+    }
+
+    private async void OnAuthChanged(Task<AuthenticationState> task)
+    {
+        try
+        {
+            var state = await task;
+            var user = state.User;
+
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                _userLabel =
+                    user.Identity?.Name
+                    ?? user.FindFirst("email")?.Value
+                    ?? user.FindFirst("name")?.Value
+                    ?? user.FindFirst("unique_name")?.Value
+                    ?? "Conta";
+            }
+            else
+            {
+                _userLabel = "Conta";
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch { /* ignore */ }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        if (_provider is not null)
+        {
+            await Theme.InitializeAsync(_provider);   // carrega do localStorage ou do sistema
+            _isDarkMode = Theme.IsDark;               // reflete no provider via @bind-IsDarkMode
+        }
+
+        // Monta o rótulo do usuário (se autenticado)
+        if (AuthStateTask is not null)
+        {
+            var state = await AuthStateTask;
+            var user = state.User;
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                // tenta nome, depois email, depois nameid
+                _userLabel =
+                    user.Identity?.Name
+                    ?? user.FindFirst("email")?.Value
+                    ?? user.FindFirst("name")?.Value
+                    ?? user.FindFirst("unique_name")?.Value
+                    ?? "Conta";
+            }
+            else
+            {
+                _userLabel = "Conta";
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnThemeChanged(bool dark)
+    {
+        _isDarkMode = dark;                           // sincroniza com o provider
+        InvokeAsync(StateHasChanged);
+    }
+
+    private Task ToggleThemeAsync()
+    {
+        var next = !_isDarkMode;
+        Snackbar.Add(next ? "Modo escuro" : "Modo claro", Severity.Info);
+        return Theme.SetAsync(next);
+    }
+
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    private void IrParaPerfil()
+    {
+        // Ajuste a rota de perfil se existir
+        Nav.NavigateTo("/perfil");
+    }
+
+    private async Task LogoutAsync()
+    {
+        try
+        {
+            await Auth.LogoutAsync();                 // JWT: limpa token e navega; Cookies: chama endpoint e navega
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Falha ao sair: {ex.Message}", Severity.Error);
+        }
+    }
+
+    public void Dispose()
+    {
+        Theme.Changed -= OnThemeChanged;
+        AuthStateProvider.AuthenticationStateChanged -= OnAuthChanged;
+    }
+
+    private readonly MudTheme _theme = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#1976d2",
+            Secondary = "#7c4dff",
+            AppbarBackground = "#ffffff",   // fundo claro
+            AppbarText = "#1f2937",         // texto escuro (legível)
+            TextPrimary = "#111827",        // texto padrão mais escuro
+            TextSecondary = "#4b5563",
+            Background = "#fafafa",
+            Surface = "#ffffff"
+        },
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#40c4ff",
+            Secondary = "#b388ff",
+            AppbarBackground = "#1e1e1e",
+            AppbarText = "#ffffff",
+            TextPrimary = "#ffffff",
+            TextSecondary = "#d1d5db",
+            Background = "#121212",
+            Surface = "#1a1a1a"
+        },
+
+        LayoutProperties = new LayoutProperties { DefaultBorderRadius = "12px" },
+        Typography = new Typography
+        {
+            Default = new DefaultTypography { FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" }, FontSize = "0.95rem", LineHeight = "1.5", FontWeight = "400" },
+            H1 = new H1Typography { FontSize = "2.25rem", FontWeight = "700", LineHeight = "1.2" },
+            H2 = new H2Typography { FontSize = "1.875rem", FontWeight = "700", LineHeight = "1.25" },
+            H3 = new H3Typography { FontSize = "1.5rem", FontWeight = "600", LineHeight = "1.3" },
+            H4 = new H4Typography { FontSize = "1.25rem", FontWeight = "600", LineHeight = "1.35" },
+            H5 = new H5Typography { FontSize = "1.125rem", FontWeight = "600", LineHeight = "1.4" },
+            H6 = new H6Typography { FontSize = "1rem", FontWeight = "600", LineHeight = "1.4" },
+            Subtitle1 = new Subtitle1Typography { FontSize = "1rem", FontWeight = "500", LineHeight = "1.45" },
+            Subtitle2 = new Subtitle2Typography { FontSize = "0.9rem", FontWeight = "500", LineHeight = "1.45" },
+            Body1 = new Body1Typography { FontSize = "0.95rem", FontWeight = "400", LineHeight = "1.6" },
+            Body2 = new Body2Typography { FontSize = "0.875rem", FontWeight = "400", LineHeight = "1.6" },
+            Button = new ButtonTypography { FontSize = "0.875rem", FontWeight = "600", LetterSpacing = ".02em", TextTransform = "none" },
+            Caption = new CaptionTypography { FontSize = "0.75rem", FontWeight = "400", LineHeight = "1.4" },
+            Overline = new OverlineTypography { FontSize = "0.7rem", FontWeight = "500", LetterSpacing = ".08em", TextTransform = "uppercase" }
+        }
+    };
+}

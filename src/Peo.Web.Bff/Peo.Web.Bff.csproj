@@ -73,7 +73,9 @@
 
 		<!-- fallback via tool (opcional manter o restore) -->
 		<Exec Condition="'$(_NSwagExe)' == ''"
-			  WorkingDirectory="$(SpaWorkingDir)"
-			  Command="dotnet nswag run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+      WorkingDirectory="$(SpaWorkingDir)"
+      Command="dotnet nswag run &quot;$(SpaClientNswag)&quot; /variables:OpenApi=&quot;$(SpaOpenApi)&quot;" />
+
+
 	</Target>
 </Project>

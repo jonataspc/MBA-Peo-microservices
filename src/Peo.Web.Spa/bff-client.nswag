@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "documentPath": "$(OpenApi)",
+      "url": "$(OpenApi)",
       "schemaType": "OpenApi3",
       "output": null,
       "newLineBehavior": "Auto"
