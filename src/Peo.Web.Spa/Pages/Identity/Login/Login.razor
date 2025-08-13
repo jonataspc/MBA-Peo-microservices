@@ -91,8 +91,7 @@
         <MudTextField @bind-Value="Model.Email"
                       Placeholder="seu@email.com"
                       For="@(() => Model.Email)"
-                      InputType="InputType.Email"
-                      Autocomplete="Autocomplete.Email"
+                      InputType="InputType.Email"                      
                       Required="true"
                       Disabled="@_busy" />
  
@@ -100,8 +99,7 @@
         <MudTextField @bind-Value="Model.Password"
                       Placeholder="••••••••"
                       For="@(() => Model.Password)"
-                      InputType="@(_showPassword? InputType.Text: InputType.Password)"
-                      Autocomplete="Autocomplete.CurrentPassword"
+                      InputType="@(_showPassword? InputType.Text: InputType.Password)"                      
                       Required="true"
                       Disabled="@_busy"
                       Adornment="Adornment.End"
