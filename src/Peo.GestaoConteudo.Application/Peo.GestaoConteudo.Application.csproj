@@ -18,4 +18,8 @@
 	<ProjectReference Include="..\Peo.Core.Infra.ServiceBus\Peo.Core.Infra.ServiceBus.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\Curso\Atualizar\" />
+  </ItemGroup>
+
 </Project>
