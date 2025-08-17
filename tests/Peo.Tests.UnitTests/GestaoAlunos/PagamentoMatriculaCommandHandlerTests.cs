@@ -107,7 +107,7 @@ public class PagamentoMatriculaCommandHandlerTests
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
-        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", valor));
 
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
             It.IsAny<ObterDetalhesCursoRequest>(),
