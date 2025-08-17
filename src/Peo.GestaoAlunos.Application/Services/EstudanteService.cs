@@ -1,7 +1,6 @@
 ﻿using MassTransit;
 using Peo.Core.DomainObjects;
 using Peo.Core.Interfaces.Services;
-using Peo.Core.Interfaces.Services.Acls;
 using Peo.Core.Messages.IntegrationRequests;
 using Peo.Core.Messages.IntegrationResponses;
 using Peo.GestaoAlunos.Domain.Entities;
@@ -13,7 +12,7 @@ namespace Peo.GestaoAlunos.Application.Services;
 public class EstudanteService(
     IRequestClient<ObterDetalhesCursoRequest> requestClientObterDetalhesCurso,
     IEstudanteRepository estudanteRepository,
-    IDetalhesUsuarioService detalhesUsuarioService,
+    IRequestClient<ObterDetalhesUsuarioRequest> requestClientObterDetalhesUsuario,
     IAppIdentityUser appIdentityUser) : IEstudanteService
 {
     public async Task<Estudante> CriarEstudanteAsync(Guid usuarioId, CancellationToken cancellationToken = default)
@@ -187,7 +186,9 @@ public class EstudanteService(
 
     private async Task<string> GerarConteudoCertificadoAsync(Matricula matricula, string numeroCertificado)
     {
-        var usuarioEstudante = await detalhesUsuarioService.ObterUsuarioPorIdAsync(matricula!.Estudante!.UsuarioId) ?? throw new InvalidOperationException($"Estudante {matricula.EstudanteId} não encontrado!");
+        var msg = await requestClientObterDetalhesUsuario.GetResponse<ObterDetalhesUsuarioResponse>(new ObterDetalhesUsuarioRequest(matricula.Estudante!.UsuarioId));
+
+        var nomeUsuario = msg?.Message?.Nome ?? throw new ArgumentException("Usuário não encontrado", nameof(matricula.EstudanteId));
 
         var responseCurso = await requestClientObterDetalhesCurso.GetResponse<ObterDetalhesCursoResponse>(new ObterDetalhesCursoRequest(matricula.CursoId));
 
@@ -196,7 +197,7 @@ public class EstudanteService(
 
         var tituloCurso = responseCurso.Message.Titulo!;
 
-        return $"Certificado de Conclusão\nMatrícula: {matricula.Id}\nEmitido em: {DateTime.Now:yyyy-MM-dd}\nNúmero: {numeroCertificado}\nCurso: {tituloCurso}\nNome do estudante: {usuarioEstudante!.NomeCompleto}";
+        return $"Certificado de Conclusão\nMatrícula: {matricula.Id}\nEmitido em: {DateTime.Now:yyyy-MM-dd}\nNúmero: {numeroCertificado}\nCurso: {tituloCurso}\nNome do estudante: {nomeUsuario}";
     }
 
     private static string GerarNumeroCertificado()

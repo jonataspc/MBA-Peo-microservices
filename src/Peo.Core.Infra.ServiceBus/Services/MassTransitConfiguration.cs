@@ -34,6 +34,7 @@ namespace Peo.Core.Infra.ServiceBus.Services
 
                 Type[] requestClients = [
                     typeof(ObterDetalhesCursoRequest),
+                    typeof(ObterDetalhesUsuarioRequest),
                     typeof(ObterMatriculaRequest)
                     ];
 

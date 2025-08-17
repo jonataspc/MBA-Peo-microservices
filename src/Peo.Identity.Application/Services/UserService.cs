@@ -1,11 +1,10 @@
 ﻿using Peo.Core.Entities;
-using Peo.Core.Interfaces.Services.Acls;
 using Peo.Identity.Domain.Interfaces.Data;
 using Peo.Identity.Domain.Interfaces.Services;
 
 namespace Peo.Identity.Application.Services
 {
-    public class UserService(IUserRepository repository) : IUserService, IDetalhesUsuarioService
+    public class UserService(IUserRepository repository) : IUserService
     {
         public async Task AddAsync(Usuario user)
         {
