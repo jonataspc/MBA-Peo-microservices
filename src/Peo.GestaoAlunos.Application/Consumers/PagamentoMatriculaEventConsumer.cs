@@ -29,12 +29,12 @@ namespace Peo.GestaoAlunos.Application.Consumers
             logger.LogInformation("Processing PagamentoMatriculaConfirmadoEvent for MatriculaId: {MatriculaId}", message.MatriculaId);
 
             var matricula = await estudanteRepository.GetMatriculaByIdAsync(message.MatriculaId)
-                            ?? throw new InvalidOperationException($"MatrÌcula com ID {message.MatriculaId} n„o encontrada");
+                            ?? throw new InvalidOperationException($"Matr√≠cula com ID {message.MatriculaId} n√£o encontrada");
 
             matricula.ConfirmarPagamento();
             await estudanteRepository.UnitOfWork.CommitAsync(CancellationToken.None);
 
-            // Dispara email ao aluno informando que a matrÌcula foi confirmada
+            // Dispara email ao aluno informando que a matr√≠cula foi confirmada
         }
     }
 }
