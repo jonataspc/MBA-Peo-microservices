@@ -116,7 +116,9 @@ public class EstudanteService(
         if (responseCurso.Message == null || responseCurso.Message.CursoId == null)
             throw new ArgumentException("Curso não encontrado", nameof(matricula.CursoId));
 
-        var totalAulas = responseCurso.Message!.TotalAulas!.Value;
+        if (responseCurso.Message.TotalAulas == null)
+            throw new ArgumentException("Total de aulas do curso não informado", nameof(matricula.CursoId));
+        var totalAulas = responseCurso.Message.TotalAulas.Value;
         var aulasConcluidas = await estudanteRepository.GetAulasConcluidasCountAsync(matriculaId);
 
         var novoPercentualProgresso = (int)(aulasConcluidas * 100.0 / totalAulas);
