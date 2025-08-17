@@ -29,7 +29,7 @@ namespace Peo.Faturamento.Integrations.Paypal.Services
                 return new PaymentBrokerResult(true, default, Guid.CreateVersion7().ToString());
             }
 
-            // imula falha no pagamento
+            // Simula falha no pagamento
             var reasons = new[]
                 {
                     "Insufficient funds",
