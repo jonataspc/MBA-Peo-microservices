@@ -6,11 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddExceptionHandler();
 builder.Services.AddIdentity(builder.Configuration)
+                .AddFaturamento(builder.Configuration)
                 .AddGestaoConteudo(builder.Configuration)
                 .AddGestaoAlunos(builder.Configuration)
-                .AddSwagger()
+                .AddSwagger("PEO - BFF")
                 .AddApiServices()
-                .SetupWebApi(builder.Configuration);
+                .SetupWebApi(builder.Configuration)
+                .AddPolicies()
+                .AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddOpenApiDocument(o =>
 {
@@ -26,6 +29,7 @@ app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.AddIdentityEndpoints();
+app.AddFaturamentoEndpoints();
 app.AddGestaoConteudoEndpoints();
 app.AddGestaoAlunosEndpoints();
 

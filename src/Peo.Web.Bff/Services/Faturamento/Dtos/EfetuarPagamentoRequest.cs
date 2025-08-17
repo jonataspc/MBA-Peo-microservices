@@ -1,8 +1,9 @@
+﻿using Peo.Core.Dtos;
 using System.ComponentModel.DataAnnotations;
 
-namespace Peo.Web.Bff.Services.GestaoAlunos.Dtos
+namespace Peo.Web.Bff.Services.Faturamento.Dtos
 {
-    public class PagamentoMatriculaRequest
+    public class EfetuarPagamentoRequest
     {
         [Required]
         public Guid MatriculaId { get; set; }
@@ -10,4 +11,4 @@ namespace Peo.Web.Bff.Services.GestaoAlunos.Dtos
         [Required]
         public CartaoCredito DadosCartao { get; set; } = null!;
     }
-} 
+}

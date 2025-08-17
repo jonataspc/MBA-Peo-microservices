@@ -9,7 +9,6 @@ namespace Peo.GestaoConteudo.Domain.Entities
     {
         public string Titulo { get; private set; } = null!;
         public string? Descricao { get; private set; }
-        public virtual Usuario? Instrutor { get; }
         public Guid InstrutorId { get; private set; }
         public virtual ConteudoProgramatico? ConteudoProgramatico { get; private set; }
         public decimal Preco { get; private set; }

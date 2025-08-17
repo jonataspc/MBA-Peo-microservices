@@ -1,15 +1,17 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using MiniValidation;
 using Peo.Core.DomainObjects;
+using Peo.Core.DomainObjects.Result;
 using Peo.Core.Web.Api;
-using Peo.GestaoAlunos.Application.Commands.PagamentoMatricula;
-using Peo.GestaoAlunos.Application.Dtos.Requests;
-using Peo.GestaoAlunos.Application.Dtos.Responses;
+using Peo.Faturamento.Application.Commands.PagamentoMatricula;
+using Peo.Faturamento.Application.Dtos.Requests;
+using Peo.Faturamento.Application.Dtos.Responses;
 
-namespace Peo.GestaoAlunos.Application.Endpoints.Matricula;
+namespace Peo.Faturamento.Application.Endpoints.Pagamento;
 
 public class EndpointPagamentoMatricula : IEndpoint
 {

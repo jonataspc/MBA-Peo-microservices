@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Peo.Core.Entities;
 using Peo.Core.Infra.Data.Configurations.Base;
 using Peo.GestaoAlunos.Domain.Entities;
 
@@ -21,10 +20,5 @@ public class EstudanteConfiguration : EntityBaseConfiguration<Estudante>
 
         builder.HasIndex(s => s.UsuarioId)
             .IsUnique();
-
-        builder.HasOne<Usuario>()
-            .WithMany()
-            .HasForeignKey(e => e.UsuarioId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -4,13 +4,12 @@ using Peo.Core.Dtos;
 using Peo.Core.Interfaces.Data;
 using Peo.Core.Web.Services;
 using Peo.Faturamento.Application.Services;
-using Peo.Faturamento.Domain.Dtos;
 using Peo.Faturamento.Infra.Data.Helpers;
 using Peo.Faturamento.Integrations.Paypal.Services;
 using Peo.GestaoAlunos.Application.Endpoints;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Infra.Data.Helpers;
-using Peo.GestaoConteudo.Application.Services;
+using Peo.GestaoConteudo.Application.Consumers;
 using Peo.GestaoConteudo.Domain.Entities;
 using Peo.GestaoConteudo.Infra.Data.Helpers;
 using Peo.Tests.ArchitectureTests.Extensions;
@@ -43,7 +42,7 @@ public class ArchitectTests
             typeof(Peo.Identity.Infra.Data.Helpers.IdentityDbMigrationHelpers).Assembly,
             typeof(Peo.Identity.Application.Services.TokenService).Assembly,
             typeof(GestaoConteudoDbMigrationHelpers).Assembly,
-            typeof(CursoAulaService).Assembly,
+            typeof(ObterDetalhesCursoConsumer).Assembly,
             typeof(PaypalBrokerService ).Assembly,
             typeof(FaturamentoDbMigrationHelpers).Assembly,
             typeof(PagamentoService ).Assembly,

@@ -9,11 +9,11 @@ var faturamentoSvc = builder.AddProject<Projects.Peo_Faturamento_WebApi>("peo-fa
            .WithReference(rabbitmq)
            .WaitFor(rabbitmq);
 
-var gestaoAlunosSvc = builder.AddProject<Projects.Peo_GestaoAlunos_WebApi>("peo-gestaoalunos-webapi")
+var gestaoAlunosSvc = builder.AddProject<Projects.Peo_GestaoAlunos_WebApi>("peo-gestao-alunos-webapi")
            .WithReference(rabbitmq)
            .WaitFor(rabbitmq);
 
-var gestaoConteudoSvc = builder.AddProject<Projects.Peo_GestaoConteudo_WebApi>("peo-gestaoconteudo-webapi")
+var gestaoConteudoSvc = builder.AddProject<Projects.Peo_GestaoConteudo_WebApi>("peo-gestao-conteudo-webapi")
            .WithReference(rabbitmq)
            .WaitFor(rabbitmq);
 

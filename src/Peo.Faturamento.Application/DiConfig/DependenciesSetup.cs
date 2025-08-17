@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Peo.Core.DomainObjects.Result;
 using Peo.Core.Dtos;
 using Peo.Core.Messages.IntegrationCommands;
+using Peo.Faturamento.Application.Commands.PagamentoMatricula;
+using Peo.Faturamento.Application.Dtos.Responses;
 using Peo.Faturamento.Application.Handlers;
 using Peo.Faturamento.Application.Services;
 using Peo.Faturamento.Domain.Interfaces.Services;
@@ -19,10 +21,13 @@ namespace Peo.Faturamento.Application.DiConfig
                 x.RegisterServicesFromAssembly(typeof(PagamentoService).Assembly);
             });
 
+            // Handlers
+            services.AddScoped<IRequestHandler<PagamentoMatriculaCommand, Result<PagamentoMatriculaResponse>>, PagamentoMatriculaCommandHandler>();
+
             // Commands
             services.AddScoped<IRequestHandler<ProcessarPagamentoMatriculaCommand, Result<ProcessarPagamentoMatriculaResponse>>, ProcessarPagamentoMatriculaCommandHandler>();
 
-            // Application services            
+            // Application services
             services.AddScoped<IPagamentoService, PagamentoService>();
 
             return services;

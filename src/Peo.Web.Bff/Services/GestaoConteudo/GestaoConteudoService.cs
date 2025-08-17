@@ -7,7 +7,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
     public class GestaoConteudoService(HttpClient httpClient)
     {
         // Curso endpoints
-        public async Task<Results<Ok<CursoResponse>, ValidationProblem, BadRequest, BadRequest<object>>> CadastrarCursoAsync(CursoRequest request, CancellationToken ct)
+        public async Task<Results<Ok<CadastrarCursoResponse>, ValidationProblem, BadRequest, BadRequest<object>>> CadastrarCursoAsync(CursoRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/conteudo/curso/", request, ct);
             if (!response.IsSuccessStatusCode)
@@ -15,7 +15,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
                 return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
             }
 
-            var cursoResponse = await response.Content.ReadFromJsonAsync<CursoResponse>(cancellationToken: ct);
+            var cursoResponse = await response.Content.ReadFromJsonAsync<CadastrarCursoResponse>(cancellationToken: ct);
             if (cursoResponse == null)
             {
                 return TypedResults.BadRequest<object>("Failed to deserialize curso response");
@@ -24,7 +24,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
             return TypedResults.Ok(cursoResponse);
         }
 
-        public async Task<Results<Ok<IEnumerable<CursoResponse>>, ValidationProblem, BadRequest, BadRequest<object>>> ObterTodosCursosAsync(CancellationToken ct)
+        public async Task<Results<Ok<ObterTodosCursosResponse>, ValidationProblem, BadRequest, BadRequest<object>>> ObterTodosCursosAsync(CancellationToken ct)
         {
             var response = await httpClient.GetAsync("/v1/conteudo/curso/", ct);
             if (!response.IsSuccessStatusCode)
@@ -32,7 +32,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
                 return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
             }
 
-            var cursosResponse = await response.Content.ReadFromJsonAsync<IEnumerable<CursoResponse>>(cancellationToken: ct);
+            var cursosResponse = await response.Content.ReadFromJsonAsync<ObterTodosCursosResponse>(cancellationToken: ct);
             if (cursosResponse == null)
             {
                 return TypedResults.BadRequest<object>("Failed to deserialize cursos response");
@@ -41,7 +41,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
             return TypedResults.Ok(cursosResponse);
         }
 
-        public async Task<Results<Ok<CursoResponse>, NotFound, ValidationProblem, BadRequest, BadRequest<object>>> ObterCursoPorIdAsync(Guid id, CancellationToken ct)
+        public async Task<Results<Ok<Curso>, NotFound, ValidationProblem, BadRequest, BadRequest<object>>> ObterCursoPorIdAsync(Guid id, CancellationToken ct)
         {
             var response = await httpClient.GetAsync($"/v1/conteudo/curso/{id}", ct);
             if (!response.IsSuccessStatusCode)
@@ -54,7 +54,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
                 return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
             }
 
-            var cursoResponse = await response.Content.ReadFromJsonAsync<CursoResponse>(cancellationToken: ct);
+            var cursoResponse = await response.Content.ReadFromJsonAsync<Curso>(cancellationToken: ct);
             if (cursoResponse == null)
             {
                 return TypedResults.BadRequest<object>("Failed to deserialize curso response");
@@ -98,4 +98,4 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
             return TypedResults.Ok(aulaResponse);
         }
     }
-} 
+}

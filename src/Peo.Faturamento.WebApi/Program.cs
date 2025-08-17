@@ -6,7 +6,7 @@ using Peo.ServiceDefaults;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddDependencies(builder.Configuration, builder.Environment)
-                .AddSwagger()
+                .AddSwagger("PEO - Faturamento")
                 .SetupWebApi(builder.Configuration)
                 .AddPolicies()
                 .AddJwtAuthentication(builder.Configuration);

@@ -2,6 +2,7 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Peo.Core.Interfaces.Services;
+using Peo.Core.Messages.IntegrationRequests;
 using System.Reflection;
 
 namespace Peo.Core.Infra.ServiceBus.Services
@@ -30,6 +31,17 @@ namespace Peo.Core.Infra.ServiceBus.Services
                     );
                     cfg.ConfigureEndpoints(context);
                 });
+
+                Type[] requestClients = [
+                    typeof(ObterDetalhesCursoRequest),
+                    typeof(ObterMatriculaRequest)
+                    ];
+
+                // Configure request clients
+                foreach (var requestClient in requestClients)
+                {
+                    x.AddRequestClient(requestClient);
+                }
             });
 
             // Register the IMessageBus implementation

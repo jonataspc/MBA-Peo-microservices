@@ -8,14 +8,14 @@ namespace Peo.Core.Web.Configuration
 {
     public static class SwaggerConfiguration
     {
-        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, string title)
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(option =>
             {
                 option.CustomSchemaIds(type => type.FullName);
                 option.OperationFilter<HttpResultsOperationFilter>();
-                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Plataforma de Educação Online - WebAPI", Version = "v1" });
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = title, Version = "v1" });
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
