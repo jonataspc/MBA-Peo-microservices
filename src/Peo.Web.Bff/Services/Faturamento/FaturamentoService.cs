@@ -22,7 +22,7 @@ namespace Peo.Web.Bff.Services.Faturamento
             var loginResponse = await response.Content.ReadFromJsonAsync<EfetuarPagamentoResponse>(cancellationToken: ct);
             if (loginResponse == null)
             {
-                return TypedResults.BadRequest<object>("Failed to deserialize login response");
+                return TypedResults.BadRequest<object>("Failed to deserialize payment response");
             }
 
             return TypedResults.Ok(loginResponse);
