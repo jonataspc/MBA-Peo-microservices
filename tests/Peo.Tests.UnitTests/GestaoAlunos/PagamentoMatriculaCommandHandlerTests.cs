@@ -1,14 +1,16 @@
 using FluentAssertions;
+using MassTransit;
 using MediatR;
 using Moq;
 using Peo.Core.DomainObjects.Result;
 using Peo.Core.Dtos;
-using Peo.Core.Interfaces.Services.Acls;
 using Peo.Core.Messages.IntegrationCommands;
+using Peo.Core.Messages.IntegrationRequests;
+using Peo.Core.Messages.IntegrationResponses;
+using Peo.Faturamento.Application.Commands.PagamentoMatricula;
+using Peo.Faturamento.Application.Dtos.Requests;
 using Peo.Faturamento.Domain.Entities;
 using Peo.Faturamento.Domain.ValueObjects;
-using Peo.GestaoAlunos.Application.Commands.PagamentoMatricula;
-using Peo.GestaoAlunos.Application.Dtos.Requests;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Interfaces;
 
@@ -17,20 +19,22 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 public class PagamentoMatriculaCommandHandlerTests
 {
     private readonly Mock<IEstudanteRepository> _estudanteRepositoryMock;
-    private readonly Mock<ICursoAulaService> _courseLessonServiceMock;
+    private readonly Mock<IRequestClient<ObterDetalhesCursoRequest>> _obterDetalhesCursoRequestMock;
+    private readonly Mock<IRequestClient<ObterMatriculaRequest>> _obterMatriculaRequestMock;
     private readonly PagamentoMatriculaCommandHandler _handler;
     private readonly Mock<IMediator> _mediator;
 
     public PagamentoMatriculaCommandHandlerTests()
     {
         _estudanteRepositoryMock = new Mock<IEstudanteRepository>();
-        _courseLessonServiceMock = new Mock<ICursoAulaService>();
+        _obterDetalhesCursoRequestMock = new Mock<IRequestClient<ObterDetalhesCursoRequest>>();
+        _obterMatriculaRequestMock = new Mock<IRequestClient<ObterMatriculaRequest>>();
         _mediator = new Mock<IMediator>();
 
         _handler = new PagamentoMatriculaCommandHandler(
-            _estudanteRepositoryMock.Object,
             _mediator.Object,
-            _courseLessonServiceMock.Object);
+            _obterDetalhesCursoRequestMock.Object,
+            _obterMatriculaRequestMock.Object);
     }
 
     [Fact]
@@ -49,8 +53,25 @@ public class PagamentoMatriculaCommandHandlerTests
 
         _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
-        _courseLessonServiceMock.Setup(x => x.ObterPrecoCursoAsync(cursoId))
-            .ReturnsAsync(valor);
+
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", valor));
+
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
+
+        var matriculaMockResponse = new Mock<Response<ObterMatriculaResponse>>();
+        matriculaMockResponse.Setup(x => x.Message).Returns(new ObterMatriculaResponse(matriculaId, cursoId, true));
+
+        _obterMatriculaRequestMock.Setup(x => x.GetResponse<ObterMatriculaResponse>(
+            It.IsAny<ObterMatriculaRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(matriculaMockResponse.Object);
+
         _mediator.Setup(x => x.Send(It.IsAny<ProcessarPagamentoMatriculaCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(new ProcessarPagamentoMatriculaResponse(true, StatusPagamento.Pago.ToString())));
 
@@ -84,8 +105,24 @@ public class PagamentoMatriculaCommandHandlerTests
 
         _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
-        _courseLessonServiceMock.Setup(x => x.ObterPrecoCursoAsync(cursoId))
-            .ReturnsAsync(valor);
+
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
+
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
+
+        var matriculaMockResponse = new Mock<Response<ObterMatriculaResponse>>();
+        matriculaMockResponse.Setup(x => x.Message).Returns(new ObterMatriculaResponse(matriculaId, cursoId, true));
+
+        _obterMatriculaRequestMock.Setup(x => x.GetResponse<ObterMatriculaResponse>(
+            It.IsAny<ObterMatriculaRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(matriculaMockResponse.Object);
 
         _mediator.Setup(x => x.Send(It.IsAny<ProcessarPagamentoMatriculaCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure<ProcessarPagamentoMatriculaResponse>(new Error()));
