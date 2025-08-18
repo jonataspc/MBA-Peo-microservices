@@ -4,6 +4,7 @@ using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
 using Peo.Faturamento.Application.DiConfig;
+using Peo.Faturamento.Application.Endpoints;
 using Peo.Faturamento.Domain.Interfaces.Brokers;
 using Peo.Faturamento.Infra.Data.DiConfig;
 using Peo.Faturamento.Integrations.Paypal.Services;
@@ -52,9 +53,7 @@ namespace Peo.Faturamento.WebApi.Configuration
 
         public static WebApplication MapEndpoints(this WebApplication app)
         {
-            //app.MapIdentityEndpoints();
-            //app.MapCursoEndpoints();
-            //app.MapEstudanteEndpoints();
+            app.MapFaturamentoEndpoints();
             return app;
         }
     }

@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Peo.Core.DomainObjects.Result;
-using Peo.Core.Interfaces.Services.Acls;
-using Peo.GestaoConteudo.Application.Services;
 using Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar;
+using System.Reflection;
 
 namespace Peo.GestaoConteudo.Application.DiConfig
 {
@@ -14,7 +13,7 @@ namespace Peo.GestaoConteudo.Application.DiConfig
             // Mediator
             services.AddMediatR(x =>
             {
-                x.RegisterServicesFromAssembly(typeof(CursoAulaService).Assembly);
+                x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
 
             // Handlers
@@ -23,9 +22,6 @@ namespace Peo.GestaoConteudo.Application.DiConfig
             services.AddScoped<IRequestHandler<UseCases.Curso.ObterTodos.Query, Result<UseCases.Curso.ObterTodos.Response>>, UseCases.Curso.ObterTodos.Handler>();
             services.AddScoped<IRequestHandler<UseCases.Aula.ObterTodos.Query, Result<UseCases.Aula.ObterTodos.Response>>, UseCases.Aula.ObterTodos.Handler>();
             services.AddScoped<IRequestHandler<UseCases.Aula.Cadastrar.Command, Result<Response>>, Handler>();
-
-            // Anti-corruption layers
-            services.AddScoped<ICursoAulaService, CursoAulaService>();
 
             return services;
         }

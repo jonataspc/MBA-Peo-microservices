@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Peo.GestaoAlunos.Infra.Data.Contexts;
 
-
 #nullable disable
 
 namespace Peo.GestaoAlunos.Infra.Data.Migrations
@@ -17,35 +16,10 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true);
-
-            modelBuilder.Entity("Peo.Core.Entities.Usuario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NomeCompleto")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Usuario");
-                });
 
             modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Certificado", b =>
                 {
@@ -200,15 +174,6 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Matricula");
-                });
-
-            modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Estudante", b =>
-                {
-                    b.HasOne("Peo.Core.Entities.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Matricula", b =>

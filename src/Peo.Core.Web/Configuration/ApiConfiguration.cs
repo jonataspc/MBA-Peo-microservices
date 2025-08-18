@@ -15,10 +15,18 @@ namespace Peo.Core.Web.Configuration
             {
                 options.AddPolicy("CorsPolicy", builder =>
                 {
+#if DEBUG
+                    // Necessario devido ao bug ao debugar Blazor com Aspire (https://github.com/dotnet/aspire/issues/5819)
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+
+#else
                     builder.WithOrigins(allowedOrigins.ToArray())
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();
+#endif
                 });
             });
 

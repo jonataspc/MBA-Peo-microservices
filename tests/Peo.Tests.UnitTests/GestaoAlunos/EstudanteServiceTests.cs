@@ -1,9 +1,10 @@
 using FluentAssertions;
+using MassTransit;
 using Moq;
 using Peo.Core.DomainObjects;
-using Peo.Core.Entities;
 using Peo.Core.Interfaces.Services;
-using Peo.Core.Interfaces.Services.Acls;
+using Peo.Core.Messages.IntegrationRequests;
+using Peo.Core.Messages.IntegrationResponses;
 using Peo.GestaoAlunos.Application.Services;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Interfaces;
@@ -15,21 +16,22 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 public class EstudanteServiceTests
 {
     private readonly Mock<IEstudanteRepository> _estudanteRepositoryMock;
-    private readonly Mock<ICursoAulaService> _aulaCursoServiceMock;
-    private readonly Mock<IDetalhesUsuarioService> _detalhesUsuarioServiceMock;
+    private readonly Mock<IRequestClient<ObterDetalhesCursoRequest>> _obterDetalhesCursoRequestMock;
+    private readonly Mock<IRequestClient<ObterDetalhesUsuarioRequest>> _obterDetalhesUsuarioRequestMock;
     private readonly Mock<IAppIdentityUser> _appIdentityUserMock;
     private readonly EstudanteService _estudanteService;
 
     public EstudanteServiceTests()
     {
         _estudanteRepositoryMock = new Mock<IEstudanteRepository>();
-        _aulaCursoServiceMock = new Mock<ICursoAulaService>();
-        _detalhesUsuarioServiceMock = new Mock<IDetalhesUsuarioService>();
+        _obterDetalhesUsuarioRequestMock = new Mock<IRequestClient<ObterDetalhesUsuarioRequest>>();
         _appIdentityUserMock = new Mock<IAppIdentityUser>();
+        _obterDetalhesCursoRequestMock = new Mock<IRequestClient<ObterDetalhesCursoRequest>>();
+
         _estudanteService = new EstudanteService(
+            _obterDetalhesCursoRequestMock.Object,
             _estudanteRepositoryMock.Object,
-            _aulaCursoServiceMock.Object,
-            _detalhesUsuarioServiceMock.Object,
+            _obterDetalhesUsuarioRequestMock.Object,
             _appIdentityUserMock.Object);
     }
 
@@ -61,12 +63,22 @@ public class EstudanteServiceTests
         var estudante = new Estudante(Guid.CreateVersion7());
         var matriculaEsperada = new Matricula(estudanteId, cursoId);
 
+        // Setup curso response mock
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
+
         _estudanteRepositoryMock.Setup(x => x.GetByIdAsync(estudanteId))
             .ReturnsAsync(estudante);
-        _aulaCursoServiceMock.Setup(x => x.ValidarSeCursoExisteAsync(cursoId))
-            .ReturnsAsync(true);
+
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
+
         _estudanteRepositoryMock.Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Estudante, bool>>>()))
             .ReturnsAsync(false);
+
         _estudanteRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
@@ -102,10 +114,18 @@ public class EstudanteServiceTests
         var cursoId = Guid.CreateVersion7();
         var estudante = new Estudante(Guid.CreateVersion7());
 
+        // Setup empty curso response mock
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(null, null, null, null));
+
         _estudanteRepositoryMock.Setup(x => x.GetByIdAsync(estudanteId))
             .ReturnsAsync(estudante);
-        _aulaCursoServiceMock.Setup(x => x.ValidarSeCursoExisteAsync(cursoId))
-            .ReturnsAsync(false);
+
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => _estudanteService.MatricularEstudanteAsync(estudanteId, cursoId));
@@ -155,9 +175,14 @@ public class EstudanteServiceTests
         var aulaId = Guid.CreateVersion7();
         var estudanteId = Guid.CreateVersion7();
         var usuarioAtualId = Guid.CreateVersion7();
-        var matricula = new Matricula(estudanteId, Guid.CreateVersion7());
+        var cursoId = Guid.CreateVersion7();
+        var matricula = new Matricula(estudanteId, cursoId);
         var progresso = new ProgressoMatricula(matriculaId, aulaId);
         var estudante = new Estudante(usuarioAtualId) { Id = estudanteId };
+
+        // Setup curso response mock
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
 
         _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
@@ -167,8 +192,11 @@ public class EstudanteServiceTests
             .ReturnsAsync(estudante);
         _estudanteRepositoryMock.Setup(x => x.GetProgressoMatriculaAsync(matriculaId, aulaId))
             .ReturnsAsync(progresso);
-        _aulaCursoServiceMock.Setup(x => x.ObterTotalAulasDoCursoAsync(matricula.CursoId))
-            .ReturnsAsync(10);
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
         _estudanteRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId))
             .ReturnsAsync(9);
         _estudanteRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
@@ -239,7 +267,10 @@ public class EstudanteServiceTests
         var cursoId = Guid.CreateVersion7();
         var estudanteId = Guid.CreateVersion7();
         var estudante = new Estudante(usuarioId) { Id = estudanteId };
-        var matriculaEsperada = new Matricula(estudanteId, cursoId);
+
+        // Setup curso response mock
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
 
         _estudanteRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioId))
             .ReturnsAsync((Estudante?)null);
@@ -247,11 +278,11 @@ public class EstudanteServiceTests
         _estudanteRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(estudante);
 
-        //_estudanteRepositoryMock.Setup(x => x.Insert(It.Is<Estudante>(s => s.UsuarioId == usuarioId)))
-        //    .ReturnsAsync(Task.CompletedTask);
-
-        _aulaCursoServiceMock.Setup(x => x.ValidarSeCursoExisteAsync(cursoId))
-            .ReturnsAsync(true);
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
 
         _estudanteRepositoryMock.Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Estudante, bool>>>()))
             .ReturnsAsync(false);
@@ -311,20 +342,32 @@ public class EstudanteServiceTests
         matricula.ConfirmarPagamento();
         matricula.Estudante = estudante;
 
+        // Setup curso response mock
+        var mockCursoResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockCursoResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
+
+        // Setup usuario response mock
+        var mockUsuarioResponse = new Mock<Response<ObterDetalhesUsuarioResponse>>();
+        mockUsuarioResponse.Setup(x => x.Message).Returns(new ObterDetalhesUsuarioResponse("Usuario Teste"));
+
         _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
         _estudanteRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
             .ReturnsAsync(estudante);
-        _aulaCursoServiceMock.Setup(x => x.ObterTotalAulasDoCursoAsync(cursoId))
-            .ReturnsAsync(10);
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockCursoResponse.Object);
+        _obterDetalhesUsuarioRequestMock.Setup(x => x.GetResponse<ObterDetalhesUsuarioResponse>(
+            It.IsAny<ObterDetalhesUsuarioRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockUsuarioResponse.Object);
         _estudanteRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId))
             .ReturnsAsync(10);
-        _aulaCursoServiceMock.Setup(x => x.ObterTituloCursoAsync(cursoId))
-            .ReturnsAsync("Curso Teste");
-        _detalhesUsuarioServiceMock.Setup(x => x.ObterUsuarioPorIdAsync(usuarioAtualId))
-            .ReturnsAsync(new Usuario(usuarioAtualId, "Usuario Teste", "teste@exemplo.com"));
         _estudanteRepositoryMock.Setup(x => x.AddCertificadoAsync(It.IsAny<Certificado>()))
             .Returns(Task.CompletedTask);
         _estudanteRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
@@ -357,14 +400,21 @@ public class EstudanteServiceTests
         var estudante = new Estudante(usuarioAtualId) { Id = estudanteId };
         matricula.ConfirmarPagamento();
 
+        // Setup curso response mock
+        var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
+        mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
+
         _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
         _estudanteRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
             .ReturnsAsync(estudante);
-        _aulaCursoServiceMock.Setup(x => x.ObterTotalAulasDoCursoAsync(cursoId))
-            .ReturnsAsync(10);
+        _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
+            It.IsAny<ObterDetalhesCursoRequest>(),
+            It.IsAny<CancellationToken>(),
+            It.IsAny<RequestTimeout>()))
+            .ReturnsAsync(mockResponse.Object);
         _estudanteRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId))
             .ReturnsAsync(8);
 

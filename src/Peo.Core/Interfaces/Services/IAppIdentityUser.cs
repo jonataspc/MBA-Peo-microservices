@@ -20,7 +20,7 @@ namespace Peo.Core.Interfaces.Services
 
         HttpContext GetHttpContext();
 
-        string GetUserToken();
+        string? GetUserToken();
 
         string GetUserRefreshToken();
     }

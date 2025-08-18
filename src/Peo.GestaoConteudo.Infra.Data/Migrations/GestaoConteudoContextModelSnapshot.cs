@@ -16,7 +16,7 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true);
@@ -51,7 +51,7 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
 
                     b.HasIndex("AulaId");
 
-                    b.ToTable("ArquivoAula");
+                    b.ToTable("ArquivoAula", (string)null);
                 });
 
             modelBuilder.Entity("Peo.GestaoConteudo.Domain.Entities.Aula", b =>
@@ -91,7 +91,7 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
 
                     b.HasIndex("CursoId");
 
-                    b.ToTable("Aula");
+                    b.ToTable("Aula", (string)null);
                 });
 
             modelBuilder.Entity("Peo.GestaoConteudo.Domain.Entities.Curso", b =>
@@ -134,34 +134,7 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InstrutorId");
-
-                    b.ToTable("Curso");
-                });
-
-            modelBuilder.Entity("Peo.Core.Entities.Usuario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NomeCompleto")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Usuario");
+                    b.ToTable("Curso", (string)null);
                 });
 
             modelBuilder.Entity("Peo.GestaoConteudo.Domain.Entities.ArquivoAula", b =>
@@ -188,12 +161,6 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
 
             modelBuilder.Entity("Peo.GestaoConteudo.Domain.Entities.Curso", b =>
                 {
-                    b.HasOne("Peo.Core.Entities.Usuario", "Instrutor")
-                        .WithMany()
-                        .HasForeignKey("InstrutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("Peo.GestaoConteudo.Domain.ValueObjects.ConteudoProgramatico", "ConteudoProgramatico", b1 =>
                         {
                             b1.Property<Guid>("CursoId")
@@ -205,15 +172,13 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
 
                             b1.HasKey("CursoId");
 
-                            b1.ToTable("ConteudoProgramatico");
+                            b1.ToTable("ConteudoProgramatico", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CursoId");
                         });
 
                     b.Navigation("ConteudoProgramatico");
-
-                    b.Navigation("Instrutor");
                 });
 
             modelBuilder.Entity("Peo.GestaoConteudo.Domain.Entities.Aula", b =>

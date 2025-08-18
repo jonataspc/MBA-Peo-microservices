@@ -1,7 +1,9 @@
-using Peo.GestaoAlunos.Application.Dtos.Requests;
-using Peo.GestaoAlunos.Application.Dtos.Responses;
+using MediatR;
+using Peo.Core.DomainObjects.Result;
+using Peo.Faturamento.Application.Dtos.Requests;
+using Peo.Faturamento.Application.Dtos.Responses;
 
-namespace Peo.GestaoAlunos.Application.Commands.PagamentoMatricula;
+namespace Peo.Faturamento.Application.Commands.PagamentoMatricula;
 
 public class PagamentoMatriculaCommand : IRequest<Result<PagamentoMatriculaResponse>>
 {

@@ -1,6 +1,8 @@
-﻿using Peo.Core.DomainObjects;
+﻿using MassTransit;
+using Peo.Core.DomainObjects;
 using Peo.Core.Interfaces.Services;
-using Peo.Core.Interfaces.Services.Acls;
+using Peo.Core.Messages.IntegrationRequests;
+using Peo.Core.Messages.IntegrationResponses;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Interfaces;
 using Peo.GestaoAlunos.Domain.ValueObjects;
@@ -8,9 +10,9 @@ using Peo.GestaoAlunos.Domain.ValueObjects;
 namespace Peo.GestaoAlunos.Application.Services;
 
 public class EstudanteService(
+    IRequestClient<ObterDetalhesCursoRequest> requestClientObterDetalhesCurso,
     IEstudanteRepository estudanteRepository,
-    ICursoAulaService cursoAulaService,
-    IDetalhesUsuarioService detalhesUsuarioService,
+    IRequestClient<ObterDetalhesUsuarioRequest> requestClientObterDetalhesUsuario,
     IAppIdentityUser appIdentityUser) : IEstudanteService
 {
     public async Task<Estudante> CriarEstudanteAsync(Guid usuarioId, CancellationToken cancellationToken = default)
@@ -27,16 +29,16 @@ public class EstudanteService(
         if (estudante == null)
             throw new ArgumentException("Estudante não encontrado", nameof(estudanteId));
 
-        var cursoExiste = await cursoAulaService.ValidarSeCursoExisteAsync(cursoId);
+        var responseCurso = await requestClientObterDetalhesCurso.GetResponse<ObterDetalhesCursoResponse>(new ObterDetalhesCursoRequest(cursoId));
 
-        if (!cursoExiste)
-            throw new ArgumentException("Curso não encontrado", nameof(cursoId));
+        if (responseCurso.Message == null || responseCurso.Message.CursoId == null)
+            throw new ArgumentException("Curso não encontrado ou sem preço definido", nameof(cursoId));
 
         var cursoJaMatriculado = await estudanteRepository.AnyAsync(s => s.Id == estudanteId && s.Matriculas.Any(e => e.CursoId == cursoId));
 
         if (cursoJaMatriculado)
         {
-            throw new ArgumentException("Estudante já está matriculado neste curso", nameof(cursoId));
+            throw new ArgumentException("Estudante já está matriculado neste curso");
         }
 
         var matricula = new Matricula(estudanteId, cursoId);
@@ -109,7 +111,14 @@ public class EstudanteService(
         await estudanteRepository.AtualizarProgressoMatriculaAsync(progresso);
 
         // Calcular e atualizar progresso geral
-        var totalAulas = await cursoAulaService.ObterTotalAulasDoCursoAsync(matricula.CursoId);
+        var responseCurso = await requestClientObterDetalhesCurso.GetResponse<ObterDetalhesCursoResponse>(new ObterDetalhesCursoRequest(matricula.CursoId));
+
+        if (responseCurso.Message == null || responseCurso.Message.CursoId == null)
+            throw new ArgumentException("Curso não encontrado", nameof(matricula.CursoId));
+
+        if (responseCurso.Message.TotalAulas == null)
+            throw new ArgumentException("Total de aulas do curso não informado", nameof(matricula.CursoId));
+        var totalAulas = responseCurso.Message.TotalAulas.Value;
         var aulasConcluidas = await estudanteRepository.GetAulasConcluidasCountAsync(matriculaId);
 
         var novoPercentualProgresso = (int)(aulasConcluidas * 100.0 / totalAulas);
@@ -148,7 +157,12 @@ public class EstudanteService(
             throw new InvalidOperationException($"Não é possível concluir matrícula no status {matricula.Status}");
 
         // Verificar se todas as aulas foram concluídas
-        var totalAulas = await cursoAulaService.ObterTotalAulasDoCursoAsync(matricula.CursoId);
+        var responseCurso = await requestClientObterDetalhesCurso.GetResponse<ObterDetalhesCursoResponse>(new ObterDetalhesCursoRequest(matricula.CursoId));
+
+        if (responseCurso.Message == null || responseCurso.Message.CursoId == null)
+            throw new ArgumentException("Curso não encontrado", nameof(matricula.CursoId));
+
+        var totalAulas = responseCurso.Message.TotalAulas;
         var aulasConcluidas = await estudanteRepository.GetAulasConcluidasCountAsync(matriculaId);
 
         if (aulasConcluidas < totalAulas)
@@ -174,9 +188,18 @@ public class EstudanteService(
 
     private async Task<string> GerarConteudoCertificadoAsync(Matricula matricula, string numeroCertificado)
     {
-        var usuarioEstudante = await detalhesUsuarioService.ObterUsuarioPorIdAsync(matricula!.Estudante!.UsuarioId) ?? throw new InvalidOperationException($"Estudante {matricula.EstudanteId} não encontrado!");
-        var tituloCurso = await cursoAulaService.ObterTituloCursoAsync(matricula.CursoId);
-        return $"Certificado de Conclusão\nMatrícula: {matricula.Id}\nEmitido em: {DateTime.Now:yyyy-MM-dd}\nNúmero: {numeroCertificado}\nCurso: {tituloCurso}\nNome do estudante: {usuarioEstudante!.NomeCompleto}";
+        var msg = await requestClientObterDetalhesUsuario.GetResponse<ObterDetalhesUsuarioResponse>(new ObterDetalhesUsuarioRequest(matricula.Estudante!.UsuarioId));
+
+        var nomeUsuario = msg?.Message?.Nome ?? throw new ArgumentException("Usuário não encontrado", nameof(matricula.EstudanteId));
+
+        var responseCurso = await requestClientObterDetalhesCurso.GetResponse<ObterDetalhesCursoResponse>(new ObterDetalhesCursoRequest(matricula.CursoId));
+
+        if (responseCurso.Message == null || responseCurso.Message.CursoId == null)
+            throw new ArgumentException("Curso não encontrado", nameof(matricula.CursoId));
+
+        var tituloCurso = responseCurso.Message.Titulo!;
+
+        return $"Certificado de Conclusão\nMatrícula: {matricula.Id}\nEmitido em: {DateTime.Now:yyyy-MM-dd}\nNúmero: {numeroCertificado}\nCurso: {tituloCurso}\nNome do estudante: {nomeUsuario}";
     }
 
     private static string GerarNumeroCertificado()

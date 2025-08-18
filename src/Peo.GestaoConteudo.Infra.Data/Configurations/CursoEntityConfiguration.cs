@@ -17,14 +17,14 @@ namespace Peo.GestaoConteudo.Infra.Data.Configurations
             builder.Property(e => e.Descricao)
                    .HasMaxLength(1024);
 
+            builder.Property(e => e.Preco)
+                   .HasPrecision(10, 2)
+                   .IsRequired();
+
             builder.OwnsOne(c => c.ConteudoProgramatico, pc =>
             {
                 pc.Property(p => p.Conteudo).HasMaxLength(1024);
             });
-
-            builder.HasOne(o => o.Instrutor)
-                   .WithMany()
-                   .HasForeignKey(o => o.InstrutorId);
         }
     }
 }

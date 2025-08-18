@@ -4,6 +4,7 @@ using Peo.Core.Dtos;
 using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
+using Peo.Identity.Application.Consumers;
 using Peo.Identity.Application.DiConfig;
 using Peo.Identity.Application.Extensions;
 using Peo.Identity.Application.Services;
@@ -24,7 +25,7 @@ namespace Peo.Identity.WebApi.Configuration
                     .AddIdentity()
                     .AddAppSettings(configuration)
                     .AddMediator()
-                    .AddServiceBus(configuration)
+                    .AddServiceBus(configuration, [typeof(ObterDetalhesUsuarioConsumer).Assembly])
                     .AddApiServices();
 
             return services;

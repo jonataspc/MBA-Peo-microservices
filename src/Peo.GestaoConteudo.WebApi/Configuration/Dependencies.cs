@@ -4,6 +4,7 @@ using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
 using Peo.GestaoConteudo.Application;
+using Peo.GestaoConteudo.Application.Consumers;
 using Peo.GestaoConteudo.Application.DiConfig;
 using Peo.GestaoConteudo.Infra.Data.DiConfig;
 
@@ -17,7 +18,7 @@ namespace Peo.GestaoConteudo.WebApi.Configuration
                     .AddServicesForGestaoConteudo()
                     .AddAppSettings(configuration)
                     .AddMediator()
-                    .AddServiceBus(configuration)
+                    .AddServiceBus(configuration, [typeof(ObterDetalhesCursoConsumer).Assembly])
                     .AddApiServices();
 
             return services;

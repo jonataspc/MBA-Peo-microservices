@@ -18,7 +18,7 @@ namespace Peo.GestaoAlunos.WebApi.Configuration
                     .AddServicesForGestaoAlunos()
                     .AddAppSettings(configuration)
                     .AddMediator()
-                    .AddServiceBus(configuration, [typeof(PagamentoComFalhaEventConsumer).Assembly])
+                    .AddServiceBus(configuration, [typeof(PagamentoMatriculaEventConsumer).Assembly])
                     .AddApiServices();
 
             return services;

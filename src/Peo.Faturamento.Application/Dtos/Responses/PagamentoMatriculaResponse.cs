@@ -1,4 +1,4 @@
-namespace Peo.GestaoAlunos.Application.Dtos.Responses;
+namespace Peo.Faturamento.Application.Dtos.Responses;
 
 public record PagamentoMatriculaResponse(
     Guid MatriculaId,

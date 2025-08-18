@@ -119,6 +119,46 @@
         }
       }
     },
+    "/v1/faturamento/pagamento": {
+      "post": {
+        "tags": [
+          "Faturamento"
+        ],
+        "operationId": "PostV1FaturamentoPagamento",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EfetuarPagamentoRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EfetuarPagamentoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/conteudo/curso": {
       "post": {
         "tags": [
@@ -143,7 +183,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CursoResponse"
+                  "$ref": "#/components/schemas/CadastrarCursoResponse"
                 }
               }
             }
@@ -162,17 +202,14 @@
         "tags": [
           "Conteúdo"
         ],
-        "operationId": "GetV1ConteudoCursoAll",
+        "operationId": "GetV1ConteudoCurso",
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CursoResponse"
-                  }
+                  "$ref": "#/components/schemas/ObterTodosCursosResponse"
                 }
               }
             }
@@ -193,7 +230,7 @@
         "tags": [
           "Conteúdo"
         ],
-        "operationId": "GetV1ConteudoCurso",
+        "operationId": "GetV1ConteudoCurso2",
         "parameters": [
           {
             "name": "id",
@@ -212,7 +249,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CursoResponse"
+                  "$ref": "#/components/schemas/Curso"
                 }
               }
             }
@@ -349,46 +386,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MatriculaCursoResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/estudante/matricula/pagamento": {
-      "post": {
-        "tags": [
-          "Estudantes"
-        ],
-        "operationId": "PostV1EstudanteMatriculaPagamento",
-        "requestBody": {
-          "x-name": "request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PagamentoMatriculaRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PagamentoMatriculaResponse"
                 }
               }
             }
@@ -620,46 +617,71 @@
           }
         }
       },
-      "CursoResponse": {
+      "EfetuarPagamentoResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "id": {
+          "matriculaId": {
             "type": "string",
             "format": "guid"
           },
-          "titulo": {
-            "type": "string"
-          },
-          "descricao": {
+          "statusPagamento": {
             "type": "string",
             "nullable": true
           },
-          "nomeInstrutor": {
-            "type": "string",
-            "nullable": true
-          },
-          "conteudoProgramatico": {
-            "type": "string",
-            "nullable": true
-          },
-          "preco": {
+          "valorPago": {
             "type": "number",
             "format": "decimal"
-          },
-          "estaPublicado": {
-            "type": "boolean"
-          },
-          "dataPublicacao": {
+          }
+        }
+      },
+      "EfetuarPagamentoRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "matriculaId",
+          "dadosCartao"
+        ],
+        "properties": {
+          "matriculaId": {
             "type": "string",
-            "format": "date-time",
+            "format": "guid",
+            "minLength": 1
+          },
+          "dadosCartao": {
+            "$ref": "#/components/schemas/CartaoCredito"
+          }
+        }
+      },
+      "CartaoCredito": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "numeroCartao": {
+            "type": "string",
             "nullable": true
           },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "dataExpiracao": {
+            "type": "string",
+            "nullable": true
+          },
+          "cvv": {
+            "type": "string",
+            "nullable": true
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CadastrarCursoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       },
@@ -692,6 +714,65 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "ObterTodosCursosResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cursos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Curso"
+            }
+          }
+        }
+      },
+      "Curso": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "nomeInstrutor": {
+            "type": "string"
+          },
+          "conteudoProgramatico": {
+            "$ref": "#/components/schemas/ConteudoProgramatico"
+          },
+          "preco": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "estaPublicado": {
+            "type": "boolean"
+          },
+          "dataPublicacao": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ConteudoProgramatico": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "conteudo": {
+            "type": "string"
           }
         }
       },
@@ -799,69 +880,6 @@
           "cursoId": {
             "type": "string",
             "format": "guid",
-            "minLength": 1
-          }
-        }
-      },
-      "PagamentoMatriculaResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "pagamentoId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "status": {
-            "type": "string"
-          },
-          "mensagem": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "PagamentoMatriculaRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "matriculaId",
-          "dadosCartao"
-        ],
-        "properties": {
-          "matriculaId": {
-            "type": "string",
-            "format": "guid",
-            "minLength": 1
-          },
-          "dadosCartao": {
-            "$ref": "#/components/schemas/CartaoCredito"
-          }
-        }
-      },
-      "CartaoCredito": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "numero",
-          "nomeTitular",
-          "dataVencimento",
-          "cvv"
-        ],
-        "properties": {
-          "numero": {
-            "type": "string",
-            "minLength": 1
-          },
-          "nomeTitular": {
-            "type": "string",
-            "minLength": 1
-          },
-          "dataVencimento": {
-            "type": "string",
-            "minLength": 1
-          },
-          "cvv": {
-            "type": "string",
             "minLength": 1
           }
         }

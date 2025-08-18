@@ -51,25 +51,32 @@ namespace Peo.Web.Spa.Services
         System.Threading.Tasks.Task<RefreshTokenResponse> PostV1IdentityRefreshTokenAsync(RefreshTokenRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CursoResponse> PostV1ConteudoCursoAsync(CursoRequest request);
+        System.Threading.Tasks.Task<EfetuarPagamentoResponse> PostV1FaturamentoPagamentoAsync(EfetuarPagamentoRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CursoResponse> PostV1ConteudoCursoAsync(CursoRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<EfetuarPagamentoResponse> PostV1FaturamentoPagamentoAsync(EfetuarPagamentoRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CursoResponse>> GetV1ConteudoCursoAllAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CursoResponse>> GetV1ConteudoCursoAllAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CursoResponse> GetV1ConteudoCursoAsync(System.Guid id);
+        System.Threading.Tasks.Task<CadastrarCursoResponse> PostV1ConteudoCursoAsync(CursoRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CursoResponse> GetV1ConteudoCursoAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CadastrarCursoResponse> PostV1ConteudoCursoAsync(CursoRequest request, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ObterTodosCursosResponse> GetV1ConteudoCursoAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ObterTodosCursosResponse> GetV1ConteudoCursoAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Curso> GetV1ConteudoCurso2Async(System.Guid id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Curso> GetV1ConteudoCurso2Async(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<AulaResponse>> GetV1ConteudoCursoAulaAsync(System.Guid cursoId);
@@ -91,13 +98,6 @@ namespace Peo.Web.Spa.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1EstudanteMatriculaAsync(MatriculaCursoRequest request, System.Threading.CancellationToken cancellationToken);
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PagamentoMatriculaResponse> PostV1EstudanteMatriculaPagamentoAsync(PagamentoMatriculaRequest request);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PagamentoMatriculaResponse> PostV1EstudanteMatriculaPagamentoAsync(PagamentoMatriculaRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1EstudanteMatriculaConcluirAsync(ConcluirMatriculaRequest request);
@@ -451,14 +451,107 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CursoResponse> PostV1ConteudoCursoAsync(CursoRequest request)
+        public virtual System.Threading.Tasks.Task<EfetuarPagamentoResponse> PostV1FaturamentoPagamentoAsync(EfetuarPagamentoRequest request)
+        {
+            return PostV1FaturamentoPagamentoAsync(request, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<EfetuarPagamentoResponse> PostV1FaturamentoPagamentoAsync(EfetuarPagamentoRequest request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(request, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
+                    // Operation Path: "v1/faturamento/pagamento"
+                    urlBuilder_.Append("v1/faturamento/pagamento");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<EfetuarPagamentoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<object>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<object>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<CadastrarCursoResponse> PostV1ConteudoCursoAsync(CursoRequest request)
         {
             return PostV1ConteudoCursoAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CursoResponse> PostV1ConteudoCursoAsync(CursoRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CadastrarCursoResponse> PostV1ConteudoCursoAsync(CursoRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -506,7 +599,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CursoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CadastrarCursoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -544,14 +637,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CursoResponse>> GetV1ConteudoCursoAllAsync()
+        public virtual System.Threading.Tasks.Task<ObterTodosCursosResponse> GetV1ConteudoCursoAsync()
         {
-            return GetV1ConteudoCursoAllAsync(System.Threading.CancellationToken.None);
+            return GetV1ConteudoCursoAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CursoResponse>> GetV1ConteudoCursoAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ObterTodosCursosResponse> GetV1ConteudoCursoAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -592,7 +685,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<CursoResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ObterTodosCursosResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -630,14 +723,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CursoResponse> GetV1ConteudoCursoAsync(System.Guid id)
+        public virtual System.Threading.Tasks.Task<Curso> GetV1ConteudoCurso2Async(System.Guid id)
         {
-            return GetV1ConteudoCursoAsync(id, System.Threading.CancellationToken.None);
+            return GetV1ConteudoCurso2Async(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CursoResponse> GetV1ConteudoCursoAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<Curso> GetV1ConteudoCurso2Async(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -682,7 +775,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CursoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Curso>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -971,99 +1064,6 @@ namespace Peo.Web.Spa.Services
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<MatriculaCursoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<object>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<object>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<PagamentoMatriculaResponse> PostV1EstudanteMatriculaPagamentoAsync(PagamentoMatriculaRequest request)
-        {
-            return PostV1EstudanteMatriculaPagamentoAsync(request, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PagamentoMatriculaResponse> PostV1EstudanteMatriculaPagamentoAsync(PagamentoMatriculaRequest request, System.Threading.CancellationToken cancellationToken)
-        {
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(request, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/matricula/pagamento"
-                    urlBuilder_.Append("v1/estudante/matricula/pagamento");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<PagamentoMatriculaResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1655,35 +1655,58 @@ namespace Peo.Web.Spa.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CursoResponse
+    public partial class EfetuarPagamentoResponse
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("matriculaId")]
+        public System.Guid MatriculaId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("titulo")]
-        public string Titulo { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("statusPagamento")]
+        public string StatusPagamento { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("descricao")]
-        public string Descricao { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("valorPago")]
+        public decimal ValorPago { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("nomeInstrutor")]
-        public string NomeInstrutor { get; set; }
+    }
 
-        [System.Text.Json.Serialization.JsonPropertyName("conteudoProgramatico")]
-        public string ConteudoProgramatico { get; set; }
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class EfetuarPagamentoRequest
+    {
 
-        [System.Text.Json.Serialization.JsonPropertyName("preco")]
-        public decimal Preco { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("matriculaId")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Guid MatriculaId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("estaPublicado")]
-        public bool EstaPublicado { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("dadosCartao")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public CartaoCredito DadosCartao { get; set; } = new CartaoCredito();
 
-        [System.Text.Json.Serialization.JsonPropertyName("dataPublicacao")]
-        public System.DateTimeOffset? DataPublicacao { get; set; }
+    }
 
-        [System.Text.Json.Serialization.JsonPropertyName("tags")]
-        public System.Collections.Generic.IEnumerable<string> Tags { get; set; }
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CartaoCredito
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("numeroCartao")]
+        public string NumeroCartao { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dataExpiracao")]
+        public string DataExpiracao { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("cvv")]
+        public string Cvv { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nome")]
+        public string Nome { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CadastrarCursoResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("cursoId")]
+        public System.Guid CursoId { get; set; }
 
     }
 
@@ -1708,6 +1731,57 @@ namespace Peo.Web.Spa.Services
 
         [System.Text.Json.Serialization.JsonPropertyName("tags")]
         public System.Collections.Generic.IEnumerable<string> Tags { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ObterTodosCursosResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("cursos")]
+        public System.Collections.Generic.IEnumerable<Curso> Cursos { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Curso
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("titulo")]
+        public string Titulo { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("descricao")]
+        public string Descricao { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nomeInstrutor")]
+        public string NomeInstrutor { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conteudoProgramatico")]
+        public ConteudoProgramatico ConteudoProgramatico { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("preco")]
+        public decimal Preco { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("estaPublicado")]
+        public bool EstaPublicado { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dataPublicacao")]
+        public System.DateTimeOffset DataPublicacao { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("tags")]
+        public System.Collections.Generic.IEnumerable<string> Tags { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ConteudoProgramatico
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("conteudo")]
+        public string Conteudo { get; set; }
 
     }
 
@@ -1799,57 +1873,6 @@ namespace Peo.Web.Spa.Services
         [System.Text.Json.Serialization.JsonPropertyName("cursoId")]
         [System.ComponentModel.DataAnnotations.Required]
         public System.Guid CursoId { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PagamentoMatriculaResponse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("pagamentoId")]
-        public System.Guid PagamentoId { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("mensagem")]
-        public string Mensagem { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PagamentoMatriculaRequest
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("matriculaId")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid MatriculaId { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("dadosCartao")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public CartaoCredito DadosCartao { get; set; } = new CartaoCredito();
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CartaoCredito
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("numero")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Numero { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("nomeTitular")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string NomeTitular { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("dataVencimento")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string DataVencimento { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("cvv")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Cvv { get; set; }
 
     }
 

@@ -78,9 +78,9 @@ namespace Peo.Core.Web.Services
             return _accessor.HttpContext!;
         }
 
-        public string GetUserToken()
+        public string? GetUserToken()
         {
-            return IsAuthenticated() ? _accessor!.HttpContext!.User.GetUserToken()! : "";
+            return IsAuthenticated() ? _accessor!.HttpContext!.User.GetUserToken()! : null;
         }
 
         public string GetUserRefreshToken()

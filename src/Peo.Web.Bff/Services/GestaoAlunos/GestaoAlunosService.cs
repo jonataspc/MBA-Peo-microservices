@@ -24,22 +24,7 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
             return TypedResults.Ok(matriculaResponse);
         }
 
-        public async Task<Results<Ok<PagamentoMatriculaResponse>, ValidationProblem, BadRequest, BadRequest<object>>> PagarMatriculaAsync(PagamentoMatriculaRequest request, CancellationToken ct)
-        {
-            var response = await httpClient.PostAsJsonAsync("/v1/estudante/matricula/pagamento", request, ct);
-            if (!response.IsSuccessStatusCode)
-            {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
-            }
-
-            var pagamentoResponse = await response.Content.ReadFromJsonAsync<PagamentoMatriculaResponse>(cancellationToken: ct);
-            if (pagamentoResponse == null)
-            {
-                return TypedResults.BadRequest<object>("Failed to deserialize pagamento response");
-            }
-
-            return TypedResults.Ok(pagamentoResponse);
-        }
+         
 
         public async Task<Results<Ok<ConcluirMatriculaResponse>, ValidationProblem, BadRequest, BadRequest<object>>> ConcluirMatriculaAsync(ConcluirMatriculaRequest request, CancellationToken ct)
         {
