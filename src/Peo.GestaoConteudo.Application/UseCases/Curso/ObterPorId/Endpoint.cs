@@ -17,7 +17,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Curso.ObterPorId
         {
             app.MapGet("/curso/{id:guid}", HandleGetById)
              .WithSummary("Obter curso por Id")
-             .RequireAuthorization(AccessRoles.Admin);
+             .RequireAuthorization(AccessRoles.Aluno);
         }
 
         private static async Task<Results<Ok<CursoResponse>, NotFound, ValidationProblem, BadRequest, BadRequest<Error>>> HandleGetById(Guid id, IMediator mediator, ILogger<Endpoint> logger)

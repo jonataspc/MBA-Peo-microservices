@@ -216,4 +216,13 @@ public class EstudanteService(
         var certificados = await estudanteRepository.GetCertificadosByEstudanteIdAsync(estudanteId);
         return certificados;
     }
+
+    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, CancellationToken cancellationToken = default)
+    {
+        var estudante = await ObterEstudantePorUserIdAsync(usuarioId, cancellationToken);
+
+        var matriculas = await estudanteRepository.GetMatriculasByEstudanteIdAsync(estudante.Id);
+
+        return matriculas;
+    }
 }

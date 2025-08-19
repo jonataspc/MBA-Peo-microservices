@@ -21,5 +21,7 @@ namespace Peo.GestaoAlunos.Domain.Interfaces
         Task<IEnumerable<Certificado>> ObterCertificadosDoEstudanteAsync(Guid estudanteId, CancellationToken cancellationToken = default);
 
         Task<Estudante> ObterEstudantePorUserIdAsync(Guid usuarioId, CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<Matricula>> ObterMatriculas(Guid estudanteId, CancellationToken cancellationToken = default);
     }
 }

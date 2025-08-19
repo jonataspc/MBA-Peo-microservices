@@ -6,12 +6,17 @@ namespace Peo.Web.Bff.Services.Identity
 {
     public class IdentityService(HttpClient httpClient)
     {
-        public async Task<Results<Ok, BadRequest<object>>> RegisterAsync(RegisterRequest request, CancellationToken ct)
+        public async Task<Results<Ok, UnauthorizedHttpResult, BadRequest<object>>> RegisterAsync(RegisterRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/identity/register", request, ct);
             if (!response.IsSuccessStatusCode)
             {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             return TypedResults.Ok();
@@ -27,7 +32,7 @@ namespace Peo.Web.Bff.Services.Identity
                     return TypedResults.Unauthorized();
                 }
 
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>(cancellationToken: ct);
@@ -49,7 +54,7 @@ namespace Peo.Web.Bff.Services.Identity
                     return TypedResults.Unauthorized();
                 }
 
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var refreshTokenResponse = await response.Content.ReadFromJsonAsync<RefreshTokenResponse>(cancellationToken: ct);

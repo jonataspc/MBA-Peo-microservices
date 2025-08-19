@@ -5,14 +5,18 @@ using System.Net;
 namespace Peo.Web.Bff.Services.GestaoAlunos
 {
     public class GestaoAlunosService(HttpClient httpClient)
-    {
-        // Matricula endpoints
-        public async Task<Results<Ok<MatriculaCursoResponse>, ValidationProblem, BadRequest, BadRequest<object>>> MatricularCursoAsync(MatriculaCursoRequest request, CancellationToken ct)
+    {        
+        public async Task<Results<Ok<MatriculaCursoResponse>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> MatricularCursoAsync(MatriculaCursoRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/estudante/matricula/", request, ct);
             if (!response.IsSuccessStatusCode)
             {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var matriculaResponse = await response.Content.ReadFromJsonAsync<MatriculaCursoResponse>(cancellationToken: ct);
@@ -24,14 +28,42 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
             return TypedResults.Ok(matriculaResponse);
         }
 
-         
 
-        public async Task<Results<Ok<ConcluirMatriculaResponse>, ValidationProblem, BadRequest, BadRequest<object>>> ConcluirMatriculaAsync(ConcluirMatriculaRequest request, CancellationToken ct)
+        public async Task<Results<Ok<IEnumerable<MatriculaResponse>>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> ConsultarMatriculasAlunoAsync(CancellationToken ct)
+        {
+            var response = await httpClient.GetAsync("/v1/estudante/matricula/", ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
+            }
+
+            var matriculaResponse = await response.Content.ReadFromJsonAsync<IEnumerable<MatriculaResponse>>(cancellationToken: ct);
+            if (matriculaResponse == null)
+            {
+                return TypedResults.BadRequest<object>("Failed to deserialize matricula response");
+            }
+
+            return TypedResults.Ok(matriculaResponse);
+        }
+
+
+
+        public async Task<Results<Ok<ConcluirMatriculaResponse>, ValidationProblem, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ConcluirMatriculaAsync(ConcluirMatriculaRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/estudante/matricula/concluir", request, ct);
             if (!response.IsSuccessStatusCode)
             {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var concluirResponse = await response.Content.ReadFromJsonAsync<ConcluirMatriculaResponse>(cancellationToken: ct);
@@ -44,12 +76,17 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
         }
 
         // Aula endpoints
-        public async Task<Results<Ok<ProgressoAulaResponse>, ValidationProblem, BadRequest, BadRequest<object>>> IniciarAulaAsync(IniciarAulaRequest request, CancellationToken ct)
+        public async Task<Results<Ok<ProgressoAulaResponse>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> IniciarAulaAsync(IniciarAulaRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/estudante/matricula/aula/iniciar", request, ct);
             if (!response.IsSuccessStatusCode)
             {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var progressoResponse = await response.Content.ReadFromJsonAsync<ProgressoAulaResponse>(cancellationToken: ct);
@@ -61,12 +98,17 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
             return TypedResults.Ok(progressoResponse);
         }
 
-        public async Task<Results<Ok<ProgressoAulaResponse>, ValidationProblem, BadRequest, BadRequest<object>>> ConcluirAulaAsync(ConcluirAulaRequest request, CancellationToken ct)
+        public async Task<Results<Ok<ProgressoAulaResponse>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> ConcluirAulaAsync(ConcluirAulaRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/estudante/matricula/aula/concluir", request, ct);
             if (!response.IsSuccessStatusCode)
             {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var progressoResponse = await response.Content.ReadFromJsonAsync<ProgressoAulaResponse>(cancellationToken: ct);
@@ -79,12 +121,17 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
         }
 
         // Certificados endpoint
-        public async Task<Results<Ok<IEnumerable<CertificadoEstudanteResponse>>, BadRequest, BadRequest<object>>> ObterCertificadosAsync(CancellationToken ct)
+        public async Task<Results<Ok<IEnumerable<CertificadoEstudanteResponse>>, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ObterCertificadosAsync(CancellationToken ct)
         {
             var response = await httpClient.GetAsync("/v1/estudante/certificados", ct);
             if (!response.IsSuccessStatusCode)
             {
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var certificadosResponse = await response.Content.ReadFromJsonAsync<IEnumerable<CertificadoEstudanteResponse>>(cancellationToken: ct);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using MiniValidation;
 using Peo.Core.DomainObjects;
 using Peo.Core.Entities;
+using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Api;
 using Peo.Identity.Application.Endpoints.Requests;
 using Peo.Identity.Domain.Interfaces.Services;
@@ -23,11 +24,17 @@ namespace Peo.Identity.Application.Endpoints
         public static async Task<IResult> HandleRegister(
             RegisterRequest request,
             UserManager<IdentityUser> userManager,
+            IAppIdentityUser appIdentityUser,
             IUserService userService)
         {
             if (!MiniValidator.TryValidate(request, out var errors))
             {
                 return TypedResults.ValidationProblem(errors);
+            }
+
+            if (request.IsAdmin && !appIdentityUser.IsAdmin())
+            {
+                return TypedResults.Forbid();
             }
 
             var user = new IdentityUser
@@ -46,6 +53,15 @@ namespace Peo.Identity.Application.Endpoints
                 if (!roleResult.Succeeded)
                 {
                     return TypedResults.BadRequest(new { Description = "Failed to assign role", Content = roleResult.Errors });
+                }
+
+                if (request.IsAdmin)
+                {
+                    var adminRoleResult = await userManager.AddToRoleAsync(user, AccessRoles.Admin);
+                    if (!adminRoleResult.Succeeded)
+                    {
+                        return TypedResults.BadRequest(new { Description = "Failed to assign admin role", Content = adminRoleResult.Errors });
+                    }
                 }
 
                 await userService.AddAsync(

@@ -17,7 +17,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Curso.ObterConteudoProgramatic
         {
             app.MapGet("/curso/{id:guid}/conteudo-programatico", HandleGetById)
              .WithSummary("Obter conteudo programatico por IdCurso")
-             .RequireAuthorization(AccessRoles.Admin);
+             .RequireAuthorization(AccessRoles.Aluno);
         }
 
         private static async Task<Results<Ok<ConteudoProgramaticoResponse>, NotFound, ValidationProblem, BadRequest, BadRequest<Error>>> HandleGetById(Guid id, IMediator mediator, ILogger<Endpoint> logger)

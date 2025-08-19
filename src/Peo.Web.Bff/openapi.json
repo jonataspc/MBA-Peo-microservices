@@ -292,10 +292,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AulaResponse"
-                  }
+                  "$ref": "#/components/schemas/ObterTodasAulasResponse"
                 }
               }
             }
@@ -345,7 +342,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AulaResponse"
+                  "$ref": "#/components/schemas/CadastrarAulaResponse"
                 }
               }
             }
@@ -386,6 +383,35 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MatriculaCursoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "GetV1EstudanteMatricula",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatriculaResponse"
+                  }
                 }
               }
             }
@@ -776,6 +802,18 @@
           }
         }
       },
+      "ObterTodasAulasResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aulas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AulaResponse"
+            }
+          }
+        }
+      },
       "AulaResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -814,11 +852,21 @@
             "type": "string",
             "format": "guid"
           },
-          "nome": {
+          "titulo": {
             "type": "string"
           },
           "url": {
             "type": "string"
+          }
+        }
+      },
+      "CadastrarAulaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aulaId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       },
@@ -852,7 +900,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "nome": {
+          "titulo": {
             "type": "string"
           },
           "url": {
@@ -881,6 +929,36 @@
             "type": "string",
             "format": "guid",
             "minLength": 1
+          }
+        }
+      },
+      "MatriculaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "number",
+            "format": "double"
           }
         }
       },

@@ -12,7 +12,9 @@ namespace Peo.Identity.Application.Endpoints.Requests
         string Password,
 
         [Required]
-        string Name
+        string Name,
+
+        bool IsAdmin = false
 
         );
 }
