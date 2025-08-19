@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Peo.Web.Bff.Services.GestaoConteudo.Dtos
@@ -15,4 +16,4 @@ namespace Peo.Web.Bff.Services.GestaoConteudo.Dtos
         TimeSpan Duracao,
 
         IEnumerable<ArquivoAulaRequest> Arquivos);
-} 
+}

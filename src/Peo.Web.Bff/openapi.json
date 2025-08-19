@@ -292,10 +292,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AulaResponse"
-                  }
+                  "$ref": "#/components/schemas/ObterTodasAulasResponse"
                 }
               }
             }
@@ -345,7 +342,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AulaResponse"
+                  "$ref": "#/components/schemas/CadastrarAulaResponse"
                 }
               }
             }
@@ -776,6 +773,18 @@
           }
         }
       },
+      "ObterTodasAulasResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aulas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AulaResponse"
+            }
+          }
+        }
+      },
       "AulaResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -814,11 +823,21 @@
             "type": "string",
             "format": "guid"
           },
-          "nome": {
+          "titulo": {
             "type": "string"
           },
           "url": {
             "type": "string"
+          }
+        }
+      },
+      "CadastrarAulaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aulaId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       },
@@ -852,7 +871,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "nome": {
+          "titulo": {
             "type": "string"
           },
           "url": {

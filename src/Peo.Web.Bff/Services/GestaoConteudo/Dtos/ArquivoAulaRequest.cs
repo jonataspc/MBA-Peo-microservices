@@ -4,7 +4,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo.Dtos
 {
     public record ArquivoAulaRequest(
         [Required]
-        string Nome,
+        string Titulo,
 
         [Required]
         string Url);

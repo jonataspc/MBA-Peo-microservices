@@ -6,7 +6,7 @@ namespace Peo.Web.Bff.Services.Faturamento
 {
     public class FaturamentoService(HttpClient httpClient)
     {
-        public async Task<Results<Ok<EfetuarPagamentoResponse>, ValidationProblem, UnauthorizedHttpResult, BadRequest<object>>> EfetuarPagamentoAsync(EfetuarPagamentoRequest request, CancellationToken ct)
+        public async Task<Results<Ok<EfetuarPagamentoResponse>, ValidationProblem, ForbidHttpResult, UnauthorizedHttpResult, BadRequest<object>>> EfetuarPagamentoAsync(EfetuarPagamentoRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/faturamento/matricula/pagamento", request, ct);
             if (!response.IsSuccessStatusCode)
@@ -16,7 +16,12 @@ namespace Peo.Web.Bff.Services.Faturamento
                     return TypedResults.Unauthorized();
                 }
 
-                return TypedResults.BadRequest(await response.Content.ReadFromJsonAsync<object>(cancellationToken: ct));
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    return TypedResults.Forbid();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
             var loginResponse = await response.Content.ReadFromJsonAsync<EfetuarPagamentoResponse>(cancellationToken: ct);

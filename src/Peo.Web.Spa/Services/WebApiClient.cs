@@ -79,18 +79,18 @@ namespace Peo.Web.Spa.Services
         System.Threading.Tasks.Task<Curso> GetV1ConteudoCurso2Async(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<AulaResponse>> GetV1ConteudoCursoAulaAsync(System.Guid cursoId);
+        System.Threading.Tasks.Task<ObterTodasAulasResponse> GetV1ConteudoCursoAulaAsync(System.Guid cursoId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<AulaResponse>> GetV1ConteudoCursoAulaAsync(System.Guid cursoId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ObterTodasAulasResponse> GetV1ConteudoCursoAulaAsync(System.Guid cursoId, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request);
+        System.Threading.Tasks.Task<CadastrarAulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CadastrarAulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1EstudanteMatriculaAsync(MatriculaCursoRequest request);
@@ -819,14 +819,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<AulaResponse>> GetV1ConteudoCursoAulaAsync(System.Guid cursoId)
+        public virtual System.Threading.Tasks.Task<ObterTodasAulasResponse> GetV1ConteudoCursoAulaAsync(System.Guid cursoId)
         {
             return GetV1ConteudoCursoAulaAsync(cursoId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<AulaResponse>> GetV1ConteudoCursoAulaAsync(System.Guid cursoId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ObterTodasAulasResponse> GetV1ConteudoCursoAulaAsync(System.Guid cursoId, System.Threading.CancellationToken cancellationToken)
         {
             if (cursoId == null)
                 throw new System.ArgumentNullException("cursoId");
@@ -872,7 +872,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<AulaResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ObterTodasAulasResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -910,14 +910,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request)
+        public virtual System.Threading.Tasks.Task<CadastrarAulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request)
         {
             return PostV1ConteudoCursoAulaAsync(cursoId, request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CadastrarAulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (cursoId == null)
                 throw new System.ArgumentNullException("cursoId");
@@ -970,7 +970,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<AulaResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CadastrarAulaResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1786,6 +1786,15 @@ namespace Peo.Web.Spa.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ObterTodasAulasResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("aulas")]
+        public System.Collections.Generic.IEnumerable<AulaResponse> Aulas { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class AulaResponse
     {
 
@@ -1816,11 +1825,20 @@ namespace Peo.Web.Spa.Services
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("nome")]
-        public string Nome { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("titulo")]
+        public string Titulo { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("url")]
         public string Url { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CadastrarAulaResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("aulaId")]
+        public System.Guid AulaId { get; set; }
 
     }
 
@@ -1849,8 +1867,8 @@ namespace Peo.Web.Spa.Services
     public partial class ArquivoAulaRequest
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("nome")]
-        public string Nome { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("titulo")]
+        public string Titulo { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("url")]
         public string Url { get; set; }
