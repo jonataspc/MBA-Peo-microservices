@@ -16,7 +16,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Aula.ObterTodos
         {
             app.MapGet("/curso/{id:guid}/aula", Handle)
              .WithSummary("Obter as aulas do curso")
-             .RequireAuthorization(AccessRoles.Admin);
+             .RequireAuthorization(AccessRoles.Aluno);
         }
 
         private static async Task<Results<Ok<Response>, ValidationProblem, BadRequest, BadRequest<Error>>> Handle(Guid id, IMediator mediator, ILogger<Endpoint> logger)

@@ -5,8 +5,7 @@ using System.Net;
 namespace Peo.Web.Bff.Services.GestaoAlunos
 {
     public class GestaoAlunosService(HttpClient httpClient)
-    {
-        // Matricula endpoints
+    {        
         public async Task<Results<Ok<MatriculaCursoResponse>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> MatricularCursoAsync(MatriculaCursoRequest request, CancellationToken ct)
         {
             var response = await httpClient.PostAsJsonAsync("/v1/estudante/matricula/", request, ct);
@@ -29,7 +28,30 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
             return TypedResults.Ok(matriculaResponse);
         }
 
-         
+
+        public async Task<Results<Ok<IEnumerable<MatriculaResponse>>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> ConsultarMatriculasAlunoAsync(CancellationToken ct)
+        {
+            var response = await httpClient.GetAsync("/v1/estudante/matricula/", ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
+            }
+
+            var matriculaResponse = await response.Content.ReadFromJsonAsync<IEnumerable<MatriculaResponse>>(cancellationToken: ct);
+            if (matriculaResponse == null)
+            {
+                return TypedResults.BadRequest<object>("Failed to deserialize matricula response");
+            }
+
+            return TypedResults.Ok(matriculaResponse);
+        }
+
+
 
         public async Task<Results<Ok<ConcluirMatriculaResponse>, ValidationProblem, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ConcluirMatriculaAsync(ConcluirMatriculaRequest request, CancellationToken ct)
         {

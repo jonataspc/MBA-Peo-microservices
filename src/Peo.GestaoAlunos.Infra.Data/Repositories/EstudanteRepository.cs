@@ -81,4 +81,12 @@ public class EstudanteRepository : GenericRepository<Estudante, GestaoEstudantes
         var matriculaIds = matriculas.Select(m => m.Id).ToList();
         return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync();
     }
+
+    public async Task<IEnumerable<Matricula>> GetMatriculasByEstudanteIdAsync(Guid estudanteId)
+    {
+        return await _dbContext.Matriculas
+            .Where(m => m.EstudanteId == estudanteId)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

@@ -396,6 +396,35 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Estudantes"
+        ],
+        "operationId": "GetV1EstudanteMatricula",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatriculaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
       }
     },
     "/v1/estudante/matricula/concluir": {
@@ -900,6 +929,36 @@
             "type": "string",
             "format": "guid",
             "minLength": 1
+          }
+        }
+      },
+      "MatriculaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "number",
+            "format": "double"
           }
         }
       },

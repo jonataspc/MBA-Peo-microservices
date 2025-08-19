@@ -28,4 +28,6 @@ public interface IEstudanteRepository : IRepository<Estudante>
     Task AddCertificadoAsync(Certificado certificado);
 
     Task<IEnumerable<Certificado>> GetCertificadosByEstudanteIdAsync(Guid estudanteId);
+
+    Task<IEnumerable<Matricula>> GetMatriculasByEstudanteIdAsync(Guid estudanteId);
 }

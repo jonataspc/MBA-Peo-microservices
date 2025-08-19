@@ -16,7 +16,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Curso.ObterTodos
         {
             app.MapGet("/curso/", HandleGetAll)
                .WithSummary("Obter todos os cursos")
-               .RequireAuthorization(AccessRoles.Admin);
+               .RequireAuthorization(AccessRoles.Aluno);
         }
 
         private static async Task<Results<Ok<Response>, ValidationProblem, BadRequest, BadRequest<Error>>> HandleGetAll(IMediator mediator, ILogger<Endpoint> logger)

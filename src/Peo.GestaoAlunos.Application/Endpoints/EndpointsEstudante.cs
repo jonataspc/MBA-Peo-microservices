@@ -18,6 +18,7 @@ namespace Peo.GestaoAlunos.Application.Endpoints
             endpoints.MapGroup("v1/estudante")
             .WithTags("Estudante")
             .MapEndpoint<EndpointMatriculaCurso>()
+            .MapEndpoint<EndpointObterMatriculas>()
             .MapEndpoint<EndpointConcluirMatricula>()
             .MapEndpoint<EndpointCertificadosEstudante>()
             .MapEndpoint<EndpointsAula>()
