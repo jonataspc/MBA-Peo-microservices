@@ -12,7 +12,9 @@ namespace Peo.Web.Bff.Services.Identity.Dtos
         string Password,
 
         [Required]
-        string Name
+        string Name,
+
+        bool IsAdmin = false
 
         );
 }
