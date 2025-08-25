@@ -1,5 +1,56 @@
-﻿<MudNavMenu Dense="true">
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="" Icon="@Icons.Material.Filled.Calculate">Menu 1</MudNavLink>
-    <MudNavLink Href="" Icon="@Icons.Material.Filled.TableChart">Menu 2</MudNavLink>
-</MudNavMenu>
+﻿
+<MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+
+    <MudNavMenu Dense="true">
+        <MudText Typo="Typo.h1" Class="pa-4">PEO</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 pb-4">Plataforma de Educação Online</MudText>
+        <MudDivider Class="my-2"/>
+        <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+
+        <MudNavGroup Title="Cursos"
+                         Icon="@Icons.Material.Filled.School"
+                         Expanded="true">
+             <MudNavLink Href="/instrutor"
+                         Icon="@Icons.Material.Filled.Person">
+                    Instrutor
+             </MudNavLink>
+             
+             <MudNavLink Href="/cursos" 
+                    Icon="@Icons.Material.Filled.Book">
+                    Cursos
+             </MudNavLink>
+
+        </MudNavGroup>
+
+        <MudNavGroup Title="Alunos"Icon="@Icons.Material.Filled.People" Expanded="true">
+            <MudNavLink Href="/matricula"Icon="@Icons.Material.Filled.Class">
+                Matricula
+            </MudNavLink>
+
+            <MudNavLink Href="/alunosmatriculados" Icon="@Icons.Material.Filled.BookOnline">
+                Alunos Matriculados
+            </MudNavLink>
+
+        </MudNavGroup>
+        
+        
+
+        <MudNavGroup Title="Financeiro"
+                     Icon="@Icons.Material.Filled.School"
+                     Expanded="true">
+            <MudNavLink Href="/faturamento"
+                        Icon="@Icons.Material.Filled.Person">
+                Faturamento
+            </MudNavLink>
+            <MudNavLink Href="/relatorio"
+                        Icon="@Icons.Material.Filled.Book">
+                Relatorio
+            </MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Configurações" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+            <MudNavLink Href="/usuarios" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">Usuários</MudNavLink>
+            <MudNavLink Href="/parametros" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Segurança</MudNavLink>
+        </MudNavGroup>
+    </MudNavMenu>
+
+</MudPaper>

@@ -1,0 +1,20 @@
+﻿@page "/instrutor"
+@attribute [Authorize]
+@layout MainLayout
+<PageTitle>Instrutores</PageTitle>
+<MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Gestão de Instrutores</MudText>
+
+<MudDataGrid T="InstrutorResponse" Items="instrutores">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Lista de Instrutores</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AdicionarInstrutor">
+            Adicionar 
+        </MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="i => i.Id" Title="ID" />
+        <PropertyColumn Property="i => i.Nome" Title="Nome" />
+        <PropertyColumn Property="i => i.Sobrenome" Title="Sobrenome" />
+    </Columns>
+</MudDataGrid>

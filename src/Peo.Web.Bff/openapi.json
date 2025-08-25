@@ -593,6 +593,9 @@
           },
           "name": {
             "type": "string"
+          },
+          "isAdmin": {
+            "type": "boolean"
           }
         }
       },
