@@ -11,29 +11,23 @@ namespace Peo.Web.Spa.Pages.Cursos
 {
     public partial class Cursos
     {
-        private IEnumerable<CursoResponse> cursosLista = new List<CursoResponse>();
+        private IEnumerable<CursoResponse> _cursosLista = new List<CursoResponse>();
 
         protected override async Task OnInitializedAsync()
         {
-           await LoadCursosAsync();
-        }
-
-        private async Task LoadCursosAsync()
-        {
-           AdicionarCurso();
         }
 
         private void AdicionarCurso()
         {
-            var moduloCurso = ToRoman(cursosLista.Count()+1);
+            var moduloCurso = ToRoman(_cursosLista.Count()+1);
             var novoCurso = new CursoResponse()
             {
                 Id = Guid.NewGuid(),
                 Titulo = "Curso de C# modulo "  + moduloCurso   ,
-                Descricao = "Aprenda C# do básico ao avançado" + (cursosLista.Count()+1).ToString(),
+                Descricao = "Aprenda C# do básico ao avançado" + (_cursosLista.Count()+1).ToString(),
                 Preco = 300.00m
             };
-            cursosLista = cursosLista.Append(novoCurso);
+            _cursosLista = _cursosLista.Append(novoCurso);
         }
 
         public static string ToRoman(int number)
@@ -66,9 +60,9 @@ namespace Peo.Web.Spa.Pages.Cursos
     public class CursoResponse
     {
         public Guid Id { get; set; } 
-        public string Titulo { get; set; } 
-        public string Descricao { get; set; } 
-        public decimal Preco { get; set; } 
+        public string? Titulo { get; set; } 
+        public string? Descricao { get; set; } 
+        public decimal? Preco { get; set; } 
 
     }
 }

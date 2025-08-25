@@ -13,20 +13,16 @@ namespace Peo.Web.Spa.Pages.Identity.Login
         [Inject]
         private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-        public string UserName { get; private set; }
-        public string Email { get; private set; }
+        public string? UserName { get; private set; }
+        public string? Email { get; private set; }
 
         protected override async Task OnInitializedAsync()
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-
-            //var emailDireto = await _userManager.GetEmailAsync(user);
-            
-
-            if (user.Identity != null && user.Identity.IsAuthenticated)
+           if (user.Identity != null && user.Identity.IsAuthenticated)
             {
-                UserName = user.Identity.Name;
+                UserName = user.Identity.Name!;
                 Email = user.FindFirst(ClaimTypes.Email)?.Value;
             }
             else
