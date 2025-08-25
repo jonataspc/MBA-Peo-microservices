@@ -57,6 +57,33 @@ namespace Peo.Identity.Infra.Data.Helpers
             {
                 Debug.WriteLine(e);
             }
+
+            await AddAdminUserAsync(serviceProvider);
+        }
+
+        private static async Task AddAdminUserAsync(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            var adminUser = new IdentityUser
+            {
+                UserName = "admin@admin.com",
+                Email = "admin@admin.com",
+            };
+
+            if (await userManager.Users.AnyAsync(u => u.UserName == adminUser.UserName))
+            {
+                return;
+            }
+
+            var result = await userManager.CreateAsync(adminUser, "@dmin!");
+
+            if (result.Succeeded)
+            {
+                await userManager.ConfirmEmailAsync(adminUser, await userManager.GenerateEmailConfirmationTokenAsync(adminUser));
+                await userManager.AddToRoleAsync(adminUser, AccessRoles.Aluno);
+                await userManager.AddToRoleAsync(adminUser, AccessRoles.Admin);
+            }
         }
     }
 }
