@@ -36,11 +36,10 @@ namespace Peo.Identity.Application.Endpoints
             {
                 return TypedResults.Forbid();
             }
-
             var user = new IdentityUser
             {
                 UserName = request.Email,
-                Email = request.Email,
+                Email = request.Email
             };
 
             var result = await userManager.CreateAsync(user, request.Password);

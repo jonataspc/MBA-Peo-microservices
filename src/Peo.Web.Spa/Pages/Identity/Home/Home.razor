@@ -1,5 +1,18 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize]
 
-<MudText Typo="Typo.h5">Bem-vindo! Você está logado.</MudText>
+@code {
+    private string? UserName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        UserName = user.Identity?.Name ?? "Usuário";
+    }
+}
+
+<MudText Typo="Typo.h5">Bem-vindo, @UserName! Você está logado.</MudText>

@@ -1,0 +1,22 @@
+﻿@page "/cursos"
+@attribute [Authorize]
+@layout MainLayout
+
+<PageTitle>Cursos</PageTitle>
+
+<MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Gestão de Cursos</MudText>
+<MudDataGrid T="CursoResponse" Items="_cursosLista">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Lista de Cursos</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AdicionarCurso">
+            Adicionar 
+        </MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="i => i.Id" Title="ID" />
+        <PropertyColumn Property="i => i.Titulo" Title="Título" />
+        <PropertyColumn Property="i => i.Descricao" Title="Descrição do Curso" />
+        <PropertyColumn Property="i => i.Preco" Title="Preço" />
+    </Columns>
+</MudDataGrid>

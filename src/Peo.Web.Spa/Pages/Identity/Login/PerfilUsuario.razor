@@ -1,0 +1,9 @@
+﻿@page "/perfil"
+@layout MainLayout
+@attribute [Authorize]
+
+<MudPaper Class="mx-auto my-12 pa-6" MaxWidth="420px" Elevation="2">
+    <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-4">Perfil do usuário</MudText>
+    <MudText Typo="Typo.body1">Usuário : @UserName</MudText>
+    <MudText Typo="Typo.body1">e-mail : @Email</MudText>
+</MudPaper>
