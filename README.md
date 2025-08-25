@@ -10,8 +10,13 @@ O objetivo principal é desenvolver uma plataforma educacional online com múltipl
 
 
 ### **Autores**
-[TODO]
-
+* Jonatas
+* Filipe
+* Joseleno 
+* Eduardo 
+* Marcelo 
+* Leandro 
+* Paulo
 
 ## **Proposta do Projeto**
 
