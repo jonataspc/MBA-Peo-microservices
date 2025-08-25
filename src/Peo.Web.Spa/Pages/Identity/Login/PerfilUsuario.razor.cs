@@ -1,20 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 
 namespace Peo.Web.Spa.Pages.Identity.Login
 {
     public partial class PerfilUsuario : ComponentBase
     {
         [Inject]
-        private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
-        public string? UserName { get; private set; }
-        public string? Email { get; private set; }
+        public string UserName { get; private set; } = string.Empty;
+        public string Email { get; private set; } = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
@@ -23,7 +18,8 @@ namespace Peo.Web.Spa.Pages.Identity.Login
            if (user.Identity != null && user.Identity.IsAuthenticated)
             {
                 UserName = user.Identity.Name!;
-                Email = user.FindFirst(ClaimTypes.Email)?.Value;
+                Email = user.Identity.Name!;
+
             }
             else
             {

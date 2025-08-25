@@ -15,6 +15,13 @@ namespace Peo.Web.Spa.Pages.Cursos
 
         protected override async Task OnInitializedAsync()
         {
+            await AdicionaCursoAsync();
+        }
+
+        private Task AdicionaCursoAsync()
+        {
+            AdicionarCurso();
+            return Task.CompletedTask;  
         }
 
         private void AdicionarCurso()
