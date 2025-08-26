@@ -15,7 +15,7 @@
                 <MudTextField @bind-Value="_model.ConteudoProgramatico" Label="Conteúdo programático" Lines="4" />
                 <MudTextField @bind-Value="_tags" Label="Tags (separe por vírgula)" />
                 <MudTextField @bind-Value="_model.Descricao" Label="Descrição" Lines="3" />
-                <MudNumericField TValue="decimal" @bind-Value="_model.Preco" Label="Preço" Min="0" Required="true" />
+                <MudNumericField @bind-Value="_model.Preco" Label="Preço" Min="0" Required="true" />
             </MudStack>
         </EditForm>
     </DialogContent>
