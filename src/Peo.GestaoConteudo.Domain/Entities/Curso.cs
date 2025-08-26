@@ -9,7 +9,7 @@ namespace Peo.GestaoConteudo.Domain.Entities
     {
         public string Titulo { get; private set; } = null!;
         public string? Descricao { get; private set; }
-        public Guid InstrutorId { get; private set; }
+        public string? InstrutorNome { get; private set; }
         public virtual ConteudoProgramatico? ConteudoProgramatico { get; private set; }
         public decimal Preco { get; private set; }
         public bool EstaPublicado { get; private set; }
@@ -21,11 +21,11 @@ namespace Peo.GestaoConteudo.Domain.Entities
         {
         }
 
-        public Curso(string titulo, string? descricao, Guid instrutorId, ConteudoProgramatico? conteudoProgramatico, decimal preco, bool estaPublicado, DateTime? dataPublicacao, List<string> tags, ICollection<Aula> aulas)
+        public Curso(string titulo, string? descricao, string instrutorNome, ConteudoProgramatico? conteudoProgramatico, decimal preco, bool estaPublicado, DateTime? dataPublicacao, List<string> tags, ICollection<Aula> aulas)
         {
             Titulo = titulo;
             Descricao = descricao;
-            InstrutorId = instrutorId;
+            InstrutorNome = instrutorNome;
             ConteudoProgramatico = conteudoProgramatico;
             Preco = preco;
             EstaPublicado = estaPublicado;

@@ -13,7 +13,7 @@ public class Handler(IRepository<Domain.Entities.Curso> repository) : IRequestHa
 
             titulo: request.Titulo,
             descricao: request.Descricao,
-            instrutorId: request.InstrutorId,
+            instrutorNome: request.InstrutorNome,
             conteudoProgramatico: new ConteudoProgramatico(request.ConteudoProgramatico),
             preco: request.Preco,
             estaPublicado: true,

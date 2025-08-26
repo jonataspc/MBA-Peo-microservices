@@ -5,7 +5,7 @@
 <PageTitle>Cursos</PageTitle>
 
 <MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Gestão de Cursos</MudText>
-<MudDataGrid T="CursoResponse" Items="_cursosLista">
+<MudDataGrid T="Curso" Items="_cursosLista">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Lista de Cursos</MudText>
         <MudSpacer />
@@ -13,10 +13,18 @@
             Adicionar 
         </MudButton>
     </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="i => i.Id" Title="ID" />
+    <Columns>        
+        <HierarchyColumn T="Curso" />
         <PropertyColumn Property="i => i.Titulo" Title="Título" />
+        <PropertyColumn Property="i => i.NomeInstrutor" Title="Instrutor" />
         <PropertyColumn Property="i => i.Descricao" Title="Descrição do Curso" />
         <PropertyColumn Property="i => i.Preco" Title="Preço" />
     </Columns>
+    <ChildRowContent>
+        <MudPaper Class="p-4" Style="white-space:pre-wrap">
+            <MudText Typo="Typo.h6">Conteúdo programático</MudText>
+            <MudDivider Class="my-2" />
+            @context.Item.ConteudoProgramatico.Conteudo
+        </MudPaper>
+    </ChildRowContent>
 </MudDataGrid>

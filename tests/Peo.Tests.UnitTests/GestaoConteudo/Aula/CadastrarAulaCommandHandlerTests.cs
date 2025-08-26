@@ -25,7 +25,7 @@ public class CadastrarAulaCommandHandlerTests
         var curso = new Peo.GestaoConteudo.Domain.Entities.Curso(
             titulo: "Curso Teste",
             descricao: "Descrição Teste",
-            instrutorId: Guid.CreateVersion7(),
+            instrutorNome: "Nome instrutor teste",
             conteudoProgramatico: new ConteudoProgramatico("Conteúdo Programático Teste"),
             preco: 99.99m,
             estaPublicado: true,
