@@ -725,9 +725,8 @@
             "type": "string",
             "nullable": true
           },
-          "instrutorId": {
-            "type": "string",
-            "format": "guid"
+          "instrutorNome": {
+            "type": "string"
           },
           "conteudoProgramatico": {
             "type": "string",

@@ -47,7 +47,7 @@ public class ObterTodasAulasQueryHandlerTests
         var curso = new Peo.GestaoConteudo.Domain.Entities.Curso(
             titulo: "Curso Teste",
             descricao: "Descrição Teste",
-            instrutorId: Guid.CreateVersion7(),
+            instrutorNome: "Nome Instrutor Teste",
             conteudoProgramatico: new ConteudoProgramatico("Conteúdo Programático Teste"),
             preco: 99.99m,
             estaPublicado: true,
@@ -100,7 +100,7 @@ public class ObterTodasAulasQueryHandlerTests
         var curso = new Peo.GestaoConteudo.Domain.Entities.Curso(
             titulo: "Curso Teste",
             descricao: "Descrição Teste",
-            instrutorId: Guid.CreateVersion7(),
+            instrutorNome: "Nome Instrutor Teste",
             conteudoProgramatico: new ConteudoProgramatico("Conteúdo Programático Teste"),
             preco: 99.99m,
             estaPublicado: true,

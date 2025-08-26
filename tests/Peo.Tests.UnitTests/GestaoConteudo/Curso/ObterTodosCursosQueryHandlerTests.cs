@@ -28,7 +28,7 @@ public class ObterTodosCursosQueryHandlerTests
             new(
                 titulo: "Curso Teste 1",
                 descricao: "Descrição Teste 1",
-                instrutorId: Guid.CreateVersion7(),
+                instrutorNome: "Nome Instrutor Teste",
                 conteudoProgramatico: new ConteudoProgramatico("Conteúdo Programático Teste 1"),
                 preco: 99.99m,
                 estaPublicado: true,
@@ -39,7 +39,7 @@ public class ObterTodosCursosQueryHandlerTests
             new(
                 titulo: "Curso Teste 2",
                 descricao: "Descrição Teste 2",
-                instrutorId: Guid.CreateVersion7(),
+                instrutorNome:"Nome Instrutor Teste",
                 conteudoProgramatico: new ConteudoProgramatico("Conteúdo Programático Teste 2"),
                 preco: 199.99m,
                 estaPublicado: true,

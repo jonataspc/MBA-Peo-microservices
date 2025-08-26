@@ -1,0 +1,110 @@
+﻿@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@inject WebApiClient Api
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>Adicionar Curso</TitleContent>
+
+    <DialogContent>        
+        <EditForm EditContext="_editContext">
+            <DataAnnotationsValidator />
+            <MudStack Spacing="2">
+                <MudTextField @bind-Value="_model.Titulo" Label="Título" Required="true" />
+                <MudTextField @bind-Value="_model.InstrutorNome" Label="Instrutor" />
+                <MudTextField @bind-Value="_model.ConteudoProgramatico" Label="Conteúdo programático" Lines="4" />
+                <MudTextField @bind-Value="_tags" Label="Tags (separe por vírgula)" />
+                <MudTextField @bind-Value="_model.Descricao" Label="Descrição" Lines="3" />
+                <MudNumericField TValue="decimal" @bind-Value="_model.Preco" Label="Preço" Min="0" Required="true" />
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                   OnClick="SaveClick" Disabled="@_busy">
+            @if (_busy)
+            {
+                <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
+            }
+            Salvar
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance? MudDialog { get; set; }
+
+    private bool _busy;
+    private string? _tags;
+    private readonly CursoForm _model = new();
+    private EditContext _editContext = default!;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_model);
+    }
+
+    private async Task SaveClick()
+    {
+        if (!_editContext.Validate())
+            return;
+
+        await SaveAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        try
+        {
+            _busy = true;
+                        
+            var req = new CursoRequest
+            {
+                Titulo = _model.Titulo!,
+                Descricao = _model.Descricao,
+                Preco = _model.Preco,
+                InstrutorNome = _model.InstrutorNome,   
+                ConteudoProgramatico = _model.ConteudoProgramatico,
+                Tags = ParseTags(_tags)             
+            };
+
+            await Api.PostV1ConteudoCursoAsync(req, CancellationToken.None);
+
+            MudDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (ApiException ex)
+        {
+            Snackbar.Add($"Erro ao salvar ({ex.StatusCode}): {ex.Message}", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro inesperado: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+
+    private static List<string>? ParseTags(string? text) =>
+        string.IsNullOrWhiteSpace(text)
+            ? null
+            : text.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                  .Select(t => t.Trim())
+                  .Where(t => t.Length > 0)
+                  .Distinct(StringComparer.OrdinalIgnoreCase)
+                  .ToList();
+
+    private sealed class CursoForm
+    {
+        [Required, MinLength(2)] public string? Titulo { get; set; }
+        public string? InstrutorNome { get; set; }          
+        public string? ConteudoProgramatico { get; set; }   
+        public string? Descricao { get; set; }
+        [Range(0, double.MaxValue)] public decimal Preco { get; set; }
+    }
+}

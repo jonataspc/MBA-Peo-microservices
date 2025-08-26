@@ -23,7 +23,7 @@ public class CadastrarCursoCommandHandlerTests
         var comando = new Command(
             Titulo: "Curso Teste",
             Descricao: "Descrição Teste",
-            InstrutorId: Guid.CreateVersion7(),
+            InstrutorNome: "Nome Instrutor Teste",
             ConteudoProgramatico: "Conteúdo Programático Teste",
             Preco: 99.99m,
             Tags: ["teste", "curso"]
@@ -43,7 +43,7 @@ public class CadastrarCursoCommandHandlerTests
         _repositorioMock.Verify(x => x.Insert(It.Is<Peo.GestaoConteudo.Domain.Entities.Curso>(c =>
             c.Titulo == comando.Titulo &&
             c.Descricao == comando.Descricao &&
-            c.InstrutorId == comando.InstrutorId &&
+            c.InstrutorNome == comando.InstrutorNome &&
             c.ConteudoProgramatico!.Conteudo == comando.ConteudoProgramatico &&
             c.Preco == comando.Preco &&
             c.Tags.SequenceEqual(comando.Tags!)

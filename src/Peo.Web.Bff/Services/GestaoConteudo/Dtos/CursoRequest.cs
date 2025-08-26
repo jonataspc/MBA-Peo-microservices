@@ -9,7 +9,7 @@ namespace Peo.Web.Bff.Services.GestaoConteudo.Dtos
         string? Descricao,
 
         [Required]
-        Guid InstrutorId,
+        string InstrutorNome,
 
         string? ConteudoProgramatico,
 

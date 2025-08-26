@@ -12,7 +12,7 @@ public sealed record Command(
     string? Descricao,
 
     [Required]
-    Guid InstrutorId,
+    string InstrutorNome,
 
     string? ConteudoProgramatico,
 
