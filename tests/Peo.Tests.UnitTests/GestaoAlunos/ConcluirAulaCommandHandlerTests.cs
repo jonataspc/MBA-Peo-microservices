@@ -10,15 +10,15 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 
 public class ConcluirAulaCommandHandlerTests
 {
-    private readonly Mock<IEstudanteService> _estudanteServiceMock;
+    private readonly Mock<IAlunoService> _alunoServiceMock;
     private readonly Mock<ILogger<ConcluirAulaCommandHandler>> _loggerMock;
     private readonly ConcluirAulaCommandHandler _handler;
 
     public ConcluirAulaCommandHandlerTests()
     {
-        _estudanteServiceMock = new Mock<IEstudanteService>();
+        _alunoServiceMock = new Mock<IAlunoService>();
         _loggerMock = new Mock<ILogger<ConcluirAulaCommandHandler>>();
-        _handler = new ConcluirAulaCommandHandler(_estudanteServiceMock.Object, _loggerMock.Object);
+        _handler = new ConcluirAulaCommandHandler(_alunoServiceMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -32,9 +32,9 @@ public class ConcluirAulaCommandHandlerTests
         var progresso = new ProgressoMatricula(matriculaId, aulaId);
         progresso.MarcarComoConcluido();
 
-        _estudanteServiceMock.Setup(x => x.ConcluirAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.ConcluirAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(progresso);
-        _estudanteServiceMock.Setup(x => x.ObterProgressoGeralCursoAsync(matriculaId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.ObterProgressoGeralCursoAsync(matriculaId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(50);
 
         var request = new ConcluirAulaRequest
@@ -66,7 +66,7 @@ public class ConcluirAulaCommandHandlerTests
         var aulaId = Guid.CreateVersion7();
         var errorMessage = "An error occurred";
 
-        _estudanteServiceMock.Setup(x => x.ConcluirAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.ConcluirAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception(errorMessage));
 
         var request = new ConcluirAulaRequest

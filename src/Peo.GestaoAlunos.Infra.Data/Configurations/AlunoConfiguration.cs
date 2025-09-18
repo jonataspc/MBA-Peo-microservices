@@ -5,9 +5,9 @@ using Peo.GestaoAlunos.Domain.Entities;
 
 namespace Peo.GestaoAlunos.Infra.Data.Configurations;
 
-public class EstudanteConfiguration : EntityBaseConfiguration<Estudante>
+public class AlunoConfiguration : EntityBaseConfiguration<Aluno>
 {
-    public override void Configure(EntityTypeBuilder<Estudante> builder)
+    public override void Configure(EntityTypeBuilder<Aluno> builder)
     {
         base.Configure(builder);
 

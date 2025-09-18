@@ -9,13 +9,13 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
 {
     public class ObterMatriculasQueryHandler : IRequestHandler<ObterMatriculasQuery, Result<IEnumerable<MatriculaResponse>>>
     {
-        private readonly IEstudanteService _estudanteService;
+        private readonly IAlunoService _alunoService;
         private readonly ILogger<ObterMatriculasQueryHandler> _logger;
         private readonly IAppIdentityUser _appIdentityUser;
 
-        public ObterMatriculasQueryHandler(IEstudanteService estudanteService, ILogger<ObterMatriculasQueryHandler> logger, IAppIdentityUser appIdentityUser)
+        public ObterMatriculasQueryHandler(IAlunoService alunoService, ILogger<ObterMatriculasQueryHandler> logger, IAppIdentityUser appIdentityUser)
         {
-            _estudanteService = estudanteService;
+            _alunoService = alunoService;
             _logger = logger;
             _appIdentityUser = appIdentityUser;
         }
@@ -24,7 +24,7 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
         {
             try
             {
-                IEnumerable<Matricula> matriculas = await _estudanteService.ObterMatriculas(_appIdentityUser.GetUserId(), cancellationToken);
+                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculas(_appIdentityUser.GetUserId(), cancellationToken);
 
                 return Result.Success(matriculas.Adapt<IEnumerable<MatriculaResponse>>());
             }

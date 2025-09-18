@@ -3,13 +3,13 @@ using Peo.GestaoAlunos.Domain.Entities;
 
 namespace Peo.GestaoAlunos.Domain.Interfaces;
 
-public interface IEstudanteRepository : IRepository<Estudante>
+public interface IAlunoRepository : IRepository<Aluno>
 {
-    Task<Estudante?> GetByUserIdAsync(Guid usuarioId);
+    Task<Aluno?> GetByUserIdAsync(Guid usuarioId);
 
-    Task<Estudante?> GetByIdAsync(Guid estudanteId);
+    Task<Aluno?> GetByIdAsync(Guid alunoId);
 
-    Task AddAsync(Estudante estudante);
+    Task AddAsync(Aluno aluno);
 
     Task AddMatriculaAsync(Matricula matricula);
 
@@ -27,7 +27,7 @@ public interface IEstudanteRepository : IRepository<Estudante>
 
     Task AddCertificadoAsync(Certificado certificado);
 
-    Task<IEnumerable<Certificado>> GetCertificadosByEstudanteIdAsync(Guid estudanteId);
+    Task<IEnumerable<Certificado>> GetCertificadosByAlunoIdAsync(Guid alunoId);
 
-    Task<IEnumerable<Matricula>> GetMatriculasByEstudanteIdAsync(Guid estudanteId);
+    Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId);
 }

@@ -6,12 +6,12 @@ namespace Peo.GestaoAlunos.Application.Commands.Aula;
 
 public class IniciarAulaCommandHandler : IRequestHandler<IniciarAulaCommand, Result<ProgressoAulaResponse>>
 {
-    private readonly IEstudanteService _estudanteService;
+    private readonly IAlunoService _alunoService;
     private readonly ILogger<IniciarAulaCommandHandler> _logger;
 
-    public IniciarAulaCommandHandler(IEstudanteService estudanteService, ILogger<IniciarAulaCommandHandler> logger)
+    public IniciarAulaCommandHandler(IAlunoService alunoService, ILogger<IniciarAulaCommandHandler> logger)
     {
-        _estudanteService = estudanteService;
+        _alunoService = alunoService;
         _logger = logger;
     }
 
@@ -19,7 +19,7 @@ public class IniciarAulaCommandHandler : IRequestHandler<IniciarAulaCommand, Res
     {
         try
         {
-            var progresso = await _estudanteService.IniciarAulaAsync(request.Request.MatriculaId, request.Request.AulaId, cancellationToken);
+            var progresso = await _alunoService.IniciarAulaAsync(request.Request.MatriculaId, request.Request.AulaId, cancellationToken);
 
             var response = new ProgressoAulaResponse(
                 progresso.MatriculaId,
@@ -27,7 +27,7 @@ public class IniciarAulaCommandHandler : IRequestHandler<IniciarAulaCommand, Res
                 progresso.EstaConcluido,
                 progresso.DataInicio,
                 progresso.DataConclusao,
-                await _estudanteService.ObterProgressoGeralCursoAsync(progresso.MatriculaId, cancellationToken)
+                await _alunoService.ObterProgressoGeralCursoAsync(progresso.MatriculaId, cancellationToken)
             );
 
             return Result.Success(response);

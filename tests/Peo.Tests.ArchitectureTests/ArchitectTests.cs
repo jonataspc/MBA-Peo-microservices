@@ -38,7 +38,7 @@ public class ArchitectTests
             typeof(Peo.Core.Web.Api.IEndpoint).Assembly,
             typeof(Peo.Core.Infra.Data.Contexts.Base.DbContextBase ).Assembly,
             typeof(GestaoAlunosDbMigrationHelpers).Assembly,
-            typeof(EndpointsEstudante ).Assembly,
+            typeof(EndpointsAluno ).Assembly,
             typeof(Peo.Identity.Infra.Data.Helpers.IdentityDbMigrationHelpers).Assembly,
             typeof(Peo.Identity.Application.Services.TokenService).Assembly,
             typeof(GestaoConteudoDbMigrationHelpers).Assembly,
