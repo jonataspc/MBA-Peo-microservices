@@ -6,14 +6,14 @@ using System.Reflection;
 
 namespace Peo.GestaoAlunos.Infra.Data.Contexts
 {
-    public class GestaoEstudantesContext : DbContextBase
+    public class GestaoAlunosContext : DbContextBase
     {
-        public DbSet<Estudante> Estudantes { get; set; } = null!;
+        public DbSet<Aluno> Alunos { get; set; } = null!;
         public DbSet<Matricula> Matriculas { get; set; } = null!;
         public DbSet<ProgressoMatricula> ProgressosMatricula { get; set; } = null!;
         public DbSet<Certificado> Certificados { get; set; } = null!;
 
-        public GestaoEstudantesContext(DbContextOptions<GestaoEstudantesContext> options) : base(options)
+        public GestaoAlunosContext(DbContextOptions<GestaoAlunosContext> options) : base(options)
         {
         }
 

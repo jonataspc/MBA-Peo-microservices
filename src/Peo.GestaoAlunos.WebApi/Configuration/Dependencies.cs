@@ -45,7 +45,7 @@ namespace Peo.GestaoAlunos.WebApi.Configuration
 
         public static WebApplication MapEndpoints(this WebApplication app)
         {
-            app.MapEstudanteEndpoints();
+            app.MapAlunoEndpoints();
             return app;
         }
     }

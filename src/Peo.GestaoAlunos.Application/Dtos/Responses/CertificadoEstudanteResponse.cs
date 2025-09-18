@@ -1,6 +1,6 @@
 namespace Peo.GestaoAlunos.Application.Dtos.Responses;
 
-public record CertificadoEstudanteResponse(
+public record CertificadoAlunoResponse(
     Guid CertificadoId,
     Guid MatriculaId,
     string Conteudo,

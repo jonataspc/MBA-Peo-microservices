@@ -6,12 +6,12 @@ namespace Peo.GestaoAlunos.Application.Commands.Matricula;
 
 public class ConcluirMatriculaCommandHandler : IRequestHandler<ConcluirMatriculaCommand, Result<ConcluirMatriculaResponse>>
 {
-    private readonly IEstudanteService _estudanteService;
+    private readonly IAlunoService _alunoService;
     private readonly ILogger<ConcluirMatriculaCommandHandler> _logger;
 
-    public ConcluirMatriculaCommandHandler(IEstudanteService estudanteService, ILogger<ConcluirMatriculaCommandHandler> logger)
+    public ConcluirMatriculaCommandHandler(IAlunoService alunoService, ILogger<ConcluirMatriculaCommandHandler> logger)
     {
-        _estudanteService = estudanteService;
+        _alunoService = alunoService;
         _logger = logger;
     }
 
@@ -19,7 +19,7 @@ public class ConcluirMatriculaCommandHandler : IRequestHandler<ConcluirMatricula
     {
         try
         {
-            var matricula = await _estudanteService.ConcluirMatriculaAsync(request.Request.MatriculaId, cancellationToken);
+            var matricula = await _alunoService.ConcluirMatriculaAsync(request.Request.MatriculaId, cancellationToken);
 
             var response = new ConcluirMatriculaResponse(matricula.Id, matricula.Status.ToString(), matricula.DataConclusao, matricula.PercentualProgresso);
 

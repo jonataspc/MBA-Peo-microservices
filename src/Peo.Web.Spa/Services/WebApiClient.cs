@@ -93,46 +93,46 @@ namespace Peo.Web.Spa.Services
         System.Threading.Tasks.Task<CadastrarAulaResponse> PostV1ConteudoCursoAulaAsync(System.Guid cursoId, AulaRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1EstudanteMatriculaAsync(MatriculaCursoRequest request);
+        System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1AlunoMatriculaAsync(MatriculaCursoRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1EstudanteMatriculaAsync(MatriculaCursoRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1AlunoMatriculaAsync(MatriculaCursoRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1EstudanteMatriculaAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1EstudanteMatriculaAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1EstudanteMatriculaConcluirAsync(ConcluirMatriculaRequest request);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1AlunoMatriculaAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1EstudanteMatriculaConcluirAsync(ConcluirMatriculaRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1AlunoMatriculaAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaIniciarAsync(IniciarAulaRequest request);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaIniciarAsync(IniciarAulaRequest request, System.Threading.CancellationToken cancellationToken);
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaConcluirAsync(ConcluirAulaRequest request);
+        System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1AlunoMatriculaConcluirAsync(ConcluirMatriculaRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaConcluirAsync(ConcluirAulaRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1AlunoMatriculaConcluirAsync(ConcluirMatriculaRequest request, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoEstudanteResponse>> GetV1EstudanteCertificadosAsync();
+        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaIniciarAsync(IniciarAulaRequest request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoEstudanteResponse>> GetV1EstudanteCertificadosAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaIniciarAsync(IniciarAulaRequest request, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaConcluirAsync(ConcluirAulaRequest request);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaConcluirAsync(ConcluirAulaRequest request, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoAlunoResponse>> GetV1AlunoCertificadosAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoAlunoResponse>> GetV1AlunoCertificadosAsync(System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -1015,14 +1015,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1EstudanteMatriculaAsync(MatriculaCursoRequest request)
+        public virtual System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1AlunoMatriculaAsync(MatriculaCursoRequest request)
         {
-            return PostV1EstudanteMatriculaAsync(request, System.Threading.CancellationToken.None);
+            return PostV1AlunoMatriculaAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1EstudanteMatriculaAsync(MatriculaCursoRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MatriculaCursoResponse> PostV1AlunoMatriculaAsync(MatriculaCursoRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1042,8 +1042,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/matricula"
-                    urlBuilder_.Append("v1/estudante/matricula");
+                    // Operation Path: "v1/aluno/matricula"
+                    urlBuilder_.Append("v1/aluno/matricula");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1108,14 +1108,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1EstudanteMatriculaAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1AlunoMatriculaAsync()
         {
-            return GetV1EstudanteMatriculaAsync(System.Threading.CancellationToken.None);
+            return GetV1AlunoMatriculaAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1EstudanteMatriculaAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<MatriculaResponse>> GetV1AlunoMatriculaAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1128,8 +1128,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/matricula"
-                    urlBuilder_.Append("v1/estudante/matricula");
+                    // Operation Path: "v1/aluno/matricula"
+                    urlBuilder_.Append("v1/aluno/matricula");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1194,14 +1194,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1EstudanteMatriculaConcluirAsync(ConcluirMatriculaRequest request)
+        public virtual System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1AlunoMatriculaConcluirAsync(ConcluirMatriculaRequest request)
         {
-            return PostV1EstudanteMatriculaConcluirAsync(request, System.Threading.CancellationToken.None);
+            return PostV1AlunoMatriculaConcluirAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1EstudanteMatriculaConcluirAsync(ConcluirMatriculaRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ConcluirMatriculaResponse> PostV1AlunoMatriculaConcluirAsync(ConcluirMatriculaRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1221,8 +1221,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/matricula/concluir"
-                    urlBuilder_.Append("v1/estudante/matricula/concluir");
+                    // Operation Path: "v1/aluno/matricula/concluir"
+                    urlBuilder_.Append("v1/aluno/matricula/concluir");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1287,14 +1287,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaIniciarAsync(IniciarAulaRequest request)
+        public virtual System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaIniciarAsync(IniciarAulaRequest request)
         {
-            return PostV1EstudanteMatriculaAulaIniciarAsync(request, System.Threading.CancellationToken.None);
+            return PostV1AlunoMatriculaAulaIniciarAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaIniciarAsync(IniciarAulaRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaIniciarAsync(IniciarAulaRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1314,8 +1314,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/matricula/aula/iniciar"
-                    urlBuilder_.Append("v1/estudante/matricula/aula/iniciar");
+                    // Operation Path: "v1/aluno/matricula/aula/iniciar"
+                    urlBuilder_.Append("v1/aluno/matricula/aula/iniciar");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1380,14 +1380,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaConcluirAsync(ConcluirAulaRequest request)
+        public virtual System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaConcluirAsync(ConcluirAulaRequest request)
         {
-            return PostV1EstudanteMatriculaAulaConcluirAsync(request, System.Threading.CancellationToken.None);
+            return PostV1AlunoMatriculaAulaConcluirAsync(request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1EstudanteMatriculaAulaConcluirAsync(ConcluirAulaRequest request, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ProgressoAulaResponse> PostV1AlunoMatriculaAulaConcluirAsync(ConcluirAulaRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request == null)
                 throw new System.ArgumentNullException("request");
@@ -1407,8 +1407,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/matricula/aula/concluir"
-                    urlBuilder_.Append("v1/estudante/matricula/aula/concluir");
+                    // Operation Path: "v1/aluno/matricula/aula/concluir"
+                    urlBuilder_.Append("v1/aluno/matricula/aula/concluir");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1473,14 +1473,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoEstudanteResponse>> GetV1EstudanteCertificadosAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoAlunoResponse>> GetV1AlunoCertificadosAsync()
         {
-            return GetV1EstudanteCertificadosAsync(System.Threading.CancellationToken.None);
+            return GetV1AlunoCertificadosAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoEstudanteResponse>> GetV1EstudanteCertificadosAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoAlunoResponse>> GetV1AlunoCertificadosAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1493,8 +1493,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/estudante/certificados"
-                    urlBuilder_.Append("v1/estudante/certificados");
+                    // Operation Path: "v1/aluno/certificados"
+                    urlBuilder_.Append("v1/aluno/certificados");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1521,7 +1521,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<CertificadoEstudanteResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<CertificadoAlunoResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2083,7 +2083,7 @@ namespace Peo.Web.Spa.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CertificadoEstudanteResponse
+    public partial class CertificadoAlunoResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("certificadoId")]

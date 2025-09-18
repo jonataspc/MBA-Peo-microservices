@@ -7,13 +7,13 @@ namespace Peo.GestaoAlunos.Application.Commands.MatriculaCurso;
 
 public class MatriculaCursoCommandHandler : IRequestHandler<MatriculaCursoCommand, Result<MatriculaCursoResponse>>
 {
-    private readonly IEstudanteService _estudanteService;
+    private readonly IAlunoService _alunoService;
     private readonly IAppIdentityUser _appIdentityUser;
     private readonly ILogger<MatriculaCursoCommandHandler> _logger;
 
-    public MatriculaCursoCommandHandler(IEstudanteService estudanteService, IAppIdentityUser appIdentityUser, ILogger<MatriculaCursoCommandHandler> logger)
+    public MatriculaCursoCommandHandler(IAlunoService alunoService, IAppIdentityUser appIdentityUser, ILogger<MatriculaCursoCommandHandler> logger)
     {
-        _estudanteService = estudanteService;
+        _alunoService = alunoService;
         _appIdentityUser = appIdentityUser;
         _logger = logger;
     }
@@ -24,7 +24,7 @@ public class MatriculaCursoCommandHandler : IRequestHandler<MatriculaCursoComman
 
         try
         {
-            matricula = await _estudanteService.MatricularEstudanteComUserIdAsync(_appIdentityUser.GetUserId(), request.Request.CursoId, cancellationToken);
+            matricula = await _alunoService.MatricularAlunoComUserIdAsync(_appIdentityUser.GetUserId(), request.Request.CursoId, cancellationToken);
         }
         catch (Exception e)
         {

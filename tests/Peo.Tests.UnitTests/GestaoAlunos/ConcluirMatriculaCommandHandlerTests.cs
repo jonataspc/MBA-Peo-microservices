@@ -11,16 +11,16 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 
 public class ConcluirMatriculaCommandHandlerTests
 {
-    private readonly Mock<IEstudanteService> _estudanteService;
+    private readonly Mock<IAlunoService> _alunoService;
     private readonly Mock<ILogger<ConcluirMatriculaCommandHandler>> _loggerMock;
     private readonly ConcluirMatriculaCommandHandler _handler;
 
     public ConcluirMatriculaCommandHandlerTests()
     {
-        _estudanteService = new Mock<IEstudanteService>();
+        _alunoService = new Mock<IAlunoService>();
         _loggerMock = new Mock<ILogger<ConcluirMatriculaCommandHandler>>();
         _handler = new ConcluirMatriculaCommandHandler(
-            _estudanteService.Object,
+            _alunoService.Object,
             _loggerMock.Object);
     }
 
@@ -29,13 +29,13 @@ public class ConcluirMatriculaCommandHandlerTests
     {
         // Arrange
         var matriculaId = Guid.CreateVersion7();
-        var estudanteId = Guid.CreateVersion7();
+        var alunoId = Guid.CreateVersion7();
         var cursoId = Guid.CreateVersion7();
-        var matricula = new Matricula(estudanteId, cursoId);
+        var matricula = new Matricula(alunoId, cursoId);
         matricula.ConfirmarPagamento();
         matricula.Concluir();
 
-        _estudanteService.Setup(x => x.ConcluirMatriculaAsync(matriculaId, It.IsAny<CancellationToken>()))
+        _alunoService.Setup(x => x.ConcluirMatriculaAsync(matriculaId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(matricula);
 
         var request = new ConcluirMatriculaRequest
@@ -62,7 +62,7 @@ public class ConcluirMatriculaCommandHandlerTests
         var matriculaId = Guid.CreateVersion7();
         var mensagemErro = "Ocorreu um erro";
 
-        _estudanteService.Setup(x => x.ConcluirMatriculaAsync(matriculaId, It.IsAny<CancellationToken>()))
+        _alunoService.Setup(x => x.ConcluirMatriculaAsync(matriculaId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception(mensagemErro));
 
         var request = new ConcluirMatriculaRequest

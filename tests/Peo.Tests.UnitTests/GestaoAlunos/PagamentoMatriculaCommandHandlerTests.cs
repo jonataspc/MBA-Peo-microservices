@@ -18,7 +18,7 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 
 public class PagamentoMatriculaCommandHandlerTests
 {
-    private readonly Mock<IEstudanteRepository> _estudanteRepositoryMock;
+    private readonly Mock<IAlunoRepository> _alunoRepositoryMock;
     private readonly Mock<IRequestClient<ObterDetalhesCursoRequest>> _obterDetalhesCursoRequestMock;
     private readonly Mock<IRequestClient<ObterMatriculaRequest>> _obterMatriculaRequestMock;
     private readonly PagamentoMatriculaCommandHandler _handler;
@@ -26,7 +26,7 @@ public class PagamentoMatriculaCommandHandlerTests
 
     public PagamentoMatriculaCommandHandlerTests()
     {
-        _estudanteRepositoryMock = new Mock<IEstudanteRepository>();
+        _alunoRepositoryMock = new Mock<IAlunoRepository>();
         _obterDetalhesCursoRequestMock = new Mock<IRequestClient<ObterDetalhesCursoRequest>>();
         _obterMatriculaRequestMock = new Mock<IRequestClient<ObterMatriculaRequest>>();
         _mediator = new Mock<IMediator>();
@@ -41,9 +41,9 @@ public class PagamentoMatriculaCommandHandlerTests
     public async Task Handle_DeveRetornarPagamento_QuandoValido()
     {
         // Arrange
-        var estudanteId = Guid.CreateVersion7();
+        var alunoId = Guid.CreateVersion7();
         var cursoId = Guid.CreateVersion7();
-        var matricula = new Matricula(estudanteId, cursoId);
+        var matricula = new Matricula(alunoId, cursoId);
         var matriculaId = matricula.Id;
         var valor = 99.99m;
         var cartaoCredito = new CartaoCredito("1234567890123456", "12/25", "123", "Usuário Teste");
@@ -51,7 +51,7 @@ public class PagamentoMatriculaCommandHandlerTests
         pagamento.ProcessarPagamento(Guid.CreateVersion7().ToString());
         pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
 
-        _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
@@ -98,12 +98,12 @@ public class PagamentoMatriculaCommandHandlerTests
     {
         // Arrange
         var matriculaId = Guid.CreateVersion7();
-        var estudanteId = Guid.CreateVersion7();
+        var alunoId = Guid.CreateVersion7();
         var cursoId = Guid.CreateVersion7();
-        var matricula = new Matricula(estudanteId, cursoId);
+        var matricula = new Matricula(alunoId, cursoId);
         var valor = 99.99m;
 
-        _estudanteRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();

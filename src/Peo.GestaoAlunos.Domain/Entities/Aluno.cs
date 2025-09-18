@@ -3,7 +3,7 @@ using Peo.Core.Entities.Base;
 
 namespace Peo.GestaoAlunos.Domain.Entities;
 
-public class Estudante : EntityBase, IAggregateRoot
+public class Aluno : EntityBase, IAggregateRoot
 {
     public Guid UsuarioId { get; private set; }
 
@@ -11,11 +11,11 @@ public class Estudante : EntityBase, IAggregateRoot
 
     public virtual ICollection<Matricula> Matriculas { get; private set; } = [];
 
-    public Estudante()
+    public Aluno()
     {
     }
 
-    public Estudante(Guid usuarioId)
+    public Aluno(Guid usuarioId)
     {
         UsuarioId = usuarioId;
         EstaAtivo = true;

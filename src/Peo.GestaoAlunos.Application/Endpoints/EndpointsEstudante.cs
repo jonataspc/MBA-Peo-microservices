@@ -3,24 +3,24 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Peo.Core.Web.Extensions;
 using Peo.GestaoAlunos.Application.Endpoints.Aula;
-using Peo.GestaoAlunos.Application.Endpoints.Estudante;
+using Peo.GestaoAlunos.Application.Endpoints.Aluno;
 using Peo.GestaoAlunos.Application.Endpoints.Matricula;
 
 namespace Peo.GestaoAlunos.Application.Endpoints
 {
-    public static class EndpointsEstudante
+    public static class EndpointsAluno
     {
-        public static void MapEstudanteEndpoints(this IEndpointRouteBuilder app)
+        public static void MapAlunoEndpoints(this IEndpointRouteBuilder app)
         {
             var endpoints = app
             .MapGroup("");
 
-            endpoints.MapGroup("v1/estudante")
-            .WithTags("Estudante")
+            endpoints.MapGroup("v1/aluno")
+            .WithTags("Aluno")
             .MapEndpoint<EndpointMatriculaCurso>()
             .MapEndpoint<EndpointObterMatriculas>()
             .MapEndpoint<EndpointConcluirMatricula>()
-            .MapEndpoint<EndpointCertificadosEstudante>()
+            .MapEndpoint<EndpointCertificadosAluno>()
             .MapEndpoint<EndpointsAula>()
             ;
         }

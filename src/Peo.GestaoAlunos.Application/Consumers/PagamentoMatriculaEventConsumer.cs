@@ -7,7 +7,7 @@ namespace Peo.GestaoAlunos.Application.Consumers
 {
     public class PagamentoMatriculaEventConsumer(
         ILogger<PagamentoMatriculaEventConsumer> logger,
-        IEstudanteRepository estudanteRepository
+        IAlunoRepository alunoRepository
         ) : IConsumer<PagamentoMatriculaConfirmadoEvent>, IConsumer<PagamentoComFalhaEvent>
     {
         public Task Consume(ConsumeContext<PagamentoComFalhaEvent> context)
@@ -28,11 +28,11 @@ namespace Peo.GestaoAlunos.Application.Consumers
 
             logger.LogInformation("Processing PagamentoMatriculaConfirmadoEvent for MatriculaId: {MatriculaId}", message.MatriculaId);
 
-            var matricula = await estudanteRepository.GetMatriculaByIdAsync(message.MatriculaId)
+            var matricula = await alunoRepository.GetMatriculaByIdAsync(message.MatriculaId)
                             ?? throw new InvalidOperationException($"Matrícula com ID {message.MatriculaId} não encontrada");
 
             matricula.ConfirmarPagamento();
-            await estudanteRepository.UnitOfWork.CommitAsync(CancellationToken.None);
+            await alunoRepository.UnitOfWork.CommitAsync(CancellationToken.None);
 
             // Dispara email ao aluno informando que a matrícula foi confirmada
         }

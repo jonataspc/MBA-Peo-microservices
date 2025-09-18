@@ -16,7 +16,7 @@ using Peo.Tests.IntegrationTests.Factories;
 
 namespace Peo.Tests.IntegrationTests.GestaoAlunos;
 
-public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<GestaoAlunosWebApi.Program>>, IAsyncLifetime
+public class AlunoEndpointsTests : IClassFixture<IntegrationTestFactory<GestaoAlunosWebApi.Program>>, IAsyncLifetime
 {
     private readonly IntegrationTestFactory<GestaoAlunosWebApi.Program> _factory;
     private readonly HttpClient _client;
@@ -24,11 +24,11 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
     private Guid _testUserId = Guid.CreateVersion7();
     private Curso _testCurso = null!;
     private Curso _testCursoNaoMatriculado = null!;
-    private Estudante? _testEstudante;
+    private Aluno? _testAluno;
     private Matricula? _testMatricula;
     private Matricula? _testMatriculaNaoPaga;
 
-    public EstudanteEndpointsTests(IntegrationTestFactory<GestaoAlunosWebApi.Program> factory)
+    public AlunoEndpointsTests(IntegrationTestFactory<GestaoAlunosWebApi.Program> factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();
@@ -39,19 +39,19 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
     {
         await _testDb.InitializeAsync();
 
-        _testEstudante = await _testDb.CriarEstudanteTesteAsync(_testUserId);
+        _testAluno = await _testDb.CriarAlunoTesteAsync(_testUserId);
 
-        var curso = await _testDb.CriarCursoTesteAsync(instrutorId: _testEstudante.UsuarioId);
+        var curso = await _testDb.CriarCursoTesteAsync(instrutorId: _testAluno.UsuarioId);
         _testCurso = curso;
 
-        var cursoDois = await _testDb.CriarCursoTesteAsync(instrutorId: _testEstudante.UsuarioId);
+        var cursoDois = await _testDb.CriarCursoTesteAsync(instrutorId: _testAluno.UsuarioId);
 
-        var cursoNaoMatriculado = await _testDb.CriarCursoTesteAsync(instrutorId: _testEstudante.UsuarioId);
+        var cursoNaoMatriculado = await _testDb.CriarCursoTesteAsync(instrutorId: _testAluno.UsuarioId);
         _testCursoNaoMatriculado = cursoNaoMatriculado;
 
         // Create test
-        _testMatricula = await _testDb.CriarMatriculaTesteAsync(_testEstudante.Id, _testCurso.Id, true);
-        _testMatriculaNaoPaga = await _testDb.CriarMatriculaTesteAsync(_testEstudante.Id, cursoDois.Id, false);
+        _testMatricula = await _testDb.CriarMatriculaTesteAsync(_testAluno.Id, _testCurso.Id, true);
+        _testMatriculaNaoPaga = await _testDb.CriarMatriculaTesteAsync(_testAluno.Id, cursoDois.Id, false);
 
         await LoginAsync();
     }
@@ -82,7 +82,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
     }
 
     [Fact]
-    public async Task ObterCertificadosEstudante_DeveRetornarCertificados()
+    public async Task ObterCertificadosAluno_DeveRetornarCertificados()
     {
         // Arrange
         await _testDb.CriarCertificadoTesteAsync(
@@ -90,11 +90,11 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
             "Test Certificate Content");
 
         // Act
-        var response = await _client.GetAsync("/v1/estudante/certificados");
+        var response = await _client.GetAsync("/v1/aluno/certificados");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var certificados = await response.Content.ReadFromJsonAsync<IEnumerable<CertificadoEstudanteResponse>>();
+        var certificados = await response.Content.ReadFromJsonAsync<IEnumerable<CertificadoAlunoResponse>>();
         certificados.Should().NotBeNull();
         certificados.Should().Contain(c => c.MatriculaId == _testMatricula.Id);
     }
@@ -110,7 +110,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/aula/iniciar", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/aula/iniciar", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -135,7 +135,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/aula/concluir", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/aula/concluir", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -156,12 +156,12 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var result = await response.Content.ReadAsStringAsync();
-        result.Should().Contain("Estudante já está matriculado neste curso");
+        result.Should().Contain("Aluno já está matriculado neste curso");
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -196,14 +196,14 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
                 AulaId = aula.Id
             };
 
-            await _client.PostAsJsonAsync("/v1/estudante/matricula/aula/iniciar", requestLessonStart);
+            await _client.PostAsJsonAsync("/v1/aluno/matricula/aula/iniciar", requestLessonStart);
 
             var requestLessonEnd = new ConcluirAulaRequest
             {
                 MatriculaId = _testMatricula.Id,
                 AulaId = aula.Id
             };
-            await _client.PostAsJsonAsync("/v1/estudante/matricula/aula/concluir", requestLessonEnd);
+            await _client.PostAsJsonAsync("/v1/aluno/matricula/aula/concluir", requestLessonEnd);
         }
 
         var request = new ConcluirMatriculaRequest
@@ -212,7 +212,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/concluir", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/concluir", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -238,7 +238,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/pagamento", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/pagamento", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -264,7 +264,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/pagamento", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/pagamento", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -288,7 +288,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/pagamento", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/pagamento", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -312,7 +312,7 @@ public class EstudanteEndpointsTests : IClassFixture<IntegrationTestFactory<Gest
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/v1/estudante/matricula/pagamento", request);
+        var response = await _client.PostAsJsonAsync("/v1/aluno/matricula/pagamento", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

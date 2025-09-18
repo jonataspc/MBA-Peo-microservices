@@ -24,7 +24,7 @@ namespace Peo.GestaoAlunos.Infra.Data.DiConfig
             }
 
             // Alunos
-            services.AddDbContext<GestaoEstudantesContext>(options =>
+            services.AddDbContext<GestaoAlunosContext>(options =>
             {
                 if (hostEnvironment.IsDevelopment())
                 {
@@ -50,7 +50,7 @@ namespace Peo.GestaoAlunos.Infra.Data.DiConfig
             }
 
             // Repos
-            services.AddScoped<IEstudanteRepository, EstudanteRepository>();
+            services.AddScoped<IAlunoRepository, AlunoRepository>();
 
             return services;
         }

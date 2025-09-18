@@ -7,7 +7,7 @@ using Peo.Core.Web.Api;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
 using Peo.GestaoAlunos.Application.Queries.ObterMatriculas;
 
-namespace Peo.GestaoAlunos.Application.Endpoints.Estudante
+namespace Peo.GestaoAlunos.Application.Endpoints.Aluno
 {
     public class EndpointObterMatriculas : IEndpoint
     {

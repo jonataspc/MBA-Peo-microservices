@@ -3,7 +3,7 @@ using Peo.GestaoAlunos.Application.Commands.Aula;
 using Peo.GestaoAlunos.Application.Commands.Matricula;
 using Peo.GestaoAlunos.Application.Commands.MatriculaCurso;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
-using Peo.GestaoAlunos.Application.Queries.ObterCertificadosEstudante;
+using Peo.GestaoAlunos.Application.Queries.ObterCertificadosAluno;
 using Peo.GestaoAlunos.Application.Services;
 using Peo.GestaoAlunos.Domain.Interfaces;
 
@@ -16,17 +16,17 @@ namespace Peo.GestaoAlunos.Application.DiConfig
             // Mediator
             services.AddMediatR(x =>
             {
-                x.RegisterServicesFromAssembly(typeof(EstudanteService).Assembly);
+                x.RegisterServicesFromAssembly(typeof(AlunoService).Assembly);
             });
 
             services.AddScoped<IRequestHandler<MatriculaCursoCommand, Result<MatriculaCursoResponse>>, MatriculaCursoCommandHandler>();
             services.AddScoped<IRequestHandler<ConcluirMatriculaCommand, Result<ConcluirMatriculaResponse>>, ConcluirMatriculaCommandHandler>();
             services.AddScoped<IRequestHandler<IniciarAulaCommand, Result<ProgressoAulaResponse>>, IniciarAulaCommandHandler>();
             services.AddScoped<IRequestHandler<ConcluirAulaCommand, Result<ProgressoAulaResponse>>, ConcluirAulaCommandHandler>();
-            services.AddScoped<IRequestHandler<ObterCertificadosEstudanteQuery, Result<IEnumerable<CertificadoEstudanteResponse>>>, ObterCertificadosEstudanteQueryHandler>();
+            services.AddScoped<IRequestHandler<ObterCertificadosAlunoQuery, Result<IEnumerable<CertificadoAlunoResponse>>>, ObterCertificadosAlunoQueryHandler>();
 
             // Application services
-            services.AddScoped<IEstudanteService, EstudanteService>();
+            services.AddScoped<IAlunoService, AlunoService>();
 
             return services;
         }

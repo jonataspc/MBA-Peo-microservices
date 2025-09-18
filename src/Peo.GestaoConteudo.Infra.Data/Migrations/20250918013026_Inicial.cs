@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Peo.GestaoConteudo.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,8 +18,8 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Titulo = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
                     Descricao = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: true),
-                    InstrutorId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Preco = table.Column<decimal>(type: "decimal(12, 2)", nullable: false),
+                    InstrutorNome = table.Column<string>(type: "TEXT", nullable: true),
+                    Preco = table.Column<decimal>(type: "decimal(12, 2)", precision: 10, scale: 2, nullable: false),
                     EstaPublicado = table.Column<bool>(type: "INTEGER", nullable: false),
                     DataPublicacao = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Tags = table.Column<string>(type: "TEXT", nullable: false),
@@ -28,12 +29,6 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Curso", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Curso_Usuario_InstrutorId",
-                        column: x => x.InstrutorId,
-                        principalTable: "Usuario",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,11 +104,6 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                 name: "IX_Aula_CursoId",
                 table: "Aula",
                 column: "CursoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Curso_InstrutorId",
-                table: "Curso",
-                column: "InstrutorId");
         }
 
         /// <inheritdoc />

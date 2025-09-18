@@ -5,20 +5,20 @@ namespace Peo.GestaoAlunos.Domain.Entities;
 
 public class Matricula : EntityBase
 {
-    public Guid EstudanteId { get; private set; }
+    public Guid AlunoId { get; private set; }
     public Guid CursoId { get; private set; }
     public DateTime DataMatricula { get; private set; }
     public DateTime? DataConclusao { get; private set; }
     public StatusMatricula Status { get; private set; }
     public int PercentualProgresso { get; private set; }
-    public virtual Estudante? Estudante { get; set; }
+    public virtual Aluno? Aluno { get; set; }
 
     protected Matricula()
     { }
 
-    public Matricula(Guid estudanteId, Guid cursoId)
+    public Matricula(Guid alunoId, Guid cursoId)
     {
-        EstudanteId = estudanteId;
+        AlunoId = alunoId;
         CursoId = cursoId;
         DataMatricula = DateTime.Now;
         Status = StatusMatricula.PendentePagamento;

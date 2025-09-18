@@ -11,15 +11,15 @@ using Peo.Faturamento.Infra.Data.Contexts;
 namespace Peo.Faturamento.Infra.Data.Migrations
 {
     [DbContext(typeof(CobrancaContext))]
-    [Migration("20250515015911_TraducaoPtBr")]
-    partial class TraducaoPtBr
+    [Migration("20250918012816_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true);
