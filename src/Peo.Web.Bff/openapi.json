@@ -2,7 +2,7 @@
   "x-generator": "NSwag v14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))",
   "openapi": "3.0.0",
   "info": {
-    "title": "Plataforma de Educa��o Online - WebAPI",
+    "title": "Plataforma de Educação Online - WebAPI",
     "version": "1.0.0"
   },
   "paths": {
@@ -162,7 +162,7 @@
     "/v1/conteudo/curso": {
       "post": {
         "tags": [
-          "Conte�do"
+          "Conteúdo"
         ],
         "operationId": "PostV1ConteudoCurso",
         "requestBody": {
@@ -200,7 +200,7 @@
       },
       "get": {
         "tags": [
-          "Conte�do"
+          "Conteúdo"
         ],
         "operationId": "GetV1ConteudoCurso",
         "responses": {
@@ -228,7 +228,7 @@
     "/v1/conteudo/curso/{id}": {
       "get": {
         "tags": [
-          "Conte�do"
+          "Conteúdo"
         ],
         "operationId": "GetV1ConteudoCurso2",
         "parameters": [
@@ -271,7 +271,7 @@
     "/v1/conteudo/curso/{cursoId}/aula": {
       "get": {
         "tags": [
-          "Conte�do"
+          "Conteúdo"
         ],
         "operationId": "GetV1ConteudoCursoAula",
         "parameters": [
@@ -309,7 +309,7 @@
       },
       "post": {
         "tags": [
-          "Conte�do"
+          "Conteúdo"
         ],
         "operationId": "PostV1ConteudoCursoAula",
         "parameters": [
