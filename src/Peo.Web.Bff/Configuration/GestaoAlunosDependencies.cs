@@ -25,8 +25,8 @@ namespace Peo.Web.Bff.Configuration
         public static WebApplication AddGestaoAlunosEndpoints(this WebApplication app)
         {
             var endpoints = app
-            .MapGroup("v1/estudante")
-            .WithTags("Estudantes");
+            .MapGroup("v1/aluno")
+            .WithTags("Alunos");
 
             endpoints.MapPost("/matricula/", async (MatriculaCursoRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {

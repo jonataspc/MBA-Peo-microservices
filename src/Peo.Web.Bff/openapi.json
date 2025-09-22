@@ -358,12 +358,12 @@
         }
       }
     },
-    "/v1/estudante/matricula": {
+    "/v1/aluno/matricula": {
       "post": {
         "tags": [
-          "Estudantes"
+          "Alunos"
         ],
-        "operationId": "PostV1EstudanteMatricula",
+        "operationId": "PostV1AlunoMatricula",
         "requestBody": {
           "x-name": "request",
           "content": {
@@ -399,9 +399,9 @@
       },
       "get": {
         "tags": [
-          "Estudantes"
+          "Alunos"
         ],
-        "operationId": "GetV1EstudanteMatricula",
+        "operationId": "GetV1AlunoMatricula",
         "responses": {
           "200": {
             "description": "",
@@ -427,12 +427,12 @@
         }
       }
     },
-    "/v1/estudante/matricula/concluir": {
+    "/v1/aluno/matricula/concluir": {
       "post": {
         "tags": [
-          "Estudantes"
+          "Alunos"
         ],
-        "operationId": "PostV1EstudanteMatriculaConcluir",
+        "operationId": "PostV1AlunoMatriculaConcluir",
         "requestBody": {
           "x-name": "request",
           "content": {
@@ -467,12 +467,12 @@
         }
       }
     },
-    "/v1/estudante/matricula/aula/iniciar": {
+    "/v1/aluno/matricula/aula/iniciar": {
       "post": {
         "tags": [
-          "Estudantes"
+          "Alunos"
         ],
-        "operationId": "PostV1EstudanteMatriculaAulaIniciar",
+        "operationId": "PostV1AlunoMatriculaAulaIniciar",
         "requestBody": {
           "x-name": "request",
           "content": {
@@ -507,12 +507,12 @@
         }
       }
     },
-    "/v1/estudante/matricula/aula/concluir": {
+    "/v1/aluno/matricula/aula/concluir": {
       "post": {
         "tags": [
-          "Estudantes"
+          "Alunos"
         ],
-        "operationId": "PostV1EstudanteMatriculaAulaConcluir",
+        "operationId": "PostV1AlunoMatriculaAulaConcluir",
         "requestBody": {
           "x-name": "request",
           "content": {
@@ -547,12 +547,12 @@
         }
       }
     },
-    "/v1/estudante/certificados": {
+    "/v1/aluno/certificados": {
       "get": {
         "tags": [
-          "Estudantes"
+          "Alunos"
         ],
-        "operationId": "GetV1EstudanteCertificados",
+        "operationId": "GetV1AlunoCertificados",
         "responses": {
           "200": {
             "description": "",
@@ -561,7 +561,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CertificadoEstudanteResponse"
+                    "$ref": "#/components/schemas/CertificadoAlunoResponse"
                   }
                 }
               }
@@ -1055,7 +1055,7 @@
           }
         }
       },
-      "CertificadoEstudanteResponse": {
+      "CertificadoAlunoResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {

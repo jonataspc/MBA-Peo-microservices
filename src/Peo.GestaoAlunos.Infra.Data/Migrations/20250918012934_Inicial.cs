@@ -1,17 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Peo.GestaoAlunos.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class TraducaoPtBr : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Estudante",
+                name: "Aluno",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -22,13 +23,7 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Estudante", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Estudante_Usuario_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuario",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_Aluno", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +31,7 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    EstudanteId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AlunoId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CursoId = table.Column<Guid>(type: "TEXT", nullable: false),
                     DataMatricula = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DataConclusao = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -49,9 +44,9 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 {
                     table.PrimaryKey("PK_Matricula", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Matricula_Estudante_EstudanteId",
-                        column: x => x.EstudanteId,
-                        principalTable: "Estudante",
+                        name: "FK_Matricula_Aluno_AlunoId",
+                        column: x => x.AlunoId,
+                        principalTable: "Aluno",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -103,6 +98,12 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Aluno_UsuarioId",
+                table: "Aluno",
+                column: "UsuarioId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Certificado_MatriculaId",
                 table: "Certificado",
                 column: "MatriculaId");
@@ -114,15 +115,9 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Estudante_UsuarioId",
-                table: "Estudante",
-                column: "UsuarioId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Matricula_EstudanteId_CursoId",
+                name: "IX_Matricula_AlunoId_CursoId",
                 table: "Matricula",
-                columns: new[] { "EstudanteId", "CursoId" },
+                columns: new[] { "AlunoId", "CursoId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -145,7 +140,7 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 name: "Matricula");
 
             migrationBuilder.DropTable(
-                name: "Estudante");
+                name: "Aluno");
         }
     }
 }

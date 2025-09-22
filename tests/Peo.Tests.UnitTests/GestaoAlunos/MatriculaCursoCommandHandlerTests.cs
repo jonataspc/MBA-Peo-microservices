@@ -11,18 +11,18 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 
 public class MatriculaCursoCommandHandlerTests
 {
-    private readonly Mock<IEstudanteService> _estudanteServiceMock;
+    private readonly Mock<IAlunoService> _alunoServiceMock;
     private readonly Mock<IAppIdentityUser> _appIdentityUserMock;
     private readonly Mock<ILogger<MatriculaCursoCommandHandler>> _loggerMock;
     private readonly MatriculaCursoCommandHandler _handler;
 
     public MatriculaCursoCommandHandlerTests()
     {
-        _estudanteServiceMock = new Mock<IEstudanteService>();
+        _alunoServiceMock = new Mock<IAlunoService>();
         _appIdentityUserMock = new Mock<IAppIdentityUser>();
         _loggerMock = new Mock<ILogger<MatriculaCursoCommandHandler>>();
         _handler = new MatriculaCursoCommandHandler(
-            _estudanteServiceMock.Object,
+            _alunoServiceMock.Object,
             _appIdentityUserMock.Object,
             _loggerMock.Object);
     }
@@ -57,7 +57,7 @@ public class MatriculaCursoCommandHandlerTests
         _appIdentityUserMock.Setup(x => x.GetRemoteIpAddress())
             .Returns("127.0.0.1");
 
-        _estudanteServiceMock.Setup(x => x.MatricularEstudanteComUserIdAsync(usuarioId, cursoId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.MatricularAlunoComUserIdAsync(usuarioId, cursoId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(matricula);
 
         var requisicao = new MatriculaCursoRequest
@@ -87,7 +87,7 @@ public class MatriculaCursoCommandHandlerTests
             .Returns(usuarioId);
         _appIdentityUserMock.Setup(x => x.IsAuthenticated())
             .Returns(true);
-        _estudanteServiceMock.Setup(x => x.MatricularEstudanteComUserIdAsync(usuarioId, cursoId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.MatricularAlunoComUserIdAsync(usuarioId, cursoId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception(mensagemErro));
 
         var requisicao = new MatriculaCursoRequest

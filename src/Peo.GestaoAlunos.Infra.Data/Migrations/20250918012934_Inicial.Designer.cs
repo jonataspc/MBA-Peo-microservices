@@ -6,48 +6,51 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Peo.GestaoAlunos.Infra.Data.Contexts;
 
-
 #nullable disable
 
 namespace Peo.GestaoAlunos.Infra.Data.Migrations
 {
-    [DbContext(typeof(GestaoEstudantesContext))]
-    [Migration("20250515021556_TraducaoPtBr")]
-    partial class TraducaoPtBr
+    [DbContext(typeof(GestaoAlunosContext))]
+    [Migration("20250918012934_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true);
 
-            modelBuilder.Entity("Peo.Core.Entities.Usuario", b =>
+            modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Aluno", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasPrecision(0)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("EstaAtivo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("ModifiedAt")
+                        .HasPrecision(0)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("NomeCompleto")
-                        .IsRequired()
+                    b.Property<Guid>("UsuarioId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuario");
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
+                    b.ToTable("Aluno");
                 });
 
             modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Certificado", b =>
@@ -88,38 +91,12 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                     b.ToTable("Certificado");
                 });
 
-            modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Estudante", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasPrecision(0)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("EstaAtivo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasPrecision(0)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("Estudante");
-                });
-
             modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Matricula", b =>
                 {
                     b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("AlunoId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -133,9 +110,6 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DataMatricula")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("EstudanteId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("ModifiedAt")
@@ -155,7 +129,7 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EstudanteId", "CursoId")
+                    b.HasIndex("AlunoId", "CursoId")
                         .IsUnique();
 
                     b.ToTable("Matricula");
@@ -205,24 +179,15 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                     b.Navigation("Matricula");
                 });
 
-            modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Estudante", b =>
-                {
-                    b.HasOne("Peo.Core.Entities.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Matricula", b =>
                 {
-                    b.HasOne("Peo.GestaoAlunos.Domain.Entities.Estudante", "Estudante")
+                    b.HasOne("Peo.GestaoAlunos.Domain.Entities.Aluno", "Aluno")
                         .WithMany("Matriculas")
-                        .HasForeignKey("EstudanteId")
+                        .HasForeignKey("AlunoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Estudante");
+                    b.Navigation("Aluno");
                 });
 
             modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.ProgressoMatricula", b =>
@@ -234,7 +199,7 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Estudante", b =>
+            modelBuilder.Entity("Peo.GestaoAlunos.Domain.Entities.Aluno", b =>
                 {
                     b.Navigation("Matriculas");
                 });

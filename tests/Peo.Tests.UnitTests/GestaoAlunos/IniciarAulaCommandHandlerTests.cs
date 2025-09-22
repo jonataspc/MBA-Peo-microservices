@@ -10,15 +10,15 @@ namespace Peo.Tests.UnitTests.GestaoAlunos;
 
 public class IniciarAulaCommandHandlerTests
 {
-    private readonly Mock<IEstudanteService> _estudanteServiceMock;
+    private readonly Mock<IAlunoService> _alunoServiceMock;
     private readonly Mock<ILogger<IniciarAulaCommandHandler>> _loggerMock;
     private readonly IniciarAulaCommandHandler _handler;
 
     public IniciarAulaCommandHandlerTests()
     {
-        _estudanteServiceMock = new Mock<IEstudanteService>();
+        _alunoServiceMock = new Mock<IAlunoService>();
         _loggerMock = new Mock<ILogger<IniciarAulaCommandHandler>>();
-        _handler = new IniciarAulaCommandHandler(_estudanteServiceMock.Object, _loggerMock.Object);
+        _handler = new IniciarAulaCommandHandler(_alunoServiceMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -29,9 +29,9 @@ public class IniciarAulaCommandHandlerTests
         var aulaId = Guid.CreateVersion7();
         var progresso = new ProgressoMatricula(matriculaId, aulaId);
 
-        _estudanteServiceMock.Setup(x => x.IniciarAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.IniciarAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(progresso);
-        _estudanteServiceMock.Setup(x => x.ObterProgressoGeralCursoAsync(matriculaId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.ObterProgressoGeralCursoAsync(matriculaId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
 
         var requisicao = new IniciarAulaRequest
@@ -63,7 +63,7 @@ public class IniciarAulaCommandHandlerTests
         var aulaId = Guid.CreateVersion7();
         var mensagemErro = "Ocorreu um erro";
 
-        _estudanteServiceMock.Setup(x => x.IniciarAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
+        _alunoServiceMock.Setup(x => x.IniciarAulaAsync(matriculaId, aulaId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception(mensagemErro));
 
         var requisicao = new IniciarAulaRequest

@@ -12,7 +12,7 @@ public class MatriculaConfiguration : EntityBaseConfiguration<Matricula>
     {
         base.Configure(builder);
 
-        builder.Property(e => e.EstudanteId)
+        builder.Property(e => e.AlunoId)
             .IsRequired();
 
         builder.Property(e => e.CursoId)
@@ -33,13 +33,13 @@ public class MatriculaConfiguration : EntityBaseConfiguration<Matricula>
             .HasDefaultValue(0);
 
         // Indexes
-        builder.HasIndex(e => new { e.EstudanteId, e.CursoId })
+        builder.HasIndex(e => new { e.AlunoId, e.CursoId })
             .IsUnique();
 
         // Relationships
-        builder.HasOne<Estudante>(e => e.Estudante)
+        builder.HasOne<Aluno>(e => e.Aluno)
             .WithMany(e => e.Matriculas)
-            .HasForeignKey(e => e.EstudanteId)
+            .HasForeignKey(e => e.AlunoId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

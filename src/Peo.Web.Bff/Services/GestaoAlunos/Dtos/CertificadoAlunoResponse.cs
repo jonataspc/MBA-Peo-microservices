@@ -1,6 +1,6 @@
 namespace Peo.Web.Bff.Services.GestaoAlunos.Dtos
 {
-    public record CertificadoEstudanteResponse(
+    public record CertificadoAlunoResponse(
         Guid CertificadoId,
         Guid MatriculaId,
         string Conteudo,

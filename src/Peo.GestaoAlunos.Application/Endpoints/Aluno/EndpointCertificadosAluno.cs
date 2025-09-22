@@ -5,24 +5,24 @@ using Microsoft.AspNetCore.Routing;
 using Peo.Core.DomainObjects;
 using Peo.Core.Web.Api;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
-using Peo.GestaoAlunos.Application.Queries.ObterCertificadosEstudante;
+using Peo.GestaoAlunos.Application.Queries.ObterCertificadosAluno;
 
-namespace Peo.GestaoAlunos.Application.Endpoints.Estudante;
+namespace Peo.GestaoAlunos.Application.Endpoints.Aluno;
 
-public class EndpointCertificadosEstudante : IEndpoint
+public class EndpointCertificadosAluno : IEndpoint
 {
     public static void Map(IEndpointRouteBuilder app)
     {
         app.MapGet("/certificados", Handler)
-           .WithSummary("Obter certificados do estudante")
+           .WithSummary("Obter certificados do aluno")
            .RequireAuthorization(AccessRoles.Aluno);
     }
 
-    private static async Task<Results<Ok<IEnumerable<CertificadoEstudanteResponse>>, BadRequest<Error>>> Handler(
+    private static async Task<Results<Ok<IEnumerable<CertificadoAlunoResponse>>, BadRequest<Error>>> Handler(
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var query = new ObterCertificadosEstudanteQuery();
+        var query = new ObterCertificadosAlunoQuery();
         var response = await mediator.Send(query, cancellationToken);
 
         if (response.IsSuccess)
