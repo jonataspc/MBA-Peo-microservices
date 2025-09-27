@@ -13,7 +13,7 @@ namespace Peo.Faturamento.Application.Handlers
     {
         public async Task<Result<ProcessarPagamentoMatriculaResponse>> Handle(ProcessarPagamentoMatriculaCommand request, CancellationToken cancellationToken)
         {
-            var pagamento = await pagamentoService.ProcessarPagamentoMatriculaAsync(request.MatriculaId, request.Valor, request.DadosCartao);
+            var pagamento = await pagamentoService.ProcessarPagamentoMatriculaAsync(request.MatriculaId, request.Valor, request.DadosCartao, cancellationToken);
 
             if (pagamento.Status == Domain.ValueObjects.StatusPagamento.Falha)
             {

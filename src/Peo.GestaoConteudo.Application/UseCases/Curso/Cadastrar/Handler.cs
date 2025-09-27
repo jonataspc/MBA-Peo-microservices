@@ -22,7 +22,7 @@ public class Handler(IRepository<Domain.Entities.Curso> repository) : IRequestHa
             aulas: []
         );
 
-        repository.Insert(curso);
+        repository.Insert(curso, cancellationToken);
         await repository.UnitOfWork.CommitAsync(cancellationToken);
 
         return Result.Success(new Response(curso.Id));

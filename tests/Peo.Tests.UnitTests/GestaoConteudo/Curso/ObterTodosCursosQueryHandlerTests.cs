@@ -49,7 +49,7 @@ public class ObterTodosCursosQueryHandlerTests
             )
         };
 
-        _repositorioMock.Setup(x => x.GetAllAsync())
+        _repositorioMock.Setup(x => x.GetAllAsync(CancellationToken.None))
             .ReturnsAsync(cursos);
 
         var consulta = new Query();
@@ -69,7 +69,7 @@ public class ObterTodosCursosQueryHandlerTests
     public async Task Handler_DeveRetornarListaVazia_QuandoNaoExistemCursos()
     {
         // Arrange
-        _repositorioMock.Setup(x => x.GetAllAsync())
+        _repositorioMock.Setup(x => x.GetAllAsync(CancellationToken.None))
             .ReturnsAsync(Enumerable.Empty<Peo.GestaoConteudo.Domain.Entities.Curso>());
 
         var consulta = new Query();

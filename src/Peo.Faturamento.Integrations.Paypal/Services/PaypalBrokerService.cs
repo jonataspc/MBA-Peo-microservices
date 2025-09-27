@@ -6,7 +6,7 @@ namespace Peo.Faturamento.Integrations.Paypal.Services
 {
     public class PaypalBrokerService : IBrokerPagamentoService
     {
-        public async Task<PaymentBrokerResult> ProcessarPagamentoAsync(CartaoCredito cartaoCredito)
+        public async Task<PaymentBrokerResult> ProcessarPagamentoAsync(CartaoCredito cartaoCredito, CancellationToken cancellationToken)
         {
             if (cartaoCredito?.NumeroCartao is null)
             {
@@ -21,7 +21,7 @@ namespace Peo.Faturamento.Integrations.Paypal.Services
             // Simula chamada à API do Paypal
             await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(0, 2)));
 
-            var success = Random.Shared.Next(0, 2) == 1 || 
+            var success = Random.Shared.Next(0, 2) == 1 ||
                             cartaoCredito.NumeroCartao.StartsWith("1234");
 
             if (success)

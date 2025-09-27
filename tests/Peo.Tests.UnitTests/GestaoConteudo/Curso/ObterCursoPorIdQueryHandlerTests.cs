@@ -36,7 +36,7 @@ public class ObterCursoPorIdQueryHandlerTests
             aulas: new List<Peo.GestaoConteudo.Domain.Entities.Aula>()
         );
 
-        _repositorioMock.Setup(x => x.GetAsync(cursoId))
+        _repositorioMock.Setup(x => x.GetAsync(cursoId, CancellationToken.None))
             .ReturnsAsync(curso);
 
         var consulta = new Query(cursoId);
@@ -56,7 +56,7 @@ public class ObterCursoPorIdQueryHandlerTests
     {
         // Arrange
         var cursoId = Guid.CreateVersion7();
-        _repositorioMock.Setup(x => x.GetAsync(cursoId))
+        _repositorioMock.Setup(x => x.GetAsync(cursoId, CancellationToken.None))
             .ReturnsAsync((Peo.GestaoConteudo.Domain.Entities.Curso?)null);
 
         var consulta = new Query(cursoId);

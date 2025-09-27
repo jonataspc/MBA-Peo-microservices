@@ -10,7 +10,7 @@ public class Handler(IRepository<Domain.Entities.Curso> repository) : IRequestHa
 {
     public async Task<Result<Response>> Handle(Query request, CancellationToken cancellationToken)
     {
-        var curso = await repository.GetAsync(request.CursoId);
+        var curso = await repository.GetAsync(request.CursoId, CancellationToken.None);
 
         if (curso is null)
         {
