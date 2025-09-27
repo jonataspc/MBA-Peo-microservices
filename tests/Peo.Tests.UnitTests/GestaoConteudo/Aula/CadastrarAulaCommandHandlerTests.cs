@@ -44,7 +44,7 @@ public class CadastrarAulaCommandHandlerTests
             Arquivos = []
         };
 
-        _repositorioMock.Setup(x => x.WithTracking().GetAsync(cursoId))
+        _repositorioMock.Setup(x => x.WithTracking().GetAsync(cursoId, CancellationToken.None))
             .ReturnsAsync(curso);
         _repositorioMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult(1));
@@ -57,7 +57,7 @@ public class CadastrarAulaCommandHandlerTests
         resultado.Value.Should().NotBeNull();
         resultado.Value.AulaId.Should().NotBeEmpty();
 
-        _repositorioMock.Verify(x => x.WithTracking().GetAsync(cursoId), Times.Once);
+        _repositorioMock.Verify(x => x.WithTracking().GetAsync(cursoId, CancellationToken.None), Times.Once);
         _repositorioMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -76,7 +76,7 @@ public class CadastrarAulaCommandHandlerTests
             Arquivos = []
         };
 
-        _repositorioMock.Setup(x => x.WithTracking().GetAsync(cursoId))
+        _repositorioMock.Setup(x => x.WithTracking().GetAsync(cursoId, CancellationToken.None))
             .ReturnsAsync((Peo.GestaoConteudo.Domain.Entities.Curso?)null);
 
         // Act
@@ -87,7 +87,7 @@ public class CadastrarAulaCommandHandlerTests
         resultado.Error.Should().NotBeNull();
         resultado.Error.Message.Should().Be("Curso não encontrado");
 
-        _repositorioMock.Verify(x => x.WithTracking().GetAsync(cursoId), Times.Once);
+        _repositorioMock.Verify(x => x.WithTracking().GetAsync(cursoId, CancellationToken.None), Times.Once);
         _repositorioMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

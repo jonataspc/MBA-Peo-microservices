@@ -45,24 +45,24 @@ public class PagamentoServiceTests
         var pagamento = new Pagamento(matriculaId, valor);
         var paymentResult = new PaymentBrokerResult(true, "Success", "hash123");
 
-        _pagamentoRepositoryMock.Setup(x => x.Insert(It.IsAny<Pagamento>()));
-        _pagamentoRepositoryMock.Setup(x => x.Update(It.IsAny<Pagamento>()));
+        _pagamentoRepositoryMock.Setup(x => x.Insert(It.IsAny<Pagamento>(), CancellationToken.None));
+        _pagamentoRepositoryMock.Setup(x => x.Update(It.IsAny<Pagamento>(), CancellationToken.None));
         _pagamentoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Guid>()))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Guid>(), CancellationToken.None))
             .ReturnsAsync(pagamento);
-        _paymentBrokerServiceMock.Setup(x => x.ProcessarPagamentoAsync(It.IsAny<CartaoCredito>()))
+        _paymentBrokerServiceMock.Setup(x => x.ProcessarPagamentoAsync(It.IsAny<CartaoCredito>(), CancellationToken.None))
             .ReturnsAsync(paymentResult);
         _messageBus.Setup(x => x.PublishAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         // Act
-        var resultado = await _pagamentoService.ProcessarPagamentoMatriculaAsync(matriculaId, valor, cartaoCredito);
+        var resultado = await _pagamentoService.ProcessarPagamentoMatriculaAsync(matriculaId, valor, cartaoCredito, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
         resultado.Status.Should().Be(StatusPagamento.Pago);
-        _pagamentoRepositoryMock.Verify(x => x.Update(It.Is<Pagamento>(p => p.Status == StatusPagamento.Pago)), Times.Once);
+        _pagamentoRepositoryMock.Verify(x => x.Update(It.Is<Pagamento>(p => p.Status == StatusPagamento.Pago), CancellationToken.None), Times.Once);
         _pagamentoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Exactly(3));
         _messageBus.Verify(x => x.PublishAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -77,24 +77,24 @@ public class PagamentoServiceTests
         var pagamento = new Pagamento(matriculaId, valor);
         var paymentResult = new PaymentBrokerResult(false, "Insufficient funds", null);
 
-        _pagamentoRepositoryMock.Setup(x => x.Insert(It.IsAny<Pagamento>()));
-        _pagamentoRepositoryMock.Setup(x => x.Update(It.IsAny<Pagamento>()));
+        _pagamentoRepositoryMock.Setup(x => x.Insert(It.IsAny<Pagamento>(), CancellationToken.None));
+        _pagamentoRepositoryMock.Setup(x => x.Update(It.IsAny<Pagamento>(), CancellationToken.None));
         _pagamentoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Guid>()))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Guid>(), CancellationToken.None))
             .ReturnsAsync(pagamento);
-        _paymentBrokerServiceMock.Setup(x => x.ProcessarPagamentoAsync(It.IsAny<CartaoCredito>()))
+        _paymentBrokerServiceMock.Setup(x => x.ProcessarPagamentoAsync(It.IsAny<CartaoCredito>(), CancellationToken.None))
             .ReturnsAsync(paymentResult);
         _messageBus.Setup(x => x.PublishAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         // Act
-        var resultado = await _pagamentoService.ProcessarPagamentoMatriculaAsync(matriculaId, valor, cartaoCredito);
+        var resultado = await _pagamentoService.ProcessarPagamentoMatriculaAsync(matriculaId, valor, cartaoCredito, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
         resultado.Status.Should().Be(StatusPagamento.Falha);
-        _pagamentoRepositoryMock.Verify(x => x.Update(It.Is<Pagamento>(p => p.Status == StatusPagamento.Falha)), Times.Once);
+        _pagamentoRepositoryMock.Verify(x => x.Update(It.Is<Pagamento>(p => p.Status == StatusPagamento.Falha), CancellationToken.None), Times.Once);
         _pagamentoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Exactly(3));
         _messageBus.Verify(x => x.PublishAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -108,18 +108,18 @@ public class PagamentoServiceTests
         pagamento.ProcessarPagamento("transaction-123");
         pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
 
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync(pagamento);
         _pagamentoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         // Act
-        var resultado = await _pagamentoService.EstornarPagamentoAsync(pagamentoId);
+        var resultado = await _pagamentoService.EstornarPagamentoAsync(pagamentoId, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
         resultado.Status.Should().Be(StatusPagamento.Estornado);
-        _pagamentoRepositoryMock.Verify(x => x.Update(pagamento), Times.Once);
+        _pagamentoRepositoryMock.Verify(x => x.Update(pagamento, CancellationToken.None), Times.Once);
         _pagamentoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -128,14 +128,14 @@ public class PagamentoServiceTests
     {
         // Arrange
         var pagamentoId = Guid.CreateVersion7();
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync((Pagamento?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            _pagamentoService.EstornarPagamentoAsync(pagamentoId));
+            _pagamentoService.EstornarPagamentoAsync(pagamentoId, CancellationToken.None));
 
-        _pagamentoRepositoryMock.Verify(x => x.Update(It.IsAny<Pagamento>()), Times.Never);
+        _pagamentoRepositoryMock.Verify(x => x.Update(It.IsAny<Pagamento>(), CancellationToken.None), Times.Never);
         _pagamentoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -148,18 +148,18 @@ public class PagamentoServiceTests
         var pagamento = new Pagamento(matriculaId, 99.99m);
         // O pagamento começa com status Pendente, que é o estado correto para cancelamento
 
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync(pagamento);
         _pagamentoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         // Act
-        var resultado = await _pagamentoService.CancelarPagamentoAsync(pagamentoId);
+        var resultado = await _pagamentoService.CancelarPagamentoAsync(pagamentoId, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
         resultado.Status.Should().Be(StatusPagamento.Cancelado);
-        _pagamentoRepositoryMock.Verify(x => x.Update(pagamento), Times.Once);
+        _pagamentoRepositoryMock.Verify(x => x.Update(pagamento, CancellationToken.None), Times.Once);
         _pagamentoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -168,14 +168,14 @@ public class PagamentoServiceTests
     {
         // Arrange
         var pagamentoId = Guid.CreateVersion7();
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync((Pagamento?)null);
 
         // Act & Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            _pagamentoService.CancelarPagamentoAsync(pagamentoId));
+            _pagamentoService.CancelarPagamentoAsync(pagamentoId, CancellationToken.None));
 
-        _pagamentoRepositoryMock.Verify(x => x.Update(It.IsAny<Pagamento>()), Times.Never);
+        _pagamentoRepositoryMock.Verify(x => x.Update(It.IsAny<Pagamento>(), CancellationToken.None), Times.Never);
         _pagamentoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -185,11 +185,11 @@ public class PagamentoServiceTests
         // Arrange
         var pagamentoId = Guid.CreateVersion7();
         var pagamentoEsperado = new Pagamento(Guid.CreateVersion7(), 99.99m);
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync(pagamentoEsperado);
 
         // Act
-        var resultado = await _pagamentoService.ObterPagamentoPorIdAsync(pagamentoId);
+        var resultado = await _pagamentoService.ObterPagamentoPorIdAsync(pagamentoId, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
@@ -201,11 +201,11 @@ public class PagamentoServiceTests
     {
         // Arrange
         var pagamentoId = Guid.CreateVersion7();
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync((Pagamento?)null);
 
         // Act
-        var resultado = await _pagamentoService.ObterPagamentoPorIdAsync(pagamentoId);
+        var resultado = await _pagamentoService.ObterPagamentoPorIdAsync(pagamentoId, CancellationToken.None);
 
         // Assert
         resultado.Should().BeNull();
@@ -221,11 +221,11 @@ public class PagamentoServiceTests
             new Pagamento(matriculaId, 99.99m),
             new Pagamento(matriculaId, 199.99m)
         };
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>()))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>(), CancellationToken.None))
             .ReturnsAsync(pagamentosEsperados);
 
         // Act
-        var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId);
+        var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
@@ -237,11 +237,11 @@ public class PagamentoServiceTests
     {
         // Arrange
         var matriculaId = Guid.CreateVersion7();
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>()))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>(), CancellationToken.None))
             .ReturnsAsync(Enumerable.Empty<Pagamento>());
 
         // Act
-        var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId);
+        var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId, CancellationToken.None);
 
         // Assert
         resultado.Should().NotBeNull();
@@ -253,11 +253,11 @@ public class PagamentoServiceTests
     {
         // Arrange
         var matriculaId = Guid.CreateVersion7();
-        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>()))
+        _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(It.IsAny<Expression<Func<Pagamento, bool>>>(), CancellationToken.None))
             .ReturnsAsync((IEnumerable<Pagamento>)null!);
 
         // Act
-        var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId);
+        var resultado = await _pagamentoService.ObterPagamentosPorMatriculaIdAsync(matriculaId, CancellationToken.None);
 
         // Assert
         resultado.Should().BeEmpty();

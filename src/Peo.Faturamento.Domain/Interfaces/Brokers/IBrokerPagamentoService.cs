@@ -5,6 +5,6 @@ namespace Peo.Faturamento.Domain.Interfaces.Brokers
 {
     public interface IBrokerPagamentoService
     {
-        Task<PaymentBrokerResult> ProcessarPagamentoAsync(CartaoCredito cartaoCredito);
+        Task<PaymentBrokerResult> ProcessarPagamentoAsync(CartaoCredito cartaoCredito, CancellationToken cancellationToken);
     }
 }

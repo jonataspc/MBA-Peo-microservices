@@ -1,4 +1,3 @@
-
 using MediatR;
 using Peo.Core.Interfaces.Data;
 
@@ -15,7 +14,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Curso.Atualizar
 
         public async Task<Unit> Handle(AtualizarCursoCommand request, CancellationToken cancellationToken)
         {
-            var curso = await _cursoRepository.WithTracking().GetAsync(request.Id);
+            var curso = await _cursoRepository.WithTracking().GetAsync(request.Id, cancellationToken);
 
             if (curso == null)
             {
@@ -25,7 +24,7 @@ namespace Peo.GestaoConteudo.Application.UseCases.Curso.Atualizar
 
             curso.AtualizarTituloDescricao(request.Titulo, request.Descricao);
 
-            _cursoRepository.Update(curso);
+            _cursoRepository.Update(curso, cancellationToken);
             await _cursoRepository.UnitOfWork.CommitAsync(cancellationToken);
 
             return Unit.Value;

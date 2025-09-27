@@ -51,7 +51,7 @@ public class PagamentoMatriculaCommandHandlerTests
         pagamento.ProcessarPagamento(Guid.CreateVersion7().ToString());
         pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
@@ -103,7 +103,7 @@ public class PagamentoMatriculaCommandHandlerTests
         var matricula = new Matricula(alunoId, cursoId);
         var valor = 99.99m;
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
