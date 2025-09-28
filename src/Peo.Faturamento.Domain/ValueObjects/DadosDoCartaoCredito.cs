@@ -1,6 +1,6 @@
 namespace Peo.Faturamento.Domain.ValueObjects;
 
-public class DadosDoCartaoCredito
+public record DadosDoCartaoCredito
 {
     public string? Hash { get; set; }
 }
