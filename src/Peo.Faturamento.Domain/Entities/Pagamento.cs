@@ -12,7 +12,7 @@ public class Pagamento : EntityBase, IAggregateRoot
     public StatusPagamento Status { get; private set; }
     public string? IdTransacao { get; private set; }
     public string? Detalhes { get; private set; }
-    public CartaoCreditoData? DadosCartao { get; private set; }
+    public DadosDoCartaoCredito? DadosCartao { get; private set; }
 
     protected Pagamento()
     { }
@@ -33,7 +33,7 @@ public class Pagamento : EntityBase, IAggregateRoot
         Status = StatusPagamento.Processando;
     }
 
-    public void ConfirmarPagamento(CartaoCreditoData dadosCartao)
+    public void ConfirmarPagamento(DadosDoCartaoCredito dadosCartao)
     {
         if (Status != StatusPagamento.Processando)
             throw new InvalidOperationException("Pagamento só pode ser confirmado quando está em Processamento");

@@ -106,7 +106,7 @@ public class PagamentoServiceTests
         var pagamentoId = Guid.CreateVersion7();
         var pagamento = new Pagamento(Guid.CreateVersion7(), 99.99m);
         pagamento.ProcessarPagamento("transaction-123");
-        pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
+        pagamento.ConfirmarPagamento(new DadosDoCartaoCredito { Hash = "hash-123" });
 
         _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync(pagamento);

@@ -49,7 +49,7 @@ public class PagamentoMatriculaCommandHandlerTests
         var cartaoCredito = new CartaoCredito("1234567890123456", "12/25", "123", "Usuário Teste");
         var pagamento = new Pagamento(matriculaId, valor);
         pagamento.ProcessarPagamento(Guid.CreateVersion7().ToString());
-        pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
+        pagamento.ConfirmarPagamento(new DadosDoCartaoCredito { Hash = "hash-123" });
 
         _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);

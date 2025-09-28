@@ -90,7 +90,7 @@ public class PagamentoService(
 
         if (result.Success)
         {
-            pagamento.ConfirmarPagamento(new CartaoCreditoData() { Hash = result.Hash });
+            pagamento.ConfirmarPagamento(new DadosDoCartaoCredito() { Hash = result.Hash });
 
             await messageBus.PublishAsync(new PagamentoMatriculaConfirmadoEvent(
                pagamento.MatriculaId,
