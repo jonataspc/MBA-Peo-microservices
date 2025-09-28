@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Peo.Core.Web.Extensions;
-using Peo.Identity.Application.Endpoints;
+﻿using Peo.Core.Web.Extensions;
+using Peo.Identity.WebApi.Endpoints;
 
-namespace Peo.Identity.Application.Extensions
+namespace Peo.Identity.WebApi.Extensions
 {
     public static class EndpointsConfig
     {

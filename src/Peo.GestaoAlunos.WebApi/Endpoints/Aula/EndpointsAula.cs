@@ -1,12 +1,10 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+using MediatR;
 using Peo.Core.DomainObjects;
 using Peo.Core.Web.Api;
 using Peo.GestaoAlunos.Application.Commands.Aula;
 using Peo.GestaoAlunos.Application.Dtos.Requests;
 
-namespace Peo.GestaoAlunos.Application.Endpoints.Aula;
+namespace Peo.GestaoAlunos.WebApi.Endpoints.Aula;
 
 public class EndpointsAula : IEndpoint
 {

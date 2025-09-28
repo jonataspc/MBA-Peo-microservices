@@ -6,13 +6,13 @@ using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
 using Peo.Identity.Application.Consumers;
 using Peo.Identity.Application.DiConfig;
-using Peo.Identity.Application.Extensions;
 using Peo.Identity.Application.Services;
 using Peo.Identity.Domain.Interfaces.Data;
 using Peo.Identity.Domain.Interfaces.Services;
 using Peo.Identity.Infra.Data.Contexts;
 using Peo.Identity.Infra.Data.DiConfig;
 using Peo.Identity.Infra.Data.Repositories;
+using Peo.Identity.WebApi.Extensions;
 
 namespace Peo.Identity.WebApi.Configuration
 {

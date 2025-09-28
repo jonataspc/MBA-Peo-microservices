@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Peo.Identity.Application.Endpoints.Requests
+namespace Peo.Identity.WebApi.Endpoints.Requests
 {
     public record RegisterRequest(
         [Required]

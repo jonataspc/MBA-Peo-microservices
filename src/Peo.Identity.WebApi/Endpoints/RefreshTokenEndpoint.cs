@@ -1,21 +1,17 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MiniValidation;
 using Peo.Core.Dtos;
 using Peo.Core.Web.Api;
-using Peo.Identity.Application.Endpoints.Requests;
-using Peo.Identity.Application.Endpoints.Responses;
 using Peo.Identity.Domain.Interfaces.Services;
+using Peo.Identity.WebApi.Endpoints.Requests;
+using Peo.Identity.WebApi.Endpoints.Responses;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Peo.Identity.Application.Endpoints
+namespace Peo.Identity.WebApi.Endpoints
 {
     public class RefreshTokenEndpoint : IEndpoint
     {

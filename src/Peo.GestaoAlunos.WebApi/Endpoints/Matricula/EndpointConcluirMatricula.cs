@@ -1,15 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Routing;
 using MiniValidation;
 using Peo.Core.DomainObjects;
+using Peo.Core.DomainObjects.Result;
 using Peo.Core.Web.Api;
 using Peo.GestaoAlunos.Application.Commands.Matricula;
 using Peo.GestaoAlunos.Application.Dtos.Requests;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
 
-namespace Peo.GestaoAlunos.Application.Endpoints.Matricula;
+namespace Peo.GestaoAlunos.WebApi.Endpoints.Matricula;
 
 public class EndpointConcluirMatricula : IEndpoint
 {

@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Identity;
 using MiniValidation;
 using Peo.Core.Web.Api;
-using Peo.Identity.Application.Endpoints.Requests;
-using Peo.Identity.Application.Endpoints.Responses;
 using Peo.Identity.Domain.Interfaces.Services;
+using Peo.Identity.WebApi.Endpoints.Requests;
+using Peo.Identity.WebApi.Endpoints.Responses;
 
-namespace Peo.Identity.Application.Endpoints
+namespace Peo.Identity.WebApi.Endpoints
 {
     public class LoginEndpoint : IEndpoint
     {

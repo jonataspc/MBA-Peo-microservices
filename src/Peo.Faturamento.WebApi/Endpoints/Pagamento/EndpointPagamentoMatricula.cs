@@ -11,7 +11,7 @@ using Peo.Faturamento.Application.Commands.PagamentoMatricula;
 using Peo.Faturamento.Application.Dtos.Requests;
 using Peo.Faturamento.Application.Dtos.Responses;
 
-namespace Peo.Faturamento.Application.Endpoints.Pagamento;
+namespace Peo.Faturamento.WebApi.Endpoints.Pagamento;
 
 public class EndpointPagamentoMatricula : IEndpoint
 {

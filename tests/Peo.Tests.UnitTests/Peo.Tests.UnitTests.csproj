@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Application\Peo.GestaoConteudo.Application.csproj" />
     <ProjectReference Include="..\..\src\Peo.Identity.Application\Peo.Identity.Application.csproj" />
     <ProjectReference Include="..\..\src\Peo.GestaoAlunos.Application\Peo.GestaoAlunos.Application.csproj" />
+    <ProjectReference Include="..\..\src\Peo.Identity.WebApi\Peo.Identity.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

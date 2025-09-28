@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\src\Peo.Faturamento.Application\Peo.Faturamento.Application.csproj" />
     <ProjectReference Include="..\..\src\Peo.Faturamento.Infra.Data\Peo.Faturamento.Infra.Data.csproj" />
     <ProjectReference Include="..\..\src\Peo.Faturamento.Integrations.Paypal\Peo.Faturamento.Integrations.Paypal.csproj" />
+    <ProjectReference Include="..\..\src\Peo.GestaoAlunos.WebApi\Peo.GestaoAlunos.WebApi.csproj" />
     <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Application\Peo.GestaoConteudo.Application.csproj" />
     <ProjectReference Include="..\..\src\Peo.GestaoConteudo.Infra.Data\Peo.GestaoConteudo.Infra.Data.csproj" />
     <ProjectReference Include="..\..\src\Peo.Core.Infra.Data\Peo.Core.Infra.Data.csproj" />

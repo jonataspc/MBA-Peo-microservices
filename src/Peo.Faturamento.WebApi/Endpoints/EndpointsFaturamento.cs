@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Peo.Core.Web.Extensions;
-using Peo.Faturamento.Application.Endpoints.Pagamento;
+using Peo.Faturamento.WebApi.Endpoints.Pagamento;
 
-namespace Peo.Faturamento.Application.Endpoints
+namespace Peo.Faturamento.WebApi.Endpoints
 {
     public static class EndpointsFaturamento
     {

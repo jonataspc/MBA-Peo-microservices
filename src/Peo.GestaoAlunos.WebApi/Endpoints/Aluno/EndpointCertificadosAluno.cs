@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Routing;
 using Peo.Core.DomainObjects;
+using Peo.Core.DomainObjects.Result;
 using Peo.Core.Web.Api;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
 using Peo.GestaoAlunos.Application.Queries.ObterCertificadosAluno;
 
-namespace Peo.GestaoAlunos.Application.Endpoints.Aluno;
+namespace Peo.GestaoAlunos.WebApi.Endpoints.Aluno;
 
 public class EndpointCertificadosAluno : IEndpoint
 {

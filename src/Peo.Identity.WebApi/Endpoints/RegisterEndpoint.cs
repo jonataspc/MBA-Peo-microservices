@@ -7,10 +7,10 @@ using Peo.Core.DomainObjects;
 using Peo.Core.Entities;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Api;
-using Peo.Identity.Application.Endpoints.Requests;
 using Peo.Identity.Domain.Interfaces.Services;
+using Peo.Identity.WebApi.Endpoints.Requests;
 
-namespace Peo.Identity.Application.Endpoints
+namespace Peo.Identity.WebApi.Endpoints
 {
     public class RegisterEndpoint : IEndpoint
     {
