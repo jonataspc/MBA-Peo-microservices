@@ -14,7 +14,7 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
 
     public async Task<Aluno?> GetByIdAsync(Guid alunoId, CancellationToken cancellationToken)
     {
-        return await _dbContext.Alunos.FirstOrDefaultAsync(e => e.Id == alunoId);
+        return await _dbContext.Alunos.FirstOrDefaultAsync(e => e.Id == alunoId, cancellationToken);
     }
 
     public async Task AddAsync(Aluno aluno, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
     {
         return await _dbContext.Matriculas
             .Include(m => m.Aluno)
-            .FirstOrDefaultAsync(m => m.Id == matriculaId);
+            .FirstOrDefaultAsync(m => m.Id == matriculaId, cancellationToken);
     }
 
     public Task AtualizarMatricula(Matricula matricula, CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
     public async Task<ProgressoMatricula?> GetProgressoMatriculaAsync(Guid matriculaId, Guid aulaId, CancellationToken cancellationToken)
     {
         return await _dbContext.ProgressosMatricula
-            .FirstOrDefaultAsync(p => p.MatriculaId == matriculaId && p.AulaId == aulaId);
+            .FirstOrDefaultAsync(p => p.MatriculaId == matriculaId && p.AulaId == aulaId, cancellationToken);
     }
 
     public Task AtualizarProgressoMatriculaAsync(ProgressoMatricula progresso, CancellationToken cancellationToken)
@@ -60,7 +60,7 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
     public async Task<int> GetAulasConcluidasCountAsync(Guid matriculaId, CancellationToken cancellationToken)
     {
         return await _dbContext.ProgressosMatricula
-            .CountAsync(p => p.MatriculaId == matriculaId && p.DataConclusao.HasValue);
+            .CountAsync(p => p.MatriculaId == matriculaId && p.DataConclusao.HasValue, cancellationToken);
     }
 
     public async Task AddCertificadoAsync(Certificado certificado, CancellationToken cancellationToken)
@@ -72,14 +72,14 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
     {
         return await _dbContext.Alunos.Where(s => s.UsuarioId == usuarioId)
                                            .AsNoTracking()
-                                           .FirstOrDefaultAsync();
+                                           .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Certificado>> GetCertificadosByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
     {
-        var matriculas = await _dbContext.Matriculas.Where(m => m.AlunoId == alunoId).ToListAsync();
+        var matriculas = await _dbContext.Matriculas.Where(m => m.AlunoId == alunoId).ToListAsync(cancellationToken);
         var matriculaIds = matriculas.Select(m => m.Id).ToList();
-        return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync();
+        return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
@@ -87,6 +87,6 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
         return await _dbContext.Matriculas
             .Where(m => m.AlunoId == alunoId)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

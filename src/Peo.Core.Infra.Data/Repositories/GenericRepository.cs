@@ -48,7 +48,7 @@ namespace Peo.Core.Infra.Data.Repositories
                 query = query.AsNoTracking();
             }
 
-            return await query.ToListAsync().ConfigureAwait(false);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
@@ -59,11 +59,11 @@ namespace Peo.Core.Infra.Data.Repositories
             {
                 return await dbSet.AsNoTracking()
                                   .Where(x => x.Id == id)
-                                  .FirstOrDefaultAsync();
+                                  .FirstOrDefaultAsync(cancellationToken);
             }
             else
             {
-                return await dbSet.FindAsync(id).ConfigureAwait(false);
+                return await dbSet.FindAsync(id, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Peo.Core.Infra.Data.Repositories
                 query = query.AsNoTracking();
             }
 
-            return await query.ToListAsync().ConfigureAwait(false);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public virtual void Insert(TEntity entity, CancellationToken cancellationToken)
@@ -93,7 +93,7 @@ namespace Peo.Core.Infra.Data.Repositories
         {
             return await _dbContext.Set<TEntity>()
                                    .AsNoTracking()
-                                   .AnyAsync(predicate)
+                                   .AnyAsync(predicate, cancellationToken)
                                    .ConfigureAwait(false);
         }
     }
