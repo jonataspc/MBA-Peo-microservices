@@ -1,4 +1,5 @@
-﻿using Peo.Core.Entities.Base;
+﻿using Peo.Core.DomainObjects;
+using Peo.Core.Entities.Base;
 
 namespace Peo.GestaoConteudo.Domain.Entities
 {
@@ -10,7 +11,7 @@ namespace Peo.GestaoConteudo.Domain.Entities
         public virtual Aula? Aula { get; }
         public Guid AulaId { get; private set; }
 
-        public ArquivoAula()
+        protected ArquivoAula()
         {
         }
 
@@ -19,6 +20,15 @@ namespace Peo.GestaoConteudo.Domain.Entities
             Titulo = titulo;
             Url = url;
             AulaId = aulaId;
+            Validar();
+        }
+
+        private void Validar()
+        {
+            if (string.IsNullOrEmpty(Titulo))
+                throw new DomainException("O campo Titulo é obrigatório.");
+            if (AulaId == Guid.Empty)
+                throw new DomainException("O campo AulaId é obrigatório.");
         }
     }
 }

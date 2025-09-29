@@ -1,3 +1,4 @@
+using Peo.Core.DomainObjects;
 using Peo.Core.Entities.Base;
 
 namespace Peo.GestaoAlunos.Domain.Entities;
@@ -19,10 +20,19 @@ public class ProgressoMatricula : EntityBase
         MatriculaId = matriculaId;
         AulaId = aulaId;
         DataInicio = DateTime.Now;
+        Validar();
     }
 
     public void MarcarComoConcluido()
     {
         DataConclusao = DateTime.Now;
+    }
+
+    private void Validar()
+    {
+        if (MatriculaId == Guid.Empty)
+            throw new DomainException("O campo MatriculaId é obrigatório.");
+        if (AulaId == Guid.Empty)
+            throw new DomainException("O campo AulaId é obrigatório.");
     }
 }
