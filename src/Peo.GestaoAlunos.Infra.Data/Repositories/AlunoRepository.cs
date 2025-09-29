@@ -57,7 +57,7 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
         return Task.CompletedTask;
     }
 
-    public async Task<int> GetAulasConcluidasCountAsync(Guid matriculaId, CancellationToken cancellationToken)
+    public async Task<int> CountAulasConcluidasAsync(Guid matriculaId, CancellationToken cancellationToken)
     {
         return await _dbContext.ProgressosMatricula
             .CountAsync(p => p.MatriculaId == matriculaId && p.DataConclusao.HasValue, cancellationToken);

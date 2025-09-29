@@ -195,7 +195,7 @@ public class AlunoServiceTests
             It.IsAny<CancellationToken>(),
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockResponse.Object);
-        _alunoRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId, CancellationToken.None))
+        _alunoRepositoryMock.Setup(x => x.CountAulasConcluidasAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(9);
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -364,7 +364,7 @@ public class AlunoServiceTests
             It.IsAny<CancellationToken>(),
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockUsuarioResponse.Object);
-        _alunoRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId, CancellationToken.None))
+        _alunoRepositoryMock.Setup(x => x.CountAulasConcluidasAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(10);
         _alunoRepositoryMock.Setup(x => x.AddCertificadoAsync(It.IsAny<Certificado>(), CancellationToken.None))
             .Returns(Task.CompletedTask);
@@ -413,7 +413,7 @@ public class AlunoServiceTests
             It.IsAny<CancellationToken>(),
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockResponse.Object);
-        _alunoRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId, CancellationToken.None))
+        _alunoRepositoryMock.Setup(x => x.CountAulasConcluidasAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(8);
 
         // Act & Assert

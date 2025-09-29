@@ -23,7 +23,7 @@ public interface IAlunoRepository : IRepository<Aluno>
 
     Task AtualizarProgressoMatriculaAsync(ProgressoMatricula progresso, CancellationToken cancellationToken);
 
-    Task<int> GetAulasConcluidasCountAsync(Guid matriculaId, CancellationToken cancellationToken);
+    Task<int> CountAulasConcluidasAsync(Guid matriculaId, CancellationToken cancellationToken);
 
     Task AddCertificadoAsync(Certificado certificado, CancellationToken cancellationToken);
 
