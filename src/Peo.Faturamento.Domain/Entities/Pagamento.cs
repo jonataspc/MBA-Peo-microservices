@@ -14,7 +14,7 @@ public class Pagamento : EntityBase, IAggregateRoot
     public string? Detalhes { get; private set; }
     public CartaoCreditoData? DadosCartao { get; private set; }
 
-    protected Pagamento()
+    public Pagamento()
     { }
 
     public Pagamento(Guid matriculaId, decimal valor)
@@ -22,12 +22,13 @@ public class Pagamento : EntityBase, IAggregateRoot
         MatriculaId = matriculaId;
         Valor = valor;
         Status = StatusPagamento.Pendente;
+        Validar();
     }
 
     public void ProcessarPagamento(string idTransacao)
     {
         if (Status != StatusPagamento.Pendente)
-            throw new InvalidOperationException("Pagamento só pode ser processado quando está Pendente");
+            throw new DomainException("Pagamento só pode ser processado quando está Pendente");
 
         IdTransacao = idTransacao;
         Status = StatusPagamento.Processando;
@@ -36,7 +37,7 @@ public class Pagamento : EntityBase, IAggregateRoot
     public void ConfirmarPagamento(CartaoCreditoData dadosCartao)
     {
         if (Status != StatusPagamento.Processando)
-            throw new InvalidOperationException("Pagamento só pode ser confirmado quando está em Processamento");
+            throw new DomainException("Pagamento só pode ser confirmado quando está em Processamento");
 
         DadosCartao = dadosCartao;
         DataPagamento = DateTime.Now;
@@ -46,7 +47,7 @@ public class Pagamento : EntityBase, IAggregateRoot
     public void MarcarComoFalha(string? detalhes)
     {
         if (Status != StatusPagamento.Processando)
-            throw new InvalidOperationException("Pagamento só pode ser marcado como falha quando está em Processamento");
+            throw new DomainException("Pagamento só pode ser marcado como falha quando está em Processamento");
 
         Detalhes = detalhes;
         Status = StatusPagamento.Falha;
@@ -55,7 +56,7 @@ public class Pagamento : EntityBase, IAggregateRoot
     public void Estornar()
     {
         if (Status != StatusPagamento.Pago)
-            throw new InvalidOperationException("Pagamento só pode ser estornado quando está Pago");
+            throw new DomainException("Pagamento só pode ser estornado quando está Pago");
 
         Status = StatusPagamento.Estornado;
     }
@@ -63,8 +64,16 @@ public class Pagamento : EntityBase, IAggregateRoot
     public void Cancelar()
     {
         if (Status != StatusPagamento.Pendente)
-            throw new InvalidOperationException("Pagamento só pode ser cancelado quando está Pendente");
+            throw new DomainException("Pagamento só pode ser cancelado quando está Pendente");
 
         Status = StatusPagamento.Cancelado;
+    }
+
+    private void Validar()
+    {
+        if (MatriculaId == Guid.Empty)
+            throw new DomainException("O campo MatriculaId é obrigatório.");
+        if (Valor <= 0)
+            throw new DomainException("O campo Valor deve ser maior que zero.");
     }
 }

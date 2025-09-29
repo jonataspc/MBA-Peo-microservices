@@ -19,6 +19,7 @@ public class Aluno : EntityBase, IAggregateRoot
     {
         UsuarioId = usuarioId;
         EstaAtivo = true;
+        Validar();
     }
 
     public void Deactivate()
@@ -29,5 +30,11 @@ public class Aluno : EntityBase, IAggregateRoot
     public void Activate()
     {
         EstaAtivo = true;
+    }
+
+    private void Validar()
+    {
+        if (UsuarioId == Guid.Empty)
+            throw new DomainException("O campo UsuarioId é obrigatório.");
     }
 }
