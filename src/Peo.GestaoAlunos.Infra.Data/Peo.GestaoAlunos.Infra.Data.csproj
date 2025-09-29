@@ -10,9 +10,5 @@
     <ProjectReference Include="..\Peo.Core.Infra.Data\Peo.Core.Infra.Data.csproj" />
     <ProjectReference Include="..\Peo.GestaoAlunos.Domain\Peo.GestaoAlunos.Domain.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
    
 </Project>

@@ -1,5 +1,4 @@
 ﻿using Peo.Core.DomainObjects;
-using Peo.Core.Entities;
 using Peo.Core.Entities.Base;
 using Peo.GestaoConteudo.Domain.ValueObjects;
 
@@ -17,7 +16,7 @@ namespace Peo.GestaoConteudo.Domain.Entities
         public virtual List<string> Tags { get; private set; } = [];
         public virtual ICollection<Aula> Aulas { get; private set; } = [];
 
-        public Curso()
+        protected Curso()
         {
         }
 
