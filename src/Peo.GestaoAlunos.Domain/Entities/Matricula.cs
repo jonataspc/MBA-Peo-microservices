@@ -14,7 +14,7 @@ public class Matricula : EntityBase
     public int PercentualProgresso { get; private set; }
     public virtual Aluno? Aluno { get; set; }
 
-    protected Matricula()
+    public Matricula()
     { }
 
     public Matricula(Guid alunoId, Guid cursoId)

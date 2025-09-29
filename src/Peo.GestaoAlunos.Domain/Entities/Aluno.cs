@@ -11,7 +11,7 @@ public class Aluno : EntityBase, IAggregateRoot
 
     public virtual ICollection<Matricula> Matriculas { get; private set; } = [];
 
-    protected Aluno()
+    public Aluno()
     {
     }
 

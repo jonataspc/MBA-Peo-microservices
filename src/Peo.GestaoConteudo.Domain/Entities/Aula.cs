@@ -14,7 +14,7 @@ namespace Peo.GestaoConteudo.Domain.Entities
         public virtual Curso Curso { get; private set; } = null!;
         public Guid CursoId { get; private set; }
 
-        protected Aula()
+        public Aula()
         {
         }
 

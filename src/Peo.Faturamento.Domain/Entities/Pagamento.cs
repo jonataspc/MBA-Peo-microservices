@@ -14,7 +14,7 @@ public class Pagamento : EntityBase, IAggregateRoot
     public string? Detalhes { get; private set; }
     public CartaoCreditoData? DadosCartao { get; private set; }
 
-    protected Pagamento()
+    public Pagamento()
     { }
 
     public Pagamento(Guid matriculaId, decimal valor)

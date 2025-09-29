@@ -12,7 +12,7 @@ public class ProgressoMatricula : EntityBase
 
     public bool EstaConcluido => DataConclusao.HasValue;
 
-    protected ProgressoMatricula()
+    public ProgressoMatricula()
     { }
 
     public ProgressoMatricula(Guid matriculaId, Guid aulaId)

@@ -11,7 +11,7 @@ public class Certificado : EntityBase
     public string? NumeroCertificado { get; private set; }
     public virtual Matricula Matricula { get; private set; } = null!;
 
-    protected Certificado()
+    public Certificado()
     {
     }
 

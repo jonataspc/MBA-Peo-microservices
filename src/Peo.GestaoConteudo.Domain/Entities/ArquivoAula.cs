@@ -11,7 +11,7 @@ namespace Peo.GestaoConteudo.Domain.Entities
         public virtual Aula? Aula { get; }
         public Guid AulaId { get; private set; }
 
-        protected ArquivoAula()
+        public ArquivoAula()
         {
         }
 
