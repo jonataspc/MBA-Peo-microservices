@@ -1852,8 +1852,8 @@ namespace Peo.Web.Spa.Services
         [System.Text.Json.Serialization.JsonPropertyName("descricao")]
         public string Descricao { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("nomeInstrutor")]
-        public string NomeInstrutor { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("instrutorNome")]
+        public string InstrutorNome { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("conteudoProgramatico")]
         public ConteudoProgramatico ConteudoProgramatico { get; set; }

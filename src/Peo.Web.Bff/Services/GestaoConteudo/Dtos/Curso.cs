@@ -13,8 +13,8 @@ namespace Peo.Web.Bff.Services.GestaoConteudo.Dtos
         [JsonProperty("descricao")]
         public required string Descricao { get; set; }
 
-        [JsonProperty("nomeInstrutor")]
-        public required string NomeInstrutor { get; set; }
+        [JsonProperty("InstrutorNome")]
+        public required string InstrutorNome { get; set; }
 
         [JsonProperty("conteudoProgramatico")]
         public required ConteudoProgramatico ConteudoProgramatico { get; set; }

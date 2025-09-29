@@ -7,7 +7,7 @@ namespace Peo.GestaoConteudo.Application.Dtos
         public Guid Id { get; set; }
         public string Titulo { get; set; } = null!;
         public string? Descricao { get; set; }
-        public string? NomeInstrutor { get; set; }
+        public string? InstrutorNome { get; set; }
         public ConteudoProgramatico? ConteudoProgramatico { get; set; }
         public decimal Preco { get; set; }
         public bool EstaPublicado { get; set; }
