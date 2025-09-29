@@ -1,0 +1,204 @@
+﻿@using MudBlazor
+@using Microsoft.AspNetCore.Components
+@using Peo.Web.Spa.Models
+@using Peo.Web.Spa.Services
+@inject AulasService Service
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form">
+            <!-- Cabeçalho do modal -->
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-2">
+                <MudText Typo="Typo.h6">@TituloDialogo</MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                               OnClick="() => Dialog.Cancel()"
+                               AriaLabel="Fechar" />
+            </MudStack>
+            <!-- Curso (selecionável no modal) -->
+            <MudSelect T="Guid?"
+                       Label="Curso"
+                       Value="CursoSelecionado"
+                       ValueChanged="@(v => CursoSelecionado = v)"
+                       ValueExpression="@(() => CursoSelecionado)"
+                       Disabled="@ReadOnly"
+                       Placeholder="@(_carregandoCursos ? "Carregando cursos..." : "Selecione...")"
+                       ToStringFunc="@(id => _cursos.FirstOrDefault(x => x.Id == id)?.Titulo
+                               ?? id?.ToString() ?? string.Empty)">
+
+                @if (!_carregandoCursos)
+                {
+                    @foreach (var c in _cursos)
+                    {
+                        <MudSelectItem Value="@((Guid?)c.Id)">@c.Titulo</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+
+
+            <!-- Dados da aula -->
+            <MudTextField @bind-Value="Model.Titulo" Label="Título" Required="true" Disabled="@ReadOnly" />
+            <MudTextField @bind-Value="Model.Descricao" Label="Descrição" Lines="3" Disabled="@ReadOnly" />
+            <MudTextField @bind-Value="Model.UrlVideo" Label="URL do Vídeo" Required="true" Disabled="@ReadOnly" />
+
+            <MudStack Row Spacing="2">
+                <MudTimePicker @bind-Time="DuracaoLocal" Label="Duração (hh:mm)" AmPm="false" Disabled="@ReadOnly" />
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.subtitle1">Arquivos</MudText>
+
+            <MudStack Row Spacing="2" AlignItems="AlignItems.End" Class="mb-2">
+                <MudTextField @bind-Value="_arquivoTitulo" Label="Título do arquivo" Disabled="@ReadOnly" />
+                <MudTextField @bind-Value="_arquivoUrl" Label="URL" Disabled="@ReadOnly" />
+                @if (!ReadOnly)
+                {
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add"
+                    OnClick="AdicionarArquivo">Adicionar</MudButton>
+                }
+            </MudStack>
+
+            <MudTable Items="Model.Arquivos" Dense="true">
+                <HeaderContent>
+                    <MudTh>Título</MudTh>
+                    <MudTh>URL</MudTh>
+                    @if (!ReadOnly)
+                    {
+                        <MudTh class="text-right">Ações</MudTh>
+                    }
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.Titulo</MudTd>
+                    <MudTd><MudLink Href="@context.Url" Target="_blank">@context.Url</MudLink></MudTd>
+                    @if (!ReadOnly)
+                    {
+                        <MudTd Class="text-right">
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                           OnClick="@(()=> RemoverArquivo(context))" />
+                        </MudTd>
+                    }
+                </RowTemplate>
+            </MudTable>
+        </MudForm>
+    </DialogContent>
+
+@*     <DialogActions>
+        <MudButton Variant="Variant.Text" OnClick="Cancelar">Cancelar</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@_salvando" OnClick="Salvar">Salvar</MudButton>
+    </DialogActions> *@
+    <DialogActions>
+        <MudButton Variant="Variant.Text" OnClick="() => Dialog.Cancel()">Cancelar</MudButton>
+        @if (!ReadOnly)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                       OnClick="Salvar">Salvar</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+    [Parameter] public AulaVm Model { get; set; } = new();
+
+    private MudForm? _form;
+    private bool _salvando;
+
+    public enum AulaDialogMode { Create, Edit, View }
+
+    [Parameter] public AulaDialogMode Mode { get; set; } = AulaDialogMode.Create;
+
+    private bool ReadOnly => Mode == AulaDialogMode.View;
+    private string TituloDialogo => Mode switch
+    {
+        AulaDialogMode.View => "Detalhes da Aula",
+        AulaDialogMode.Edit => "Editar Aula",
+        _ => "Nova Aula"
+    };
+
+    // ---- cursos (para o select) ----
+    private List<CursoOption> _cursos = new();
+    private bool _carregandoCursos;
+
+    private Guid? _cursoSelecionado;
+    private Guid? CursoSelecionado
+    {
+        get => _cursoSelecionado;
+        set { 
+            _cursoSelecionado = value;
+            Model.CursoId = value ?? Guid.Empty;
+        }
+    }
+
+    // ---- arquivos ----
+    private string? _arquivoTitulo;
+    private string? _arquivoUrl;
+
+    private void AdicionarArquivo()
+    {
+        if (string.IsNullOrWhiteSpace(_arquivoTitulo) || string.IsNullOrWhiteSpace(_arquivoUrl))
+        {
+            Snackbar.Add("Informe Título e URL do arquivo.", Severity.Info);
+            return;
+        }
+        Model.Arquivos.Add(new ArquivoAulaVm { Titulo = _arquivoTitulo!, Url = _arquivoUrl! });
+        _arquivoTitulo = _arquivoUrl = null;
+    }
+
+    private void RemoverArquivo(ArquivoAulaVm a) => Model.Arquivos.Remove(a);
+
+    // ---- MudTimePicker ----
+    private TimeSpan? DuracaoLocal
+    {
+        get => Model.Duracao;
+        set => Model.Duracao = value ?? TimeSpan.Zero;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _carregandoCursos = true;
+        try
+        {
+            _cursos = await Service.ObterCursos();
+
+            CursoSelecionado = (Model.CursoId != Guid.Empty && _cursos.Any(c => c.Id == Model.CursoId))
+            ? Model.CursoId
+            : null;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao carregar cursos: {ex.Message}", Severity.Error);
+        }
+        finally { _carregandoCursos = false; }
+    }
+
+    private async Task Salvar()
+    {
+        await _form!.Validate();
+        if (!_form.IsValid) return;
+
+        if (Model.CursoId == Guid.Empty)
+        {
+            Snackbar.Add("Selecione o curso.", Severity.Warning);
+            return;
+        }
+
+        _salvando = true;
+        try
+        {
+            var (ok, msg, aulaId) = await Service.Cadastrar(Model);
+            if (ok)
+            {
+                Snackbar.Add($"Aula criada (Id: {aulaId}).", Severity.Success);
+                Dialog.Close(DialogResult.Ok(true));
+            }
+            else Snackbar.Add($"Falha ao criar aula: {msg}", Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro: {ex.Message}", Severity.Error);
+        }
+        finally { _salvando = false; }
+    }
+
+    private void Cancelar() => Dialog.Cancel();
+}
