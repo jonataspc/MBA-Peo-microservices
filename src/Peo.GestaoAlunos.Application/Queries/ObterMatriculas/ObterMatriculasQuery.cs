@@ -1,5 +1,4 @@
-﻿using Peo.Core.DomainObjects;
-using Peo.GestaoAlunos.Application.Dtos.Responses;
+﻿using Peo.GestaoAlunos.Application.Dtos.Responses;
 
 namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
 {

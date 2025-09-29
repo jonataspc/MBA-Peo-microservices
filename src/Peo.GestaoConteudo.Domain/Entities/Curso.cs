@@ -31,12 +31,23 @@ namespace Peo.GestaoConteudo.Domain.Entities
             DataPublicacao = dataPublicacao;
             Tags = tags;
             Aulas = aulas;
+            Validar();
         }
 
         public void AtualizarTituloDescricao(string titulo, string? descricao)
         {
             Titulo = titulo;
             Descricao = descricao;
+        }
+
+        private void Validar()
+        {
+            if (string.IsNullOrEmpty(Titulo))
+                throw new DomainException("O campo Titulo é obrigatório.");
+            if (string.IsNullOrEmpty(InstrutorNome))
+                throw new DomainException("O campo InstrutorNome é obrigatório.");
+            if (Preco <= 0)
+                throw new DomainException("O campo Preco deve ser maior que zero.");
         }
     }
 }

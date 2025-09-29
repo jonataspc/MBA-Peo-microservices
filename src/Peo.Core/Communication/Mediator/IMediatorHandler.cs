@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Peo.Core.Messages;
+﻿using Peo.Core.Messages;
 using Peo.Core.Messages.DomainEvents;
 using Peo.Core.Messages.Notifications;
 

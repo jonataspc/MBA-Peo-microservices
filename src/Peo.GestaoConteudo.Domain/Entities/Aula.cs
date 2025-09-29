@@ -1,4 +1,5 @@
-﻿using Peo.Core.Entities.Base;
+﻿using Peo.Core.DomainObjects;
+using Peo.Core.Entities.Base;
 
 namespace Peo.GestaoConteudo.Domain.Entities
 {
@@ -25,12 +26,21 @@ namespace Peo.GestaoConteudo.Domain.Entities
             Duracao = duracao;
             Arquivos = arquivos;
             CursoId = cursoId;
+            Validar();
         }
 
         public void AtualizarTituloDescricao(string titulo, string? descricao)
         {
             Titulo = titulo;
             Descricao = descricao;
+        }
+
+        private void Validar()
+        {
+            if (string.IsNullOrEmpty(Titulo))
+                throw new DomainException("O campo Titulo é obrigatório.");
+            if (CursoId == Guid.Empty)
+                throw new DomainException("O campo CursoId é obrigatório.");
         }
     }
 }
