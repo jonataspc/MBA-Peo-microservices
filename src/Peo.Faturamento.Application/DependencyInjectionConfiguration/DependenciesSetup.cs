@@ -7,7 +7,7 @@ using Peo.Faturamento.Application.Commands.PagamentoMatricula;
 using Peo.Faturamento.Application.Dtos.Responses;
 using Peo.Faturamento.Application.Handlers;
 using Peo.Faturamento.Application.Services;
-using Peo.Faturamento.Domain.Interfaces.Services;
+using Peo.Faturamento.Domain.Services;
 
 namespace Peo.Faturamento.Application.DependencyInjectionConfiguration
 {

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Peo.Core.Interfaces.Services;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Services;
 
 namespace Peo.GestaoAlunos.Application.Queries.ObterCertificadosAluno;
 

@@ -4,7 +4,7 @@ using Moq;
 using Peo.GestaoAlunos.Application.Commands.Matricula;
 using Peo.GestaoAlunos.Application.Dtos.Requests;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Services;
 using Peo.GestaoAlunos.Domain.ValueObjects;
 
 namespace Peo.Tests.UnitTests.GestaoAlunos;

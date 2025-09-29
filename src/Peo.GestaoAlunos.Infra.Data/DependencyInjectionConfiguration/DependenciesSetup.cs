@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 using Peo.GestaoAlunos.Infra.Data.Contexts;
 using Peo.GestaoAlunos.Infra.Data.Repositories;
 

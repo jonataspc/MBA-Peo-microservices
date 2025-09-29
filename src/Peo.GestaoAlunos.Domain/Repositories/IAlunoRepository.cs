@@ -1,7 +1,7 @@
 using Peo.Core.Interfaces.Data;
 using Peo.GestaoAlunos.Domain.Entities;
 
-namespace Peo.GestaoAlunos.Domain.Interfaces;
+namespace Peo.GestaoAlunos.Domain.Repositories;
 
 public interface IAlunoRepository : IRepository<Aluno>
 {

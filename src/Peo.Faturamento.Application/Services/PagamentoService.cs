@@ -5,8 +5,7 @@ using Peo.Core.Interfaces.Services;
 using Peo.Core.Messages.IntegrationEvents;
 using Peo.Faturamento.Domain.Dtos;
 using Peo.Faturamento.Domain.Entities;
-using Peo.Faturamento.Domain.Interfaces.Brokers;
-using Peo.Faturamento.Domain.Interfaces.Services;
+using Peo.Faturamento.Domain.Services;
 using Peo.Faturamento.Domain.ValueObjects;
 
 namespace Peo.Faturamento.Application.Services;

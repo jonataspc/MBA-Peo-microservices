@@ -12,7 +12,7 @@ using Peo.Faturamento.Application.Dtos.Requests;
 using Peo.Faturamento.Domain.Entities;
 using Peo.Faturamento.Domain.ValueObjects;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 
 namespace Peo.Tests.UnitTests.GestaoAlunos;
 

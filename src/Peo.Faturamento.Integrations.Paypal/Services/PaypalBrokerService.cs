@@ -1,6 +1,6 @@
 ﻿using Peo.Core.Dtos;
 using Peo.Faturamento.Domain.Dtos;
-using Peo.Faturamento.Domain.Interfaces.Brokers;
+using Peo.Faturamento.Domain.Services;
 
 namespace Peo.Faturamento.Integrations.Paypal.Services
 {

@@ -1,7 +1,7 @@
 using Peo.Core.Dtos;
 using Peo.Faturamento.Domain.Entities;
 
-namespace Peo.Faturamento.Domain.Interfaces.Services;
+namespace Peo.Faturamento.Domain.Services;
 
 public interface IPagamentoService
 {

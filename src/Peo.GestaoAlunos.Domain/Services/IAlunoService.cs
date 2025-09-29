@@ -1,6 +1,6 @@
 ﻿using Peo.GestaoAlunos.Domain.Entities;
 
-namespace Peo.GestaoAlunos.Domain.Interfaces
+namespace Peo.GestaoAlunos.Domain.Services
 {
     public interface IAlunoService
     {

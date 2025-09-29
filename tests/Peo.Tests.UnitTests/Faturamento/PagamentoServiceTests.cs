@@ -7,7 +7,7 @@ using Peo.Core.Interfaces.Services;
 using Peo.Faturamento.Application.Services;
 using Peo.Faturamento.Domain.Dtos;
 using Peo.Faturamento.Domain.Entities;
-using Peo.Faturamento.Domain.Interfaces.Brokers;
+using Peo.Faturamento.Domain.Services;
 using Peo.Faturamento.Domain.ValueObjects;
 using System.Linq.Expressions;
 
