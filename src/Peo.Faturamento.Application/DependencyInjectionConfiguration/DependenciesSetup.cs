@@ -9,7 +9,7 @@ using Peo.Faturamento.Application.Handlers;
 using Peo.Faturamento.Application.Services;
 using Peo.Faturamento.Domain.Interfaces.Services;
 
-namespace Peo.Faturamento.Application.DiConfig
+namespace Peo.Faturamento.Application.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {

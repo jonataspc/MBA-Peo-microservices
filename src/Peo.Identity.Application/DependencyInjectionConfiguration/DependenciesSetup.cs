@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Peo.Identity.Application.DiConfig
+namespace Peo.Identity.Application.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {

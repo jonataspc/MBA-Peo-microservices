@@ -2,13 +2,16 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Peo.Identity.Infra.Data.Contexts;
+using Peo.Core.Infra.Data.Repositories;
+using Peo.Core.Interfaces.Data;
+using Peo.Faturamento.Domain.Entities;
+using Peo.Faturamento.Infra.Data.Contexts;
 
-namespace Peo.Identity.Infra.Data.DiConfig
+namespace Peo.Faturamento.Infra.Data.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {
-        public static IServiceCollection AddDataDependenciesForIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
+        public static IServiceCollection AddDataDependenciesForFaturamento(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             string connectionString;
 
@@ -21,8 +24,7 @@ namespace Peo.Identity.Infra.Data.DiConfig
                 connectionString = configuration.GetConnectionString("SqlServerConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de produção (SQL Server)");
             }
 
-            // Identity
-            services.AddDbContext<IdentityContext>(options =>
+            services.AddDbContext<CobrancaContext>(options =>
             {
                 if (hostEnvironment.IsDevelopment())
                 {
@@ -46,6 +48,9 @@ namespace Peo.Identity.Infra.Data.DiConfig
             {
                 services.AddDatabaseDeveloperPageExceptionFilter();
             }
+
+            // Repos
+            services.AddScoped<IRepository<Pagamento>, GenericRepository<Pagamento, CobrancaContext>>();
 
             return services;
         }

@@ -7,7 +7,7 @@ using Peo.GestaoAlunos.Application.Queries.ObterCertificadosAluno;
 using Peo.GestaoAlunos.Application.Services;
 using Peo.GestaoAlunos.Domain.Interfaces;
 
-namespace Peo.GestaoAlunos.Application.DiConfig
+namespace Peo.GestaoAlunos.Application.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {

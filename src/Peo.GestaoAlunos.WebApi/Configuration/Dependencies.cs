@@ -4,8 +4,8 @@ using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
 using Peo.GestaoAlunos.Application.Consumers;
-using Peo.GestaoAlunos.Application.DiConfig;
-using Peo.GestaoAlunos.Infra.Data.DiConfig;
+using Peo.GestaoAlunos.Application.DependencyInjectionConfiguration;
+using Peo.GestaoAlunos.Infra.Data.DependencyInjectionConfiguration;
 using Peo.GestaoAlunos.WebApi.Endpoints;
 
 namespace Peo.GestaoAlunos.WebApi.Configuration

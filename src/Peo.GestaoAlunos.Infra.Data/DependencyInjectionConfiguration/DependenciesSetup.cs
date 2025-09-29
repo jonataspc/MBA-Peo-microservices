@@ -2,16 +2,15 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Peo.Core.Infra.Data.Repositories;
-using Peo.Core.Interfaces.Data;
-using Peo.Faturamento.Domain.Entities;
-using Peo.Faturamento.Infra.Data.Contexts;
+using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Infra.Data.Contexts;
+using Peo.GestaoAlunos.Infra.Data.Repositories;
 
-namespace Peo.Faturamento.Infra.Data.DiConfig
+namespace Peo.GestaoAlunos.Infra.Data.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {
-        public static IServiceCollection AddDataDependenciesForFaturamento(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
+        public static IServiceCollection AddDataDependenciesForGestaoAlunos(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             string connectionString;
 
@@ -24,7 +23,8 @@ namespace Peo.Faturamento.Infra.Data.DiConfig
                 connectionString = configuration.GetConnectionString("SqlServerConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de produção (SQL Server)");
             }
 
-            services.AddDbContext<CobrancaContext>(options =>
+            // Alunos
+            services.AddDbContext<GestaoAlunosContext>(options =>
             {
                 if (hostEnvironment.IsDevelopment())
                 {
@@ -50,7 +50,7 @@ namespace Peo.Faturamento.Infra.Data.DiConfig
             }
 
             // Repos
-            services.AddScoped<IRepository<Pagamento>, GenericRepository<Pagamento, CobrancaContext>>();
+            services.AddScoped<IAlunoRepository, AlunoRepository>();
 
             return services;
         }

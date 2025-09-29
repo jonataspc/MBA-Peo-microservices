@@ -4,7 +4,7 @@ using Peo.Core.DomainObjects.Result;
 using Peo.GestaoConteudo.Application.UseCases.Aula.Cadastrar;
 using System.Reflection;
 
-namespace Peo.GestaoConteudo.Application.DiConfig
+namespace Peo.GestaoConteudo.Application.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {
@@ -21,7 +21,7 @@ namespace Peo.GestaoConteudo.Application.DiConfig
             services.AddScoped<IRequestHandler<UseCases.Curso.ObterPorId.Query, Result<UseCases.Curso.ObterPorId.Response>>, UseCases.Curso.ObterPorId.Handler>();
             services.AddScoped<IRequestHandler<UseCases.Curso.ObterTodos.Query, Result<UseCases.Curso.ObterTodos.Response>>, UseCases.Curso.ObterTodos.Handler>();
             services.AddScoped<IRequestHandler<UseCases.Aula.ObterTodos.Query, Result<UseCases.Aula.ObterTodos.Response>>, UseCases.Aula.ObterTodos.Handler>();
-            services.AddScoped<IRequestHandler<UseCases.Aula.Cadastrar.Command, Result<Response>>, Handler>();
+            services.AddScoped<IRequestHandler<Command, Result<Response>>, Handler>();
 
             return services;
         }

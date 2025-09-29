@@ -2,15 +2,16 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Peo.GestaoAlunos.Domain.Interfaces;
-using Peo.GestaoAlunos.Infra.Data.Contexts;
-using Peo.GestaoAlunos.Infra.Data.Repositories;
+using Peo.Core.Interfaces.Data;
+using Peo.GestaoConteudo.Domain.Entities;
+using Peo.GestaoConteudo.Infra.Data.Contexts;
+using Peo.GestaoConteudo.Infra.Data.Repositories;
 
-namespace Peo.GestaoAlunos.Infra.Data.DiConfig
+namespace Peo.GestaoConteudo.Infra.Data.DependencyInjectionConfiguration
 {
     public static class DependenciesSetup
     {
-        public static IServiceCollection AddDataDependenciesForGestaoAlunos(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
+        public static IServiceCollection AddDataDependenciesForGestaoConteudo(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             string connectionString;
 
@@ -23,8 +24,8 @@ namespace Peo.GestaoAlunos.Infra.Data.DiConfig
                 connectionString = configuration.GetConnectionString("SqlServerConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de produção (SQL Server)");
             }
 
-            // Alunos
-            services.AddDbContext<GestaoAlunosContext>(options =>
+            // GestaoConteudo
+            services.AddDbContext<GestaoConteudoContext>(options =>
             {
                 if (hostEnvironment.IsDevelopment())
                 {
@@ -50,7 +51,7 @@ namespace Peo.GestaoAlunos.Infra.Data.DiConfig
             }
 
             // Repos
-            services.AddScoped<IAlunoRepository, AlunoRepository>();
+            services.AddScoped<IRepository<Curso>, CursoRepository>();
 
             return services;
         }
