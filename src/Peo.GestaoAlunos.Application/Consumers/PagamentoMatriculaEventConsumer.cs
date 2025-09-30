@@ -1,7 +1,7 @@
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Peo.Core.Messages.IntegrationEvents;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 
 namespace Peo.GestaoAlunos.Application.Consumers
 {

@@ -1,0 +1,76 @@
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
+using MiniValidation;
+using Peo.Core.DomainObjects;
+using Peo.Core.Entities;
+using Peo.Core.Interfaces.Services;
+using Peo.Core.Web.Api;
+using Peo.Identity.Domain.Interfaces.Services;
+using Peo.Identity.WebApi.Endpoints.Requests;
+
+namespace Peo.Identity.WebApi.Endpoints
+{
+    public class RegisterEndpoint : IEndpoint
+    {
+        public static void Map(IEndpointRouteBuilder app)
+        {
+            app.MapPost("/register", HandleRegister)
+               .WithSummary("Registra um novo usuário")
+               .AllowAnonymous();
+        }
+
+        public static async Task<IResult> HandleRegister(
+            RegisterRequest request,
+            UserManager<IdentityUser> userManager,
+            IAppIdentityUser appIdentityUser,
+            IUserService userService)
+        {
+            if (!MiniValidator.TryValidate(request, out var errors))
+            {
+                return TypedResults.ValidationProblem(errors);
+            }
+
+            if (request.IsAdmin && !appIdentityUser.IsAdmin())
+            {
+                return TypedResults.Forbid();
+            }
+            var user = new IdentityUser
+            {
+                UserName = request.Email,
+                Email = request.Email
+            };
+
+            var result = await userManager.CreateAsync(user, request.Password);
+
+            if (result.Succeeded)
+            {
+                await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
+
+                var roleResult = await userManager.AddToRoleAsync(user, AccessRoles.Aluno);
+                if (!roleResult.Succeeded)
+                {
+                    return TypedResults.BadRequest(new { Description = "Failed to assign role", Content = roleResult.Errors });
+                }
+
+                if (request.IsAdmin)
+                {
+                    var adminRoleResult = await userManager.AddToRoleAsync(user, AccessRoles.Admin);
+                    if (!adminRoleResult.Succeeded)
+                    {
+                        return TypedResults.BadRequest(new { Description = "Failed to assign admin role", Content = adminRoleResult.Errors });
+                    }
+                }
+
+                await userService.AddAsync(
+                new Usuario(Guid.Parse(user.Id), request.Name, user.Email!)
+                );
+
+                return TypedResults.NoContent();
+            }
+
+            return TypedResults.BadRequest(new { Description = "Errors", Content = result.Errors });
+        }
+    }
+}

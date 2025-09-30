@@ -7,7 +7,7 @@ using Peo.Core.Interfaces.Services;
 using Peo.Faturamento.Application.Services;
 using Peo.Faturamento.Domain.Dtos;
 using Peo.Faturamento.Domain.Entities;
-using Peo.Faturamento.Domain.Interfaces.Brokers;
+using Peo.Faturamento.Domain.Services;
 using Peo.Faturamento.Domain.ValueObjects;
 using System.Linq.Expressions;
 
@@ -106,7 +106,7 @@ public class PagamentoServiceTests
         var pagamentoId = Guid.CreateVersion7();
         var pagamento = new Pagamento(Guid.CreateVersion7(), 99.99m);
         pagamento.ProcessarPagamento("transaction-123");
-        pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
+        pagamento.ConfirmarPagamento(new DadosDoCartaoCredito { Hash = "hash-123" });
 
         _pagamentoRepositoryMock.Setup(x => x.WithTracking().GetAsync(pagamentoId, CancellationToken.None))
             .ReturnsAsync(pagamento);

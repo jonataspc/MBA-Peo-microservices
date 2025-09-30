@@ -65,7 +65,7 @@ namespace Peo.Faturamento.Infra.Data.Migrations
 
             modelBuilder.Entity("Peo.Faturamento.Domain.Entities.Pagamento", b =>
                 {
-                    b.OwnsOne("Peo.Faturamento.Domain.ValueObjects.CartaoCreditoData", "DadosCartao", b1 =>
+                    b.OwnsOne("Peo.Faturamento.Domain.ValueObjects.DadosDoCartaoCredito", "DadosCartao", b1 =>
                         {
                             b1.Property<Guid>("PagamentoId")
                                 .HasColumnType("TEXT");
@@ -76,7 +76,7 @@ namespace Peo.Faturamento.Infra.Data.Migrations
 
                             b1.HasKey("PagamentoId");
 
-                            b1.ToTable("CartaoCreditoData");
+                            b1.ToTable("DadosDoCartaoCredito");
 
                             b1.WithOwner()
                                 .HasForeignKey("PagamentoId");

@@ -2,7 +2,7 @@
 using Peo.Core.DomainObjects.Result;
 using Peo.Core.Dtos;
 using Peo.Core.Messages.IntegrationCommands;
-using Peo.Faturamento.Domain.Interfaces.Services;
+using Peo.Faturamento.Domain.Services;
 
 namespace Peo.Faturamento.Application.Handlers
 {

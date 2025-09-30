@@ -6,10 +6,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Peo.Core.Dtos;
-using Peo.Identity.Application.Endpoints;
-using Peo.Identity.Application.Endpoints.Requests;
-using Peo.Identity.Application.Endpoints.Responses;
 using Peo.Identity.Domain.Interfaces.Services;
+using Peo.Identity.WebApi.Endpoints;
+using Peo.Identity.WebApi.Endpoints.Requests;
+using Peo.Identity.WebApi.Endpoints.Responses;
 
 namespace Peo.Tests.UnitTests.Identity.Endpoints;
 

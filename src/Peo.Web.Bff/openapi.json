@@ -770,7 +770,7 @@
           "descricao": {
             "type": "string"
           },
-          "nomeInstrutor": {
+          "instrutorNome": {
             "type": "string"
           },
           "conteudoProgramatico": {

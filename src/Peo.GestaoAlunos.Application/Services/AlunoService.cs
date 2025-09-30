@@ -4,7 +4,8 @@ using Peo.Core.Interfaces.Services;
 using Peo.Core.Messages.IntegrationRequests;
 using Peo.Core.Messages.IntegrationResponses;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
+using Peo.GestaoAlunos.Domain.Services;
 using Peo.GestaoAlunos.Domain.ValueObjects;
 
 namespace Peo.GestaoAlunos.Application.Services;
@@ -119,7 +120,7 @@ public class AlunoService(
         if (responseCurso.Message.TotalAulas == null)
             throw new ArgumentException("Total de aulas do curso não informado", nameof(matricula.CursoId));
         var totalAulas = responseCurso.Message.TotalAulas.Value;
-        var aulasConcluidas = await alunoRepository.GetAulasConcluidasCountAsync(matriculaId, cancellationToken);
+        var aulasConcluidas = await alunoRepository.CountAulasConcluidasAsync(matriculaId, cancellationToken);
 
         var novoPercentualProgresso = (int)(aulasConcluidas * 100.0 / totalAulas);
         matricula.AtualizarProgresso(novoPercentualProgresso);
@@ -163,7 +164,7 @@ public class AlunoService(
             throw new ArgumentException("Curso não encontrado", nameof(matricula.CursoId));
 
         var totalAulas = responseCurso.Message.TotalAulas;
-        var aulasConcluidas = await alunoRepository.GetAulasConcluidasCountAsync(matriculaId, cancellationToken);
+        var aulasConcluidas = await alunoRepository.CountAulasConcluidasAsync(matriculaId, cancellationToken);
 
         if (aulasConcluidas < totalAulas)
             throw new InvalidOperationException($"Não é possível concluir matrícula. {aulasConcluidas} de {totalAulas} aulas concluídas.");

@@ -5,7 +5,7 @@ using Peo.Core.Interfaces.Services;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
 using Peo.GestaoAlunos.Application.Queries.ObterCertificadosAluno;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Services;
 
 namespace Peo.Tests.UnitTests.GestaoAlunos;
 
