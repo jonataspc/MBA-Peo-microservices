@@ -20,8 +20,7 @@ namespace Peo.Web.Bff.Services.Historico
             _gestaoConteudoService = gestaoConteudoService;
         }
 
-        public async Task<Results<Ok<ObterHistoricoCompletoCursosResponse>, BadRequest, UnauthorizedHttpResult,
-                BadRequest<object>>>
+        public async Task<Results<Ok<ObterHistoricoCompletoCursosResponse>, BadRequest, UnauthorizedHttpResult, BadRequest<object>>>
             ObterHistoricoCompletoCursosAsync(CancellationToken ct)
         {
             var historicoResult = await _gestaoAlunosService.ObterHistoricoAsync(ct);
@@ -52,29 +51,31 @@ namespace Peo.Web.Bff.Services.Historico
             var cursosDict = cursosResults
                 .Select(r => r.Result as Ok<Curso>)
                 .Where(okResult => okResult?.Value != null)
-                .Select(okResult => okResult!.Value!)
-                .ToDictionary(curso => curso.Id);
+                .ToDictionary(
+                    okResult => okResult!.Value!.Id,
+                    okResult => okResult!.Value!
+                );
 
             var historicoCompleto = historico.Select(matricula =>
-                {
-                    var cursoIdString = matricula.CursoId.ToString();
-                    cursosDict.TryGetValue(cursoIdString, out var curso);
+            {
+                var cursoIdString = matricula.CursoId.ToString();
+                cursosDict.TryGetValue(cursoIdString, out var curso);
 
-                    return new HistoricoCursoCompletoResponse(
-                        MatriculaId: matricula.Id,
-                        NomeAluno: matricula.NomeAluno,
-                        CursoId: matricula.CursoId,
-                        NomeCurso: curso?.Titulo ?? matricula.NomeCurso ?? "Curso não encontrado",
-                        DescricaoCurso: curso?.Descricao,
-                        InstrutorNome: curso?.InstrutorNome,
-                        DataMatricula: matricula.DataMatricula,
-                        DataConclusao: matricula.DataConclusao,
-                        Status: matricula.Status,
-                        PercentualProgresso: (int)matricula.PercentualProgresso
-                    );
-                })
-                .OrderByDescending(h => h.DataConclusao ?? h.DataMatricula)
-                .ToList();
+                return new HistoricoCursoCompletoResponse(
+                    MatriculaId: matricula.Id,
+                    NomeAluno: matricula.NomeAluno,
+                    CursoId: matricula.CursoId,
+                    NomeCurso: curso?.Titulo ?? matricula.NomeCurso ?? "Curso não encontrado",
+                    DescricaoCurso: curso?.Descricao,
+                    InstrutorNome: curso?.InstrutorNome,
+                    DataMatricula: matricula.DataMatricula,
+                    DataConclusao: matricula.DataConclusao,
+                    Status: matricula.Status,
+                    PercentualProgresso: (int)matricula.PercentualProgresso
+                );
+            })
+            .OrderByDescending(h => h.DataConclusao ?? h.DataMatricula)
+            .ToList();
 
             return TypedResults.Ok(new ObterHistoricoCompletoCursosResponse(historicoCompleto));
         }
