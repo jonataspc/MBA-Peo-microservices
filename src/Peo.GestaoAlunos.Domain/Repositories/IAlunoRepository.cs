@@ -30,4 +30,6 @@ public interface IAlunoRepository : IRepository<Aluno>
     Task<IEnumerable<Certificado>> GetCertificadosByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken);
 
     Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<Matricula>> GetMatriculasConcluidaByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken);
 }

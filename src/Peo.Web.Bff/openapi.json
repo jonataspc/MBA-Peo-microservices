@@ -577,6 +577,37 @@
           }
         }
       }
+    },
+    "/v1/aluno/historico": {
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "operationId": "GetV1AlunoHistorico",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoricoAlunoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1078,6 +1109,42 @@
           "numeroCertificado": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "HistoricoAlunoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeAluno": {
+            "type": "string"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeCurso": {
+            "type": "string"
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "number",
+            "format": "double"
           }
         }
       }

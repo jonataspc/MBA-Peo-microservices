@@ -226,4 +226,13 @@ public class AlunoService(
 
         return matriculas;
     }
+
+    public async Task<IEnumerable<Matricula>> ObterMatriculasConcluidas(Guid usuarioId, CancellationToken cancellationToken = default)
+    {
+        var aluno = await ObterAlunoPorUserIdAsync(usuarioId, cancellationToken);
+
+        var matriculas = await alunoRepository.GetMatriculasConcluidaByAlunoIdAsync(aluno.Id, cancellationToken);
+
+        return matriculas;
+    }
 }
