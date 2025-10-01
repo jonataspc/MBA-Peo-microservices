@@ -9,6 +9,7 @@ builder.Services.AddIdentity(builder.Configuration)
                 .AddFaturamento(builder.Configuration)
                 .AddGestaoConteudo(builder.Configuration)
                 .AddGestaoAlunos(builder.Configuration)
+                .AddHistorico()
                 .AddSwagger("PEO - BFF")
                 .AddApiServices()
                 .SetupWebApi(builder.Configuration)
@@ -24,18 +25,23 @@ builder.Services.AddOpenApiDocument(o =>
 var app = builder.Build();
 
 app.UseCustomSwagger(builder.Environment);
-app.UseCors("CorsPolicy");
-app.UseAuthentication();
-app.UseHttpsRedirection();
-
-app.AddIdentityEndpoints();
-app.AddFaturamentoEndpoints();
-app.AddGestaoConteudoEndpoints();
-app.AddGestaoAlunosEndpoints();
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler();
 }
+
+app.UseCors("CorsPolicy");
+app.UseHttpsRedirection();
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.AddIdentityEndpoints();
+app.AddFaturamentoEndpoints();
+app.AddGestaoConteudoEndpoints();
+app.AddGestaoAlunosEndpoints();
+app.AddHistoricoEndpoints();
 
 await app.RunAsync();
