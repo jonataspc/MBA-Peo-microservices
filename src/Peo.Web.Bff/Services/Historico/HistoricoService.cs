@@ -34,7 +34,7 @@ namespace Peo.Web.Bff.Services.Historico
             if (historicoResult.Result is not Ok<IEnumerable<HistoricoAlunoResponse>> okHistorico)
                 return TypedResults.BadRequest<object>("Erro ao obter histórico de matrículas");
 
-            var historico = okHistorico.Value.ToList();
+            var historico = (okHistorico.Value ?? Enumerable.Empty<HistoricoAlunoResponse>()).ToList();
 
             if (!historico.Any())
             {
@@ -50,9 +50,10 @@ namespace Peo.Web.Bff.Services.Historico
             var cursosResults = await Task.WhenAll(cursosTasks);
 
             var cursosDict = cursosResults
-                .Where(r => r.Result is Ok<Curso>)
-                .Select(r => ((Ok<Curso>)r.Result).Value)
-                .ToDictionary(c => c.Id);
+                .Select(r => r.Result as Ok<Curso>)
+                .Where(okResult => okResult?.Value is not null)
+                .Select(okResult => okResult.Value)
+                .ToDictionary(curso => curso.Id);
 
             var historicoCompleto = historico.Select(matricula =>
             {
