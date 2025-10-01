@@ -53,7 +53,8 @@ namespace Peo.Web.Bff.Services.Historico
             {
                 if (result.Result is Ok<Curso> okCurso && okCurso.Value != null)
                 {
-                    cursosDict[okCurso.Value.Id] = okCurso.Value;
+                    var curso = okCurso.Value;
+                    cursosDict[curso.Id] = curso;
                 }
             }
 
