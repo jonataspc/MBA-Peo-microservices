@@ -48,13 +48,14 @@ namespace Peo.Web.Bff.Services.Historico
 
             var cursosResults = await Task.WhenAll(cursosTasks);
 
-            var cursosDict = cursosResults
-                .Select(r => r.Result as Ok<Curso>)
-                .Where(okResult => okResult?.Value != null)
-                .ToDictionary(
-                    okResult => okResult!.Value!.Id,
-                    okResult => okResult!.Value!
-                );
+            var cursosDict = new Dictionary<string, Curso>();
+            foreach (var result in cursosResults)
+            {
+                if (result.Result is Ok<Curso> okCurso && okCurso.Value != null)
+                {
+                    cursosDict[okCurso.Value.Id] = okCurso.Value;
+                }
+            }
 
             var historicoCompleto = historico.Select(matricula =>
             {
