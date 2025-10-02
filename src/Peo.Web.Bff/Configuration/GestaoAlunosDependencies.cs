@@ -60,6 +60,12 @@ namespace Peo.Web.Bff.Configuration
                 return await service.ObterCertificadosAsync(ct);
             });
 
+            // Histórico endpoint
+            endpoints.MapGet("/historico", async (GestaoAlunosService service, CancellationToken ct) =>
+            {
+                return await service.ObterHistoricoAsync(ct);
+            });
+
             return app;
         }
     }

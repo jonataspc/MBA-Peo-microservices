@@ -89,4 +89,13 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<Matricula>> GetMatriculasConcluidaByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Matriculas
+            .Include(m => m.Aluno)
+            .Where(m => m.AlunoId == alunoId && m.DataConclusao != null)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }
