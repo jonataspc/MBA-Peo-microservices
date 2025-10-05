@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Peo.Web.Bff.Services.GestaoConteudo.Dtos;
 using System.Net;
+using System.Net.Http;
 
 namespace Peo.Web.Bff.Services.GestaoConteudo
 {
@@ -146,6 +147,29 @@ namespace Peo.Web.Bff.Services.GestaoConteudo
             }
 
             return TypedResults.Ok(aulaResponse);
+        }
+
+        public async Task<Results<Ok<ExcluirAulaResponse>,ValidationProblem,UnauthorizedHttpResult,ForbidHttpResult,NotFound,BadRequest<object>>> ExcluirAulaAsync(Guid cursoId, Guid aulaId, CancellationToken ct)
+        {
+            var response = await httpClient.DeleteAsync(
+                $"/v1/conteudo/curso/{cursoId}/aula/{aulaId}", ct);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                return TypedResults.Unauthorized();
+
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+                return TypedResults.Forbid();
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return TypedResults.NotFound();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync(ct);
+                return TypedResults.BadRequest<object>(new { error = "delete_failed", detail = body });
+            }
+
+            return TypedResults.Ok(new ExcluirAulaResponse { AulaId = aulaId });
         }
     }
 }
