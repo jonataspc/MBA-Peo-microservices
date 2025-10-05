@@ -20,7 +20,7 @@
                        Label="Curso"
                        Value="CursoSelecionado"
                        ValueChanged="@(v => CursoSelecionado = v)"
-                       ValueExpression="@(() => CursoSelecionado)"
+                       For="@(() => CursoSelecionado)"
                        Disabled="@ReadOnly"
                        Placeholder="@(_carregandoCursos ? "Carregando cursos..." : "Selecione...")"
                        ToStringFunc="@(id => _cursos.FirstOrDefault(x => x.Id == id)?.Titulo
