@@ -577,6 +577,68 @@
           }
         }
       }
+    },
+    "/v1/aluno/historico": {
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "operationId": "GetV1AlunoHistorico",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoricoAlunoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/historico/cursos-completo": {
+      "get": {
+        "tags": [
+          "Histórico"
+        ],
+        "operationId": "ObterHistoricoCompletoCursos",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObterHistoricoCompletoCursosResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1078,6 +1140,98 @@
           "numeroCertificado": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "HistoricoAlunoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeAluno": {
+            "type": "string"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeCurso": {
+            "type": "string"
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ObterHistoricoCompletoCursosResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "historico": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoricoCursoCompletoResponse"
+            }
+          }
+        }
+      },
+      "HistoricoCursoCompletoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeAluno": {
+            "type": "string"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeCurso": {
+            "type": "string"
+          },
+          "descricaoCurso": {
+            "type": "string",
+            "nullable": true
+          },
+          "instrutorNome": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }
