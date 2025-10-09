@@ -82,20 +82,19 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
         return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, bool apenasConcluidas, CancellationToken cancellationToken)
     {
-        return await _dbContext.Matriculas
-            .Where(m => m.AlunoId == alunoId)
+        var query = _dbContext.Matriculas
+            .Include(m => m.Aluno)
+            .Where(m => m.AlunoId == alunoId);
+
+        if (apenasConcluidas)
+        {
+            query = query.Where(m => m.DataConclusao != null);
+        }
+
+        return await query
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-    }
-
-    public async Task<IEnumerable<Matricula>> GetMatriculasConcluidaByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Matriculas
-            .Include(m => m.Aluno)
-            .Where(m => m.AlunoId == alunoId && m.DataConclusao != null)
-            .AsNoTracking()
-            .ToListAsync();
     }
 }

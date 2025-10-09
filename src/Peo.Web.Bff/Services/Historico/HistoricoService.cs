@@ -4,6 +4,7 @@ using Peo.Web.Bff.Services.GestaoAlunos.Dtos;
 using Peo.Web.Bff.Services.GestaoConteudo;
 using Peo.Web.Bff.Services.GestaoConteudo.Dtos;
 using Peo.Web.Bff.Services.Historico.Dtos;
+using System.Security.Claims;
 
 namespace Peo.Web.Bff.Services.Historico
 {
@@ -11,13 +12,15 @@ namespace Peo.Web.Bff.Services.Historico
     {
         private readonly GestaoAlunosService _gestaoAlunosService;
         private readonly GestaoConteudoService _gestaoConteudoService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public HistoricoService(
             GestaoAlunosService gestaoAlunosService,
-            GestaoConteudoService gestaoConteudoService)
+            GestaoConteudoService gestaoConteudoService, IHttpContextAccessor httpContextAccessor)
         {
             _gestaoAlunosService = gestaoAlunosService;
             _gestaoConteudoService = gestaoConteudoService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Results<Ok<ObterHistoricoCompletoCursosResponse>, BadRequest, UnauthorizedHttpResult, BadRequest<object>>>
@@ -31,10 +34,10 @@ namespace Peo.Web.Bff.Services.Historico
             if (historicoResult.Result is BadRequest)
                 return TypedResults.BadRequest();
 
-            if (historicoResult.Result is not Ok<IEnumerable<HistoricoAlunoResponse>> okHistorico)
+            if (historicoResult.Result is not Ok<IEnumerable<HistoricoAlunoProgressoResponse>> okHistorico)
                 return TypedResults.BadRequest<object>("Erro ao obter histórico de matrículas");
 
-            var historico = (okHistorico.Value ?? Enumerable.Empty<HistoricoAlunoResponse>()).ToList();
+            var historico = (okHistorico.Value ?? Enumerable.Empty<HistoricoAlunoProgressoResponse>()).ToList();
 
             if (!historico.Any())
             {
@@ -57,6 +60,8 @@ namespace Peo.Web.Bff.Services.Historico
                     cursosDict[curso.Id] = curso;
                 }
             }
+            var aluno = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name)
+                            ?? "Aluno não identificado";
 
             var historicoCompleto = historico.Select(matricula =>
             {
@@ -65,9 +70,9 @@ namespace Peo.Web.Bff.Services.Historico
 
                 return new HistoricoCursoCompletoResponse(
                     MatriculaId: matricula.Id,
-                    NomeAluno: matricula.NomeAluno,
+                    Aluno: aluno,
                     CursoId: matricula.CursoId,
-                    NomeCurso: curso?.Titulo ?? matricula.NomeCurso ?? "Curso não encontrado",
+                    NomeCurso: curso?.Titulo ?? curso?.Descricao ?? "Curso não encontrado",
                     DescricaoCurso: curso?.Descricao,
                     InstrutorNome: curso?.InstrutorNome,
                     DataMatricula: matricula.DataMatricula,

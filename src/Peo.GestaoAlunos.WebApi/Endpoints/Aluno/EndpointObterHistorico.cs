@@ -12,7 +12,7 @@ namespace Peo.GestaoAlunos.WebApi.Endpoints.Aluno
     {
         public static void Map(IEndpointRouteBuilder app)
         {
-            app.MapGet("/historico/", Handle)
+            app.MapGet("/progresso-matriculas/", Handle)
               .WithSummary("Consultar histórico do aluno")
               .RequireAuthorization(AccessRoles.Aluno);
         }

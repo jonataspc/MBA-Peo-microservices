@@ -4,8 +4,9 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
 {
     public class ObterMatriculasQuery : IRequest<Result<IEnumerable<MatriculaResponse>>>
     {
-        public ObterMatriculasQuery()
-        {
-        }
+        //public ObterMatriculasQuery()
+        //{
+        //}
+        public bool ApenasConcluidas { get; init; }
     }
 }

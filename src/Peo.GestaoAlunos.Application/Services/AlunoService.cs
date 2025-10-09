@@ -218,20 +218,11 @@ public class AlunoService(
         return certificados;
     }
 
-    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, bool apenasConcluidas, CancellationToken cancellationToken = default)
     {
         var aluno = await ObterAlunoPorUserIdAsync(usuarioId, cancellationToken);
 
-        var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id, cancellationToken);
-
-        return matriculas;
-    }
-
-    public async Task<IEnumerable<Matricula>> ObterMatriculasConcluidas(Guid usuarioId, CancellationToken cancellationToken = default)
-    {
-        var aluno = await ObterAlunoPorUserIdAsync(usuarioId, cancellationToken);
-
-        var matriculas = await alunoRepository.GetMatriculasConcluidaByAlunoIdAsync(aluno.Id, cancellationToken);
+        var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id, apenasConcluidas, cancellationToken);
 
         return matriculas;
     }

@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddExceptionHandler();
 builder.Services.AddIdentity(builder.Configuration)
+                .AddHttpContextAccessor()
                 .AddFaturamento(builder.Configuration)
                 .AddGestaoConteudo(builder.Configuration)
                 .AddGestaoAlunos(builder.Configuration)
