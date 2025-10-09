@@ -10,4 +10,14 @@
         string Status,
         double PercentualProgresso
     );
+
+    public record HistoricoAlunoProgressoResponse(
+        Guid Id,
+        Guid CursoId,
+        Guid AlunoId,
+        DateTime DataMatricula,
+        DateTime? DataConclusao,
+        string Status,
+        double PercentualProgresso
+    );
 }

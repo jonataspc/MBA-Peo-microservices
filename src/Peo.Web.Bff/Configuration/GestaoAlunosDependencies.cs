@@ -61,7 +61,7 @@ namespace Peo.Web.Bff.Configuration
             });
 
             // Histórico endpoint
-            endpoints.MapGet("/historico", async (GestaoAlunosService service, CancellationToken ct) =>
+            endpoints.MapGet("/progresso-matriculas", async (GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.ObterHistoricoAsync(ct);
             });

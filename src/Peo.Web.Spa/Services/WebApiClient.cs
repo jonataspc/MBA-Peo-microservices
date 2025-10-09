@@ -135,11 +135,11 @@ namespace Peo.Web.Spa.Services
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CertificadoAlunoResponse>> GetV1AlunoCertificadosAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoResponse>> GetV1AlunoHistoricoAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoProgressoResponse>> GetV1AlunoProgressoMatriculasAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoResponse>> GetV1AlunoHistoricoAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoProgressoResponse>> GetV1AlunoProgressoMatriculasAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ObterHistoricoCompletoCursosResponse> ObterHistoricoCompletoCursosAsync();
@@ -1573,14 +1573,14 @@ namespace Peo.Web.Spa.Services
         }
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoResponse>> GetV1AlunoHistoricoAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoProgressoResponse>> GetV1AlunoProgressoMatriculasAsync()
         {
-            return GetV1AlunoHistoricoAsync(System.Threading.CancellationToken.None);
+            return GetV1AlunoProgressoMatriculasAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoResponse>> GetV1AlunoHistoricoAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<HistoricoAlunoProgressoResponse>> GetV1AlunoProgressoMatriculasAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1593,8 +1593,8 @@ namespace Peo.Web.Spa.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/aluno/historico"
-                    urlBuilder_.Append("v1/aluno/historico");
+                    // Operation Path: "v1/aluno/progresso-matriculas"
+                    urlBuilder_.Append("v1/aluno/progresso-matriculas");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1621,7 +1621,7 @@ namespace Peo.Web.Spa.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<HistoricoAlunoResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<HistoricoAlunoProgressoResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2296,20 +2296,17 @@ namespace Peo.Web.Spa.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class HistoricoAlunoResponse
+    public partial class HistoricoAlunoProgressoResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("nomeAluno")]
-        public string NomeAluno { get; set; }
-
         [System.Text.Json.Serialization.JsonPropertyName("cursoId")]
         public System.Guid CursoId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("nomeCurso")]
-        public string NomeCurso { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("alunoId")]
+        public System.Guid AlunoId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("dataMatricula")]
         public System.DateTimeOffset DataMatricula { get; set; }
@@ -2341,8 +2338,8 @@ namespace Peo.Web.Spa.Services
         [System.Text.Json.Serialization.JsonPropertyName("matriculaId")]
         public System.Guid MatriculaId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("nomeAluno")]
-        public string NomeAluno { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("aluno")]
+        public string Aluno { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("cursoId")]
         public System.Guid CursoId { get; set; }

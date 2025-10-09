@@ -578,12 +578,12 @@
         }
       }
     },
-    "/v1/aluno/historico": {
+    "/v1/aluno/progresso-matriculas": {
       "get": {
         "tags": [
           "Alunos"
         ],
-        "operationId": "GetV1AlunoHistorico",
+        "operationId": "GetV1AlunoProgressoMatriculas",
         "responses": {
           "200": {
             "description": "",
@@ -592,7 +592,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HistoricoAlunoResponse"
+                    "$ref": "#/components/schemas/HistoricoAlunoProgressoResponse"
                   }
                 }
               }
@@ -1143,7 +1143,7 @@
           }
         }
       },
-      "HistoricoAlunoResponse": {
+      "HistoricoAlunoProgressoResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -1151,15 +1151,13 @@
             "type": "string",
             "format": "guid"
           },
-          "nomeAluno": {
-            "type": "string"
-          },
           "cursoId": {
             "type": "string",
             "format": "guid"
           },
-          "nomeCurso": {
-            "type": "string"
+          "alunoId": {
+            "type": "string",
+            "format": "guid"
           },
           "dataMatricula": {
             "type": "string",
@@ -1199,7 +1197,7 @@
             "type": "string",
             "format": "guid"
           },
-          "nomeAluno": {
+          "aluno": {
             "type": "string"
           },
           "cursoId": {

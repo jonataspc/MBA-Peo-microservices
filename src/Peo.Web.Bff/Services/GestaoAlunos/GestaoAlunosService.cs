@@ -144,9 +144,9 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
         }
 
         // historico endpoint
-        public async Task<Results<Ok<IEnumerable<HistoricoAlunoResponse>>, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ObterHistoricoAsync(CancellationToken ct)
+        public async Task<Results<Ok<IEnumerable<HistoricoAlunoProgressoResponse>>, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ObterHistoricoAsync(CancellationToken ct)
         {
-            var response = await httpClient.GetAsync("/v1/aluno/historico", ct);
+            var response = await httpClient.GetAsync("/v1/aluno/progresso-matriculas", ct);
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -157,7 +157,7 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
                 throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
-            var historicoAlunoResponse = await response.Content.ReadFromJsonAsync<IEnumerable<HistoricoAlunoResponse>>(cancellationToken: ct);
+            var historicoAlunoResponse = await response.Content.ReadFromJsonAsync<IEnumerable<HistoricoAlunoProgressoResponse>>(cancellationToken: ct);
             if (historicoAlunoResponse == null)
             {
                 return TypedResults.BadRequest<object>("Failed to deserialize historico response");

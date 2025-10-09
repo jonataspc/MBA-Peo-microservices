@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Peo.Core.Dtos;
+using Peo.Core.Entities;
 using Peo.Identity.Domain.Interfaces.Services;
 using Peo.Identity.WebApi.Endpoints;
 using Peo.Identity.WebApi.Endpoints.Requests;
@@ -20,6 +21,7 @@ public class LoginEndpointTests
     private readonly LoginRequest _validRequest;
     private readonly Mock<IOptions<JwtSettings>> _jwtSettingsMock;
     private readonly JwtSettings _jwtSettings;
+    private readonly Mock<IUserService> _userServiceMock;
 
     public LoginEndpointTests()
     {
@@ -52,6 +54,8 @@ public class LoginEndpointTests
             null!, null!, null!, null!);
 
         _tokenServiceMock = new Mock<ITokenService>();
+        _userServiceMock = new Mock<IUserService>();
+
         _validRequest = new LoginRequest(
             Email: "teste@exemplo.com",
             Password: "Teste@123"
@@ -68,6 +72,7 @@ public class LoginEndpointTests
         var resultado = await LoginEndpoint.HandleLogin(
             requisicaoInvalida,
             _signInManagerMock.Object,
+            _userServiceMock.Object,
             _tokenServiceMock.Object);
 
         // Assert
@@ -86,6 +91,7 @@ public class LoginEndpointTests
         var resultado = await LoginEndpoint.HandleLogin(
             _validRequest,
             _signInManagerMock.Object,
+            _userServiceMock.Object,
             _tokenServiceMock.Object);
 
         // Assert
@@ -109,6 +115,7 @@ public class LoginEndpointTests
         var resultado = await LoginEndpoint.HandleLogin(
             _validRequest,
             _signInManagerMock.Object,
+            _userServiceMock.Object,
             _tokenServiceMock.Object);
 
         // Assert
@@ -122,6 +129,8 @@ public class LoginEndpointTests
         var usuario = new IdentityUser { Id = Guid.CreateVersion7().ToString() };
         var papeis = new[] { "Aluno" };
         var token = "token-teste";
+
+        var userDetails = new Usuario(Guid.NewGuid(), "Teste", "email@emai.com");
 
         // Configuração do comportamento do UserManager
         var userManager = _signInManagerMock.Object.UserManager;
@@ -137,10 +146,14 @@ public class LoginEndpointTests
         _tokenServiceMock.Setup(x => x.CreateToken(usuario, papeis))
             .Returns(token);
 
+        _userServiceMock.Setup(s => s.ObterUsuarioPorIdAsync(Guid.Parse(usuario.Id)))
+            .ReturnsAsync(userDetails);
+
         // Act
         var resultado = await LoginEndpoint.HandleLogin(
             _validRequest,
             _signInManagerMock.Object,
+            _userServiceMock.Object,
             _tokenServiceMock.Object);
 
         // Assert
@@ -160,6 +173,8 @@ public class LoginEndpointTests
         var papeis = new[] { "Aluno" };
         var token = "token-teste";
 
+        var userDetails = new Usuario(Guid.NewGuid(), "Teste", "email@emai.com");
+
         // Configuração do comportamento do UserManager
         var userManager = _signInManagerMock.Object.UserManager;
         Mock.Get(userManager).Setup(x => x.FindByEmailAsync(_validRequest.Email))
@@ -174,9 +189,13 @@ public class LoginEndpointTests
         _tokenServiceMock.Setup(x => x.CreateToken(usuario, papeis))
             .Returns(token);
 
+        _userServiceMock.Setup(s => s.ObterUsuarioPorIdAsync(Guid.Parse(usuario.Id)))
+            .ReturnsAsync(userDetails);
+
         var resultadoToken = await LoginEndpoint.HandleLogin(
             _validRequest,
             _signInManagerMock.Object,
+            _userServiceMock.Object,
             _tokenServiceMock.Object);
 
         // Act

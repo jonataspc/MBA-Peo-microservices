@@ -24,7 +24,12 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterHistoricoAluno
         {
             try
             {
-                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculasConcluidas(_appIdentityUser.GetUserId(), cancellationToken);
+                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculas(_appIdentityUser.GetUserId(), request.ApenasConcluidas, cancellationToken);
+
+                if (request.ApenasConcluidas)
+                {
+                    matriculas = matriculas.Where(m => m.DataConclusao.HasValue);
+                }
 
                 return Result.Success(matriculas.Adapt<IEnumerable<HistoricoAlunoResponse>>());
             }

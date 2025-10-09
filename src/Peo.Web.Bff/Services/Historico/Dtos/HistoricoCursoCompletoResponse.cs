@@ -2,7 +2,7 @@
 {
     public record HistoricoCursoCompletoResponse(
         Guid MatriculaId,
-        string NomeAluno,
+        string Aluno,
         Guid CursoId,
         string NomeCurso,
         string? DescricaoCurso,

@@ -24,7 +24,7 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
         {
             try
             {
-                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculas(_appIdentityUser.GetUserId(), cancellationToken);
+                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculas(_appIdentityUser.GetUserId(), request.ApenasConcluidas, cancellationToken);
 
                 return Result.Success(matriculas.Adapt<IEnumerable<MatriculaResponse>>());
             }
