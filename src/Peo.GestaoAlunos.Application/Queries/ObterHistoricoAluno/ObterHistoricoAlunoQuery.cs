@@ -8,7 +8,7 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterHistoricoAluno
 
         public ObterHistoricoAlunoQuery()
         {
-            ApenasConcluidas = true;
+            ApenasConcluidas = false;
         }
     }
 }
