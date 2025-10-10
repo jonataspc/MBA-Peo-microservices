@@ -22,7 +22,7 @@
             <MudText Typo="Typo.body1">Carregando seus cursos...</MudText>
         </MudStack>
     }
-    else if (!_cursosMiticulados.Any())
+    else if (!_cursos.Any())
     {
         <MudAlert Severity="Severity.Info" Class="mb-4">
             <MudText Typo="Typo.body1">
@@ -36,7 +36,7 @@
         <MudText Typo="Typo.h5" Class="mb-3">Cursos iniciados</MudText>
         
         <MudGrid>
-            @foreach (var curso in _cursosMiticulados.Where(x => x.DataConclusao is null))
+            @foreach (var curso in _cursos.Where(x => x.DataConclusao is null))
             {
                 <MudItem xs="12" sm="6" md="4" lg="3">
                     <MudCard Class="mud-elevation-4 h-100">
@@ -98,7 +98,7 @@
         <MudText Typo="Typo.h5" Class="mb-3">Cursos concluídos</MudText>
 
         <MudGrid>
-            @foreach (var curso in _cursosMiticulados.Where(x => x.DataConclusao is not null))
+            @foreach (var curso in _cursos.Where(x => x.DataConclusao is not null))
             {
                 <MudItem xs="12" sm="6" md="4" lg="3">
                     <MudCard Class="mud-elevation-4 h-100">

@@ -6,7 +6,7 @@ namespace Peo.Web.Spa.Pages.Identity.Home
     public partial class Home
     {
         private string? UserName;
-        private IEnumerable<HistoricoCursoCompletoResponse> _cursosMiticulados = [];
+        private IEnumerable<HistoricoCursoCompletoResponse> _cursos = [];
         private bool _isLoading = true;
         private CancellationTokenSource? _cts;
 
@@ -31,7 +31,7 @@ namespace Peo.Web.Spa.Pages.Identity.Home
                 StateHasChanged();
 
                 var response = await Api.ObterHistoricoCompletoCursosAsync(_cts.Token);
-                _cursosMiticulados = response?.Historico ?? Enumerable.Empty<HistoricoCursoCompletoResponse>();
+                _cursos = response?.Historico ?? Enumerable.Empty<HistoricoCursoCompletoResponse>();
             }
             catch (ApiException ex)
             {
