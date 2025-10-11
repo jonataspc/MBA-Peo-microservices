@@ -1,0 +1,151 @@
+﻿@using MudBlazor
+@using System.Text.RegularExpressions
+@inject WebApiClient webApi
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h6" Class="mb-2">Pagamento com cartão</MudText>
+
+    <MudForm @ref="form" Model="Model">
+        <MudGrid>
+
+            <MudItem xs="12">
+                <MudTextField T="string"
+                              @bind-Value="Model.Nome"
+                              Label="Nome impresso no cartão"
+                              Placeholder="Ex.: JOÃO DA SILVA"
+                              Immediate="true"
+                              Validation="@(new Func<string, IEnumerable<string>>(ValidNome))" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField T="string"
+                              @bind-Value="Model.NumeroCartao"
+                              Label="Número do cartão"
+                              Placeholder="0000 0000 0000 0000"
+                              Immediate="true"
+                              Mask="@(new PatternMask("0000 0000 0000 0000"))"
+                              Validation="@(new Func<string, IEnumerable<string>>(ValidNumero))" />
+                <MudText Class="mt-1" Typo="Typo.caption" Color="Color.Secondary">
+                    Somente dígitos (máscara aplicada).
+                </MudText>
+            </MudItem>
+
+            <MudItem xs="6" sm="4">
+                <MudTextField T="string"
+                              @bind-Value="Model.DataExpiracao"
+                              Label="Validade (MM/YY)"
+                              Placeholder="MM/YY"
+                              Immediate="true"
+                              Mask="@(new PatternMask("00/00"))"
+                              Validation="@(new Func<string, IEnumerable<string>>(ValidData))" />
+            </MudItem>
+
+            <MudItem xs="6" sm="4">
+                <MudTextField T="string"
+                              @bind-Value="Model.Cvv"
+                              Label="CVV"
+                              Placeholder="***"
+                              Immediate="true"
+                              InputType="@(mostrarCvv ? InputType.Text : InputType.Password)"
+                              Mask="@(new PatternMask("000"))"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@(mostrarCvv ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                              OnAdornmentClick="@(()=> mostrarCvv = !mostrarCvv)"
+                              Validation="@(new Func<string, IEnumerable<string>>(ValidCvv))" />
+            </MudItem>
+
+            <MudItem xs="12" sm="4" Class="d-flex align-end">
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Class="mt-2"
+                           OnClick="SubmitAsync">
+                    Confirmar pagamento
+                </MudButton>
+            </MudItem>
+
+        </MudGrid>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter] public CartaoCredito Model { get; set; } = new();
+    [Parameter] public EventCallback<bool> PagamentoEfetuado { get; set; }
+    [Parameter] public string? MatriculaId { get; set; } = string.Empty;
+
+    private EfetuarPagamentoRequest efetuarPagamentoRequest { get; set; } = new();
+    private EfetuarPagamentoResponse efetuarPagamentoResponse { get; set; } = new();
+
+    private MudForm? form;
+    private bool mostrarCvv;
+
+    // ------ Validadores simples (somente dígitos/quantidade/formato) ------
+    private IEnumerable<string> ValidNome(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            yield return "Informe o nome.";
+        else if (value.Trim().Length < 3)
+            yield return "Nome muito curto.";
+    }
+
+    private IEnumerable<string> ValidNumero(string value)
+    {
+        var digits = SomenteDigitos(value);
+
+        if (digits.Length != 16)
+            yield return "Número deve ter 16 dígitos.";        
+    }
+
+    private IEnumerable<string> ValidData(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value.Length != 5 || value[2] != '/')
+        {
+            yield return "Use o formato MM/YY.";
+            yield break;
+        }
+        if (!int.TryParse(value[..2], out var mm) || mm < 1 || mm > 12)
+            yield return "Mês inválido.";
+        if (!int.TryParse(value[3..], out _))
+            yield return "Ano inválido.";        
+    }
+
+    private IEnumerable<string> ValidCvv(string value)
+    {
+        var digits = SomenteDigitos(value);
+        if (digits.Length != 3)
+            yield return "CVV deve ter 3 dígitos.";
+    }
+
+    private static string SomenteDigitos(string? s) =>
+        string.IsNullOrWhiteSpace(s) ? string.Empty : Regex.Replace(s, "[^0-9]", "");
+
+    private async Task SubmitAsync()
+    {
+        if (form is null) return;
+
+        await form.Validate();
+        if (!form.IsValid) return;
+
+        // Normaliza antes de enviar
+        Model.NumeroCartao = SomenteDigitos(Model.NumeroCartao);
+        Model.Cvv = SomenteDigitos(Model.Cvv);
+        Model.Nome = (Model.Nome ?? string.Empty).Trim();
+
+        efetuarPagamentoRequest = new EfetuarPagamentoRequest
+        {
+            MatriculaId = Guid.Parse(MatriculaId ?? string.Empty),
+            DadosCartao = Model
+        };
+        try
+        {
+            efetuarPagamentoResponse = await webApi.PostV1FaturamentoPagamentoAsync(efetuarPagamentoRequest, CancellationToken.None);
+
+            if (efetuarPagamentoResponse.StatusPagamento == "Pago")
+                await PagamentoEfetuado.InvokeAsync(true);
+            else
+                await PagamentoEfetuado.InvokeAsync(false);
+        }catch
+        {
+            await PagamentoEfetuado.InvokeAsync(false);
+        }
+    }
+}

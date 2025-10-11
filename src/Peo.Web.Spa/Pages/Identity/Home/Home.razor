@@ -1,18 +1,140 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+@using Peo.Web.Spa.Services
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+@inject WebApiClient Api
+@inject ISnackbar Snackbar
 @attribute [Authorize]
 
-@code {
-    private string? UserName;
+<PageTitle>Home - Peo</PageTitle>
 
-    protected override async Task OnInitializedAsync()
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+    <MudText Typo="Typo.h4" Class="mb-4">Bem-vindo, @UserName!</MudText>
+    
+    @if (_isLoading)
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        UserName = user.Identity?.Name ?? "Usuário";
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
+            <MudText Typo="Typo.body1">Carregando seus cursos...</MudText>
+        </MudStack>
     }
-}
+    else if (!_cursos.Any())
+    {
+        <MudAlert Severity="Severity.Info" Class="mb-4">
+            <MudText Typo="Typo.body1">
+                Você ainda não está matriculado em nenhum curso. 
+                <MudLink Href="/cursos" Color="Color.Primary">Explore nossos cursos disponíveis!</MudLink>
+            </MudText>
+        </MudAlert>
+    }
+    else
+    {
+        <MudText Typo="Typo.h5" Class="mb-3">Cursos iniciados</MudText>
+        
+        <MudGrid>
+            @foreach (var curso in _cursos.Where(x => x.DataConclusao is null))
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Class="mud-elevation-4 h-100">
+                        <MudCardContent Class="pb-2">
+                            <MudText Typo="Typo.h6" Class="mb-2" Style="min-height: 3rem; display: flex; align-items: center;">
+                                @curso.NomeCurso
+                            </MudText>
+                            
+                            @if (!string.IsNullOrEmpty(curso.InstrutorNome))
+                            {
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                    <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1" />
+                                    @curso.InstrutorNome
+                                </MudText>
+                            }
 
-<MudText Typo="Typo.h5">Bem-vindo, @UserName! Você está logado.</MudText>
+                            <MudDivider Class="my-2" />
+
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Small" Class="mr-1" />
+                                    Matrícula: @curso.DataMatricula.ToString("dd/MM/yyyy")
+                                </MudText>
+                            </MudStack>
+                        </MudCardContent>
+
+                        <MudCardActions Class="pt-0">
+                            <MudStack Spacing="2" Style="width: 100%;">
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">Progresso:</MudText>
+                                <MudProgressLinear 
+                                    Value="@curso.PercentualProgresso" 
+                                    Color="@GetProgressColor(curso.PercentualProgresso)"
+                                    Size="Size.Medium"
+                                    Class="mb-2">
+                                    <MudText Typo="Typo.caption" Style="font-weight: 500;">
+                                        @curso.PercentualProgresso%
+                                    </MudText>
+                                </MudProgressLinear>
+                                
+                                <MudButton
+                                    Variant="Variant.Filled" 
+                                    Color="Color.Primary" 
+                                    Size="Size.Small"
+                                    FullWidth="true"
+                                    StartIcon="@Icons.Material.Filled.PlayArrow"
+                                    OnClick="@(() => IniciarOuContinuarCurso(curso.MatriculaId))">
+                                    @(curso.PercentualProgresso == 0 ? "Iniciar Curso" : "Continuar")
+                                </MudButton>
+                            </MudStack>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+
+
+        <MudDivider Class="my-2" />
+
+        <MudText Typo="Typo.h5" Class="mb-3">Cursos concluídos</MudText>
+
+        <MudGrid>
+            @foreach (var curso in _cursos.Where(x => x.DataConclusao is not null))
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Class="mud-elevation-4 h-100">
+                        <MudCardContent Class="pb-2">
+                            <MudText Typo="Typo.h6" Class="mb-2" Style="min-height: 3rem; display: flex; align-items: center;">
+                                @curso.NomeCurso
+                            </MudText>
+
+                            @if (!string.IsNullOrEmpty(curso.InstrutorNome))
+                            {
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                    <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1" />
+                                    @curso.InstrutorNome
+                                </MudText>
+                            }
+
+                            <MudDivider Class="my-2" />
+
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Small" Class="mr-1" />
+                                    Matrícula: @curso.DataMatricula.ToString("dd/MM/yyyy")
+                                </MudText>
+
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Class="mr-1" />
+                                    Conclusão: @curso.DataConclusao!.Value.ToString("dd/MM/yyyy")
+                                </MudText>
+                                
+                            </MudStack>
+                        </MudCardContent>
+                       
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+        
+</MudContainer>
