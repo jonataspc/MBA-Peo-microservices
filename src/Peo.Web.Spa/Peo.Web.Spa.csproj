@@ -20,7 +20,6 @@
 	  <Folder Include="Pages\GestaoConteudo\" />
 	  <Folder Include="Pages\Financeiro\" />
 	  <Folder Include="Pages\Configuracoes\" />
-	  <Folder Include="Pages\Alunos\" />
 	</ItemGroup>
 
 	<ItemGroup>
