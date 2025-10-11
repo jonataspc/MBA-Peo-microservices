@@ -1,0 +1,26 @@
+﻿@page "/certificados"
+@inject WebApiClient client;
+
+<h3>Certificados</h3>
+
+<MudDataGrid Items="@Elements.Take(4)" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Conteudo" Title="Nr" />
+        <PropertyColumn Property="x => x.NumeroCertificado" />
+        <PropertyColumn Property="x => x.DataEmissao" />
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager T="CertificadoAlunoResponse" />
+    </PagerContent>
+
+</MudDataGrid>
+
+@code {
+    private IEnumerable<CertificadoAlunoResponse> Elements = new List<CertificadoAlunoResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await client.GetV1AlunoCertificadosAsync();
+    }
+}
