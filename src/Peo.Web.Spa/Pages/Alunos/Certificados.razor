@@ -1,13 +1,15 @@
 ﻿@page "/certificados"
+@layout MainLayout
 @inject WebApiClient client;
 
-<h3>Certificados</h3>
+<PageTitle>Lista de Certificados</PageTitle>
 
-<MudDataGrid Items="@Elements.Take(4)" Filterable="true">
+<MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Lista de Certificados</MudText>
+<MudDataGrid Items="@ListCertificados.Take(10)" Filterable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Conteudo" Title="Nr" />
-        <PropertyColumn Property="x => x.NumeroCertificado" />
-        <PropertyColumn Property="x => x.DataEmissao" />
+        <PropertyColumn Property="x => x.NumeroCertificado" Title="Certificado" />
+        <PropertyColumn Property="x => x.Conteudo" Title="Conteúdo" />
+        <PropertyColumn Property="x => x.DataEmissao" Title="Emissão" />
     </Columns>
 
     <PagerContent>
@@ -17,10 +19,10 @@
 </MudDataGrid>
 
 @code {
-    private IEnumerable<CertificadoAlunoResponse> Elements = new List<CertificadoAlunoResponse>();
+    private IEnumerable<CertificadoAlunoResponse> ListCertificados = new List<CertificadoAlunoResponse>();
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await client.GetV1AlunoCertificadosAsync();
+        ListCertificados = await client.GetV1AlunoCertificadosAsync();
     }
 }
