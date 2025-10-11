@@ -1,0 +1,29 @@
+﻿@page "/aulas"
+
+@attribute [Authorize]
+@* somente administrador *@
+@layout MainLayout
+<PageTitle>Aulas</PageTitle>
+
+<MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Gestão de aulas</MudText>
+<MudDataGrid T="AulaResponse" Items="_aulasLista">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Lista de Cursos</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AdicionaAula">
+            Adicionar
+        </MudButton>
+    </ToolBarContent>
+    <Columns>
+        <HierarchyColumn T="AulaResponse" />
+        <PropertyColumn Property="i => i.Titulo" Title="Título" />
+  
+    </Columns>
+    <ChildRowContent>
+        <MudPaper Class="p-4" Style="white-space:pre-wrap">
+            <MudText Typo="Typo.h6">Conteúdo programático</MudText>
+            <MudDivider Class="my-2" />
+
+        </MudPaper>
+    </ChildRowContent>
+</MudDataGrid>

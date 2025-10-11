@@ -15,6 +15,9 @@
             relative = "/" + relative;
 
         var target = $"/login?returnUrl={Uri.EscapeDataString(relative)}";
+
+       // var target = $"/nao-autorizado";
+
         Nav.NavigateTo(target, forceLoad: true);
     }
 }
