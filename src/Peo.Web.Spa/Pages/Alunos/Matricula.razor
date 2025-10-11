@@ -1,0 +1,133 @@
+﻿@page "/matricula"
+@using System.Linq
+@inject WebApiClient webApiClient
+@inject ISnackbar snackbar
+
+<h3>Efetuar Matricula</h3>
+
+@if (_loading)
+{
+    <MudText>Carregando…</MudText>
+}
+else
+{
+    var lista = cursos;
+    <MudCard Class="pa-4">
+        <MudGrid>
+            <MudItem xs="12" md="8">
+                <MudSelect T="string"
+                           Label="Curso"
+                           @bind-Value="cursoSelecionado"
+                           Placeholder="Selecione um curso"
+                           Disabled="!lista.Any() || fazerPagamento">
+                    @if (lista.Any())
+                    {
+                        @foreach (var curso in lista)
+                        {
+                            <MudSelectItem T="string" Value="@curso.Id">@curso.Titulo</MudSelectItem>
+                        }
+                    }
+                    else
+                    {
+                        <MudSelectItem T="string" Disabled="true">Nenhum curso</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="4" Class="d-flex align-end">
+                <MudButton Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Class="mt-2"
+                           OnClick="Salvar" Disabled="string.IsNullOrWhiteSpace(cursoSelecionado)|| fazerPagamento ">
+
+                    Salvar
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCard>
+    @if (fazerPagamento && !string.IsNullOrWhiteSpace(matriculaSelecionada))
+    {
+        <Pagamento MatriculaId="@matriculaSelecionada" PagamentoEfetuado="@PagamentoConcluido" />
+    }
+}
+
+@code {
+    private bool _loading = true;
+
+    private IEnumerable<Curso> cursos = Enumerable.Empty<Curso>();
+
+    private string? cursoSelecionado;
+    private string? matriculaSelecionada;
+
+    private ObterTodosCursosResponse obterCursos = new();
+
+    bool pagamentoConcluido = false;
+    bool fazerPagamento = false;
+
+    private void PagamentoConcluido(bool pagto)
+    {
+        if (pagto)
+        {
+            fazerPagamento = false;
+            snackbar.Add("Pagamento efetuado com sucesso!", Severity.Success);
+        }
+        else
+            snackbar.Add("Erro ao efetuar pagamento tente mais tarde!", Severity.Error);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var resp = await webApiClient.GetV1ConteudoCursoAsync(CancellationToken.None);
+            obterCursos = resp ?? new();
+            cursos = obterCursos?.Cursos ?? Enumerable.Empty<Curso>(); // nunca null
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task Salvar()
+    {
+        if (string.IsNullOrWhiteSpace(cursoSelecionado))
+            return;
+
+        var dto = new MatriculaCursoRequest { CursoId = Guid.Parse(cursoSelecionado) };
+
+        try
+        {
+            var matriculas = await webApiClient.GetV1AlunoMatriculaAsync(CancellationToken.None);
+
+            MatriculaResponse? matriculaJaCadastrada = matriculas.FirstOrDefault(m => m.CursoId.ToString() == cursoSelecionado);
+
+            if (matriculaJaCadastrada != null)
+            {
+                if (matriculaJaCadastrada.Status.Equals("PendentePagamento"))
+                {
+                    matriculaSelecionada = matriculaJaCadastrada.Id.ToString();
+                    fazerPagamento = true;
+                }
+                else
+                {
+                    snackbar.Add("Você já está matriculado neste curso.", Severity.Info);
+                    fazerPagamento = false;
+                }
+            }
+            else
+            {
+                var result = await webApiClient.PostV1AlunoMatriculaAsync(dto, CancellationToken.None);
+                matriculaSelecionada = result.MatriculaId.ToString();
+                fazerPagamento = true;
+            }
+
+            if (fazerPagamento)
+                snackbar.Add("Matrícula já foi realizada anteriormente! Por favor, prossiga para o pagamento.", Severity.Warning);
+
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Erro ao realizar matrícula: {ex.Message}", Severity.Error);
+        }
+    }
+}
