@@ -4,15 +4,93 @@
 
 <PageTitle>Aula</PageTitle>
 
-<h3>Iniciar aula</h3>
-
 <MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Assistir aula</MudText>
 
-<MudSelect T="Guid" Label="Selecione o curso" @bind-Value="_cursoSelecionadoId">
-    @foreach (var curso in _cursosMatriculado)
+<MudSelect T="Guid"
+           Label="Selecione o curso"
+           FullWidth="false"
+           FitContent="true"
+           @bind-Value="_cursoSelecionadoId"
+           Variant="Variant.Outlined"
+           Class="mb-4"
+           ToStringFunc="@(id => ObterNomeCurso(id))">
+    <!-- ✅ Converte Guid para nome -->
+    @foreach (var curso in _cursosMatriculados)
     {
-        <MudSelectItem T="Guid" Value="curso.CursoId">@curso.NomeCurso</MudSelectItem>
+        <MudSelectItem T="Guid" Value="@curso.CursoId">
+            @curso.NomeCurso
+        </MudSelectItem>
     }
 </MudSelect>
 
+<MudButton Variant="Variant.Filled"
+           Color="Color.Primary"
+           OnClick="ListarAulas"
+           Disabled="@(_cursoSelecionadoId == Guid.Empty)">
+    Aulas disponíveis do curso
+</MudButton>
 
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Class="mb-4">Progresso das Aulas</MudText>
+
+    @if (!_progressoMatricula.Any())
+    {
+        
+        <MudText Typo="Typo.body1">Nenhuma aula disponível para o curso selecionado.</MudText>
+    }
+    else if (_cursoSelecionadoId != Guid.Empty)
+    {
+     
+        <MudDataGrid T="ProgressoMatricula"
+            Items="_progressoMatricula"
+            Hover="true"
+            Bordered="true"
+            Striped="true"
+            Dense="true"
+            Breakpoint="Breakpoint.Sm"
+            RowsPerPage="10"
+            Class="mt-4">
+
+            <Columns>
+                <PropertyColumn Property="x => x.TituloAula" Title="Aula" Editable="false" />
+                <PropertyColumn Property="x => x.DataInicio" Title="Inicio" Editable="false" />
+                <PropertyColumn Property="x => x.DataConclusao" Title="Inicio" Editable="false" />
+                <TemplateColumn>
+                    <HeaderTemplate>
+                        <MudText Typo="Typo.body2"><strong>Ações</strong></MudText>
+                    </HeaderTemplate>
+                    <CellTemplate>
+                        @if( context.Item.DataInicio==null)
+                        {
+                            <MudChip Color="Color.Default" Variant="Variant.Outlined" Size="Size.Small">Não Iniciada</MudChip>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="@(() => StartClass(context.Item))">
+                                Iniciar
+                            </MudButton>
+                        }
+                        else if(context.Item.DataInicio!=null && context.Item.DataConclusao==null)
+                        {
+                            <MudChip Color="Color.Info" Variant="Variant.Outlined" Size="Size.Small">Em Andamento</MudChip>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="@(() => CloseClass(context.Item))">
+                                Finalizar
+                            </MudButton>
+                        }
+                        else if(context.Item.DataConclusao!=null)
+                        {
+                            <MudChip Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small">Concluída</MudChip>
+                        }
+
+                    </CellTemplate>
+
+                </TemplateColumn>
+            </Columns>
+
+        </MudDataGrid>
+    }
+
+</MudContainer>

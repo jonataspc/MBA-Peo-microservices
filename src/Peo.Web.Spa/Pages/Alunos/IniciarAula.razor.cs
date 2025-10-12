@@ -1,103 +1,238 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Peo.Web.Spa.Services;
+using System.Threading.Tasks;
+using static MudBlazor.CategoryTypes;
 
 namespace Peo.Web.Spa.Pages.Alunos
 {
-    public partial class IniciarAula
+    public partial class IniciarAula : IDisposable
     {
-        private IEnumerable<MatriculaResponse> _MatriculaResponse = new List<MatriculaResponse>();
-        private IEnumerable<Curso> _cursos = new List<Curso>();
-        private IEnumerable<CursoMatriculado> _cursosMatriculado = new List<CursoMatriculado>();
+        // Estado
+        private List<CursoMatriculado> _cursosMatriculados = new();
+        private List<ProgressoMatricula> _progressoMatricula = new();
+        private Dictionary<Guid, Curso> _cursosCache = new();
         private Guid _cursoSelecionadoId;
+        private bool _carregando = true;
+        private string? _mensagemErro;
 
-        [Inject] WebApiClient Api { get; set; } = null!;
-        [Inject] IDialogService DialogService { get; set; } = null!;
-        [Inject] ISnackbar Snackbar { get; set; } = null!;
+        // Injeções de Dependência
+        [Inject] private WebApiClient Api { get; set; } = null!;
+        [Inject] private IDialogService DialogService { get; set; } = null!;
+        [Inject] private ISnackbar Snackbar { get; set; } = null!;
+        [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+
         private CancellationTokenSource? _cts;
 
         protected override async Task OnInitializedAsync()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            await ObterCursos();
-            await ObterMatriculasDoAluno();
+            await CarregarDados();
         }
 
-        private async Task ObterMatriculasDoAluno()
+        private async Task CarregarDados()
         {
+            _carregando = true;
+            _mensagemErro = null;
+
             try
             {
-                var resp = await Api.GetV1AlunoMatriculaAsync(_cts.Token);
-                foreach (var curso in resp)
-                {
-                    var cursoDetalhes = ProcurarCursoPorId(curso.CursoId);
-                    if (cursoDetalhes != null)
-                    {
-                        _cursosMatriculado = _cursosMatriculado.Append(new CursoMatriculado
-                        {
-                            CursoId = curso.CursoId,
-                            NomeCurso = cursoDetalhes.Titulo,
-                            DescricaoCurso = cursoDetalhes.Descricao,
-                            DataMatricula = curso.DataMatricula.DateTime, // FIX: Convert DateTimeOffset to DateTime
-                            DataConclusao = curso.DataConclusao?.DateTime, // FIX: Convert nullable DateTimeOffset to nullable DateTime
-                            Status = curso.Status
-                        });
-                    }
-                }
+                // Cancela operações anteriores
+                _cts?.Cancel();
+                _cts?.Dispose();
+                _cts = new CancellationTokenSource();
 
-                if (_cursosMatriculado.Any())
-                {
-                    _cursoSelecionadoId = _cursosMatriculado.First().CursoId;
-                }
+                // Carrega cursos primeiro (para ter os detalhes)
+                await ObterCursos();
 
+                // Depois carrega as matrículas
+                await ObterMatriculasDoAluno();
             }
-            catch (Exception e)
+            catch (OperationCanceledException)
             {
-
-                throw;
+                // Operação cancelada, ignore
             }
-
+            catch (Exception ex)
+            {
+                _mensagemErro = "Erro ao carregar dados. Tente novamente.";
+                Snackbar.Add(_mensagemErro, Severity.Error);
+                // Log: ex.Message, ex.StackTrace
+            }
+            finally
+            {
+                _carregando = false;
+            }
         }
 
         private async Task ObterCursos()
         {
-            try
+            var respCursos = await Api.GetV1ConteudoCursoAsync(_cts!.Token);
+            var cursos = respCursos?.Cursos ?? Enumerable.Empty<Curso>();
+
+            // Cria dicionário para busca rápida
+            _cursosCache = cursos
+                .Where(c => Guid.TryParse(c.Id, out _))
+                .ToDictionary(
+                    c => Guid.Parse(c.Id),
+                    c => c
+                );
+        }
+
+        private async Task ObterMatriculasDoAluno()
+        {
+            var matriculas = await Api.GetV1AlunoMatriculaAsync(_cts!.Token);
+
+            // Usa List para melhor performance
+            _cursosMatriculados = matriculas
+                .Select(m => CriarCursoMatriculado(m))
+                .Where(cm => cm != null)
+                .Select(cm => cm!)
+                .ToList();
+
+            // Seleciona o primeiro curso automaticamente
+            if (_cursosMatriculados.Any())
             {
-                var respCursos = await Api.GetV1ConteudoCursoAsync(_cts.Token);
-
-                _cursos = respCursos?.Cursos ?? Enumerable.Empty<Curso>();
-                foreach (var curso in _cursos)
-                {
-
-                    _ = Guid.TryParse(curso.Id,out Guid cursoId);
-                }
-
-
-            }
-            catch (Exception e)
-            {
-
-                throw;
+                _cursoSelecionadoId = _cursosMatriculados.First().CursoId;
+                await ListarAulas();
             }
         }
 
-        // Exemplo de como procurar um curso em uma lista de cursos pelo Id
-        private Curso? ProcurarCursoPorId(Guid cursoId)
+        private CursoMatriculado? CriarCursoMatriculado(MatriculaResponse matricula)
         {
-            // Considerando que _cursos é IEnumerable<Curso> e Curso.Id é string
-            return _cursos.FirstOrDefault(c => Guid.TryParse(c.Id, out var id) && id == cursoId);
+            if (!_cursosCache.TryGetValue(matricula.CursoId, out var curso))
+            {
+                return null;
+            }
+
+            return new CursoMatriculado
+            {
+                CursoId = matricula.CursoId,
+                NomeCurso = curso.Titulo,
+                DescricaoCurso = curso.Descricao,
+                DataMatricula = matricula.DataMatricula.DateTime,
+                DataConclusao = matricula.DataConclusao?.DateTime,
+                Status = matricula.Status
+            };
+        }
+
+
+        private string ObterNomeCurso(Guid cursoId)
+        {
+            return _cursosMatriculados
+                .FirstOrDefault(c => c.CursoId == cursoId)
+                ?.NomeCurso ?? "Curso não encontrado";
+        }
+
+        private void OnCursoSelecionado(Guid cursoId)
+        {
+            _cursoSelecionadoId = cursoId;
+        }
+
+        #region aulas disponiveis
+        private async Task ListarAulas()
+        {
+            
+            RetornaAulasDaMatriculaMock(_cursoSelecionadoId);
+
+        }
+
+        private async Task StartClass(ProgressoMatricula itemClicado)
+        {
+            // Sua lógica para iniciar a aula vai aqui.
+            // Por exemplo, navegar para outra página, salvar no banco, etc.
+            Console.WriteLine($"Iniciando a aula: {itemClicado.TituloAula}");
+            Snackbar.Add($"Iniciando a aula: {itemClicado.TituloAula}", Severity.Info);
+
+            // Exemplo: Navegar para a página da aula
+            // NavigationManager.NavigateTo($"/aula/{itemClicado.Id}");
+        }
+        private async Task CloseClass(ProgressoMatricula itemClicado)
+        {
+            // Sua lógica para iniciar a aula vai aqui.
+            // Por exemplo, navegar para outra página, salvar no banco, etc.
+            Console.WriteLine($"Finalizando a aula: {itemClicado.TituloAula}");
+            Snackbar.Add($"Finalizando a aula: {itemClicado.TituloAula}", Severity.Info);
+
+            // Exemplo: Navegar para a página da aula
+            // NavigationManager.NavigateTo($"/aula/{itemClicado.Id}");
+        }
+        #endregion
+
+
+
+
+        private void RetornaAulasDaMatriculaMock(Guid MatriculaId)
+        {
+            _progressoMatricula = new List<ProgressoMatricula>
+            {
+                new ProgressoMatricula
+                {
+                    id = Guid.NewGuid(),
+                    MatriculaId = MatriculaId,
+                    AulaId = Guid.NewGuid(),
+                    TituloAula = "Introdução ao Curso",
+                    DataInicio = DateTime.Now.AddDays(-10),
+                    DataConclusao = DateTime.Now.AddDays(-9)
+                },
+                new ProgressoMatricula
+                {
+                    id = Guid.NewGuid(),
+                    MatriculaId = MatriculaId,
+                    AulaId = Guid.NewGuid(),
+                    TituloAula = "Aula 1: Conceitos Básicos",
+                    DataInicio = DateTime.Now.AddDays(-8),
+                    DataConclusao = DateTime.Now.AddDays(-7)
+                },
+                new ProgressoMatricula
+                {
+                    id = Guid.NewGuid(),
+                    MatriculaId = MatriculaId,
+                    AulaId = Guid.NewGuid(),
+                    TituloAula = "Aula 2: Ferramentas Essenciais",
+                    DataInicio = DateTime.Now.AddDays(-6),
+                    DataConclusao = null // Ainda não concluída
+                },
+                new ProgressoMatricula
+                {
+                    id = Guid.NewGuid(),
+                    MatriculaId = MatriculaId,
+                    AulaId = Guid.NewGuid(),
+                    TituloAula = "Aula 3: Práticas Avançadas",
+                    DataInicio = DateTime.MinValue, // Ainda não iniciada
+                    DataConclusao = null
+                }
+            };
+            foreach (var aula in _progressoMatricula)
+            {
+                Console.WriteLine($"Aula: {aula.TituloAula}, Início: {aula.DataInicio}, Conclusão: {aula.DataConclusao}");
+            }
+
+        }
+        public void Dispose()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
         }
     }
-}
 
-public class CursoMatriculado
-{
-    public Guid CursoId { get; set; }
-    public string? NomeCurso { get; set; }
-    public string? DescricaoCurso { get; set; }
-    public DateTime DataMatricula { get; set; }
-    public DateTime? DataConclusao { get; set; }
-    public string Status { get; set; }
+    public class CursoMatriculado
+    {
+        public Guid CursoId { get; set; }
+        public string? NomeCurso { get; set; }
+        public string? DescricaoCurso { get; set; }
+        public DateTime DataMatricula { get; set; }
+        public DateTime? DataConclusao { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
+
+    public class ProgressoMatricula
+    {
+        public Guid id { get; set; }
+        public Guid MatriculaId { get; set; }
+        public Guid AulaId { get; set; }
+        public String TituloAula { get; set; } 
+        public DateTime DataInicio { get; set; }
+        public DateTime? DataConclusao { get; set; }
+
+    }
+
 }
