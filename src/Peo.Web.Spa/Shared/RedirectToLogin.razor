@@ -1,23 +1,46 @@
 ﻿@namespace Peo.Web.Spa.Shared
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Nav
 
-@code {
-    protected override void OnInitialized()
+<CascadingAuthenticationState>
+    @if (!_navegou)
     {
-        var relative = Nav.ToBaseRelativePath(Nav.Uri);
+        <span></span> @* placeholder *@
+    }
+</CascadingAuthenticationState>
 
-        if (relative.StartsWith("login", StringComparison.OrdinalIgnoreCase))
+@code {
+    [CascadingParameter] private Task<AuthenticationState> AuthTask { get; set; } = default!;
+
+    private bool _navegou;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthTask;
+        var user = auth.User;
+
+        var current = Nav.ToBaseRelativePath(Nav.Uri);
+        // Evita loop quando já estamos em /login ou /naoautorizado
+        if (current.StartsWith("login", StringComparison.OrdinalIgnoreCase) ||
+            current.StartsWith("naoautorizado", StringComparison.OrdinalIgnoreCase))
             return;
 
-        if (string.IsNullOrWhiteSpace(relative))
-            relative = "/";
-        else if (!relative.StartsWith('/'))
-            relative = "/" + relative;
+        // Monta returnUrl
+        var relative = string.IsNullOrWhiteSpace(current) ? "/" :
+                       (current.StartsWith("/") ? current : "/" + current);
 
-        var target = $"/login?returnUrl={Uri.EscapeDataString(relative)}";
-
-       // var target = $"/nao-autorizado";
-
-        Nav.NavigateTo(target, forceLoad: true);
+        if (!(user.Identity?.IsAuthenticated ?? false))
+        {
+            // 401 → login
+            var targetLogin = $"/login?returnUrl={Uri.EscapeDataString(relative)}";
+            _navegou = true;
+            Nav.NavigateTo(targetLogin, forceLoad: true);
+        }
+        else
+        {
+            // 403 → página de acesso negado
+            _navegou = true;
+            Nav.NavigateTo("/naoautorizado", forceLoad: true);
+        }
     }
 }

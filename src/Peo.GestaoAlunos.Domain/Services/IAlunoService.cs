@@ -1,4 +1,5 @@
-﻿using Peo.GestaoAlunos.Domain.Entities;
+﻿using Peo.GestaoAlunos.Domain.Dtos;
+using Peo.GestaoAlunos.Domain.Entities;
 
 namespace Peo.GestaoAlunos.Domain.Services
 {
@@ -22,8 +23,8 @@ namespace Peo.GestaoAlunos.Domain.Services
 
         Task<Aluno> ObterAlunoPorUserIdAsync(Guid usuarioId, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<Matricula>> ObterMatriculas(Guid alunoId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Matricula>> ObterMatriculas(Guid alunoId, bool apenasConcluidas, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<Matricula>> ObterMatriculasConcluidas(Guid alunoId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<AulaMatriculaDto>> ObterAulasMatricula(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken = default);
     }
 }

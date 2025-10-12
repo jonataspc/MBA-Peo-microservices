@@ -1,0 +1,88 @@
+@page "/historico"
+@attribute [Authorize]
+@layout MainLayout
+
+<PageTitle>Histórico de Cursos</PageTitle>
+
+<MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Histórico de Cursos</MudText>
+<MudDataGrid T="HistoricoCursoCompletoResponse" Items="_historicoLista" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Meus Cursos</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" OnClick="ObterHistorico">
+            Atualizar
+        </MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="i => i.NomeCurso" Title="Curso" />
+        <PropertyColumn Property="i => i.InstrutorNome" Title="Instrutor" />
+        <PropertyColumn Property="i => i.DataMatricula" Title="Data Matrícula" Format="dd/MM/yyyy" />
+        <PropertyColumn Property="i => i.DataConclusao" Title="Data Conclusão" Format="dd/MM/yyyy">
+            <CellTemplate>
+                @if (context.Item.DataConclusao.HasValue)
+                {
+                    @context.Item.DataConclusao.Value.ToString("dd/MM/yyyy")
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2" Color="Color.Warning">Em andamento</MudText>
+                }
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="i => i.Status" Title="Status">
+            <CellTemplate>
+                @if (context.Item.Status == "Concluído" || context.Item.Status == "Concluido")
+                {
+                    <MudChip Color="Color.Success" Size="Size.Small">@context.Item.Status</MudChip>
+                }
+                else if (context.Item.Status == "Em Progresso" || context.Item.Status == "EmProgresso")
+                {
+                    <MudChip Color="Color.Info" Size="Size.Small">Em Progresso</MudChip>
+                }
+                else
+                {
+                    <MudChip Color="Color.Default" Size="Size.Small">@context.Item.Status</MudChip>
+                }
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="i => i.PercentualProgresso" Title="Progresso">
+            <CellTemplate>
+                <MudProgressLinear
+                    Value="@context.Item.PercentualProgresso"
+                    Color="@GetProgressColor(context.Item.PercentualProgresso)"
+                    Class="my-2"
+                    Size="Size.Medium">
+                    <MudText Typo="Typo.body2">@context.Item.PercentualProgresso%</MudText>
+                </MudProgressLinear>
+            </CellTemplate>
+        </PropertyColumn>
+        <TemplateColumn Title="Ações" Sortable="false">
+            <CellTemplate>
+                <MudTooltip Text="Ver detalhes">
+                    <MudIconButton
+                        Icon="@Icons.Material.Filled.Info"
+                        Size="Size.Small"
+                        Color="Color.Primary"
+                        OnClick="@(() => VerDetalhes(context.Item))" />
+                </MudTooltip>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="HistoricoCursoCompletoResponse" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private Color GetProgressColor(int percentual)
+    {
+        return percentual switch
+        {
+            100 => Color.Success,
+            >= 75 => Color.Info,
+            >= 50 => Color.Primary,
+            >= 25 => Color.Warning,
+            _ => Color.Error
+        };
+    }
+}

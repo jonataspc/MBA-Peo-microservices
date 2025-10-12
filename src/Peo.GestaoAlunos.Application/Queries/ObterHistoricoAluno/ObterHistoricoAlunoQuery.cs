@@ -4,8 +4,11 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterHistoricoAluno
 {
     public class ObterHistoricoAlunoQuery : IRequest<Result<IEnumerable<HistoricoAlunoResponse>>>
     {
+        public bool ApenasConcluidas { get; init; }
+
         public ObterHistoricoAlunoQuery()
         {
+            ApenasConcluidas = false;
         }
     }
 }

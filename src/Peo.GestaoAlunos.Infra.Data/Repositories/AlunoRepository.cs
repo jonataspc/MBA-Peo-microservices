@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Peo.Core.Infra.Data.Repositories;
+using Peo.GestaoAlunos.Domain.Dtos;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Repositories;
 using Peo.GestaoAlunos.Infra.Data.Contexts;
@@ -82,20 +83,39 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
         return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, bool apenasConcluidas, CancellationToken cancellationToken)
     {
-        return await _dbContext.Matriculas
-            .Where(m => m.AlunoId == alunoId)
+        var query = _dbContext.Matriculas
+            .Include(m => m.Aluno)
+            .Where(m => m.AlunoId == alunoId);
+
+        if (apenasConcluidas)
+        {
+            query = query.Where(m => m.DataConclusao != null);
+        }
+
+        return await query
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Matricula>> GetMatriculasConcluidaByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<AulaMatriculaDto>> GetAulasByMatriculaIdAsync(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken)
     {
-        return await _dbContext.Matriculas
-            .Include(m => m.Aluno)
-            .Where(m => m.AlunoId == alunoId && m.DataConclusao != null)
+        var query = _dbContext.Matriculas
+            .Where(m => m.AlunoId == alunoId && m.Id == matriculaId)
+            .SelectMany(m => _dbContext.ProgressosMatricula.Where(p => p.MatriculaId == m.Id),
+                (m, p) => new AulaMatriculaDto(
+                    m.Id,
+                    m.CursoId,
+                    p.AulaId,
+                    p.DataInicio,
+                    p.DataConclusao,
+                    p.EstaConcluido ? "Concluido" : "Pendente"
+                )
+            );
+
+        return await query
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

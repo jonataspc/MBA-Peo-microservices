@@ -3,6 +3,7 @@ using Peo.Core.DomainObjects;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Messages.IntegrationRequests;
 using Peo.Core.Messages.IntegrationResponses;
+using Peo.GestaoAlunos.Domain.Dtos;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Repositories;
 using Peo.GestaoAlunos.Domain.Services;
@@ -122,7 +123,7 @@ public class AlunoService(
         var totalAulas = responseCurso.Message.TotalAulas.Value;
         var aulasConcluidas = await alunoRepository.CountAulasConcluidasAsync(matriculaId, cancellationToken);
 
-        var novoPercentualProgresso = (int)(aulasConcluidas * 100.0 / totalAulas);
+        var novoPercentualProgresso = (int)((aulasConcluidas + 1) * 100.0 / totalAulas);
         matricula.AtualizarProgresso(novoPercentualProgresso);
 
         // Se todas as aulas foram concluídas, marcar matrícula como concluída
@@ -218,21 +219,21 @@ public class AlunoService(
         return certificados;
     }
 
-    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, bool apenasConcluidas, CancellationToken cancellationToken = default)
     {
         var aluno = await ObterAlunoPorUserIdAsync(usuarioId, cancellationToken);
 
-        var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id, cancellationToken);
+        var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id, apenasConcluidas, cancellationToken);
 
         return matriculas;
     }
 
-    public async Task<IEnumerable<Matricula>> ObterMatriculasConcluidas(Guid usuarioId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<AulaMatriculaDto>> ObterAulasMatricula(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken = default)
     {
-        var aluno = await ObterAlunoPorUserIdAsync(usuarioId, cancellationToken);
+        var aluno = await ObterAlunoPorUserIdAsync(alunoId, cancellationToken);
 
-        var matriculas = await alunoRepository.GetMatriculasConcluidaByAlunoIdAsync(aluno.Id, cancellationToken);
+        var aulas = await alunoRepository.GetAulasByMatriculaIdAsync(aluno.Id, matriculaId, cancellationToken);
 
-        return matriculas;
+        return aulas;
     }
 }

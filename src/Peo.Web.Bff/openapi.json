@@ -427,6 +427,49 @@
         }
       }
     },
+    "/v1/aluno/matricula/{id}/aulas": {
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "operationId": "GetV1AlunoMatriculaAulas",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AulaMatriculaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/aluno/matricula/concluir": {
       "post": {
         "tags": [
@@ -578,12 +621,12 @@
         }
       }
     },
-    "/v1/aluno/historico": {
+    "/v1/aluno/progresso-matriculas": {
       "get": {
         "tags": [
           "Alunos"
         ],
-        "operationId": "GetV1AlunoHistorico",
+        "operationId": "GetV1AlunoProgressoMatriculas",
         "responses": {
           "200": {
             "description": "",
@@ -592,7 +635,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/HistoricoAlunoResponse"
+                    "$ref": "#/components/schemas/HistoricoAlunoProgressoResponse"
                   }
                 }
               }
@@ -1026,6 +1069,45 @@
           }
         }
       },
+      "AulaMatriculaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dataInicio": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "tituloCurso": {
+            "type": "string",
+            "nullable": true
+          },
+          "tituloAula": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ConcluirMatriculaResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1143,7 +1225,7 @@
           }
         }
       },
-      "HistoricoAlunoResponse": {
+      "HistoricoAlunoProgressoResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -1151,15 +1233,13 @@
             "type": "string",
             "format": "guid"
           },
-          "nomeAluno": {
-            "type": "string"
-          },
           "cursoId": {
             "type": "string",
             "format": "guid"
           },
-          "nomeCurso": {
-            "type": "string"
+          "alunoId": {
+            "type": "string",
+            "format": "guid"
           },
           "dataMatricula": {
             "type": "string",
@@ -1199,7 +1279,7 @@
             "type": "string",
             "format": "guid"
           },
-          "nomeAluno": {
+          "aluno": {
             "type": "string"
           },
           "cursoId": {

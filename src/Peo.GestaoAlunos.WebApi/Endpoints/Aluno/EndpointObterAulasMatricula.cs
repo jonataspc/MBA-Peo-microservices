@@ -4,22 +4,22 @@ using Peo.Core.DomainObjects;
 using Peo.Core.DomainObjects.Result;
 using Peo.Core.Web.Api;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
-using Peo.GestaoAlunos.Application.Queries.ObterHistoricoAluno;
+using Peo.GestaoAlunos.Application.Queries.ObterAulasMatricula;
 
 namespace Peo.GestaoAlunos.WebApi.Endpoints.Aluno
 {
-    public class EndpointObterHistorico : IEndpoint
+    public class EndpointObterAulasMatricula : IEndpoint
     {
         public static void Map(IEndpointRouteBuilder app)
         {
-            app.MapGet("/progresso-matriculas/", Handle)
-              .WithSummary("Consultar histórico do aluno")
+            app.MapGet("/matricula/{id:guid}/aulas", Handle)
+              .WithSummary("Consultar aulas da matrícula")
               .RequireAuthorization(AccessRoles.Aluno);
         }
 
-        private static async Task<Results<Ok<IEnumerable<HistoricoAlunoResponse>>, ValidationProblem, BadRequest<Error>>> Handle(IMediator mediator, CancellationToken cancellationToken)
+        private static async Task<Results<Ok<IEnumerable<AulaMatriculaResponse>>, ValidationProblem, BadRequest<Error>>> Handle(Guid id, IMediator mediator, CancellationToken cancellationToken)
         {
-            var command = new ObterHistoricoAlunoQuery();
+            var command = new ObterAulasMatriculaQuery(id);
             var response = await mediator.Send(command, cancellationToken);
 
             if (response.IsSuccess)

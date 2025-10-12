@@ -16,7 +16,10 @@ namespace Peo.Identity.WebApi.Endpoints
                .AllowAnonymous();
         }
 
-        public static async Task<IResult> HandleLogin(LoginRequest loginRequest, SignInManager<IdentityUser> signInManager, ITokenService tokenService)
+        public static async Task<IResult> HandleLogin(LoginRequest loginRequest, 
+                                                        SignInManager<IdentityUser> signInManager,
+                                                        IUserService userService,
+                                                        ITokenService tokenService)
         {
             if (!MiniValidator.TryValidate(loginRequest, out var errors))
             {
@@ -36,7 +39,7 @@ namespace Peo.Identity.WebApi.Endpoints
             {
                 return TypedResults.Unauthorized();
             }
-
+            
             var userRoles = await signInManager.UserManager.GetRolesAsync(user!);
 
             return TypedResults.Ok(new LoginResponse(tokenService.CreateToken(user, userRoles), Guid.Parse(user.Id)));
