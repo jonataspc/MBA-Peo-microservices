@@ -1,0 +1,18 @@
+﻿@page "/alunos/iniciar-aula"
+@layout MainLayout
+@attribute [Authorize()]
+
+<PageTitle>Aula</PageTitle>
+
+<h3>Iniciar aula</h3>
+
+<MudText Typo="Typo.h1" Class="mb-4" Align="Align.Center">Assistir aula</MudText>
+
+<MudSelect T="Guid" Label="Selecione o curso" @bind-Value="_cursoSelecionadoId">
+    @foreach (var curso in _cursosMatriculado)
+    {
+        <MudSelectItem T="Guid" Value="curso.CursoId">@curso.NomeCurso</MudSelectItem>
+    }
+</MudSelect>
+
+
