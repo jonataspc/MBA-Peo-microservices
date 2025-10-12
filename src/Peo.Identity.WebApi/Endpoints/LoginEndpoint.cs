@@ -39,16 +39,6 @@ namespace Peo.Identity.WebApi.Endpoints
             {
                 return TypedResults.Unauthorized();
             }
-
-            var userId = Guid.Parse(user.Id);
-            var userDetails = await userService.ObterUsuarioPorIdAsync(userId);
-
-            if (userDetails is null)
-            {
-                return Results.Problem("Erro ao obter detalhes do usuário.", statusCode: 500);
-            }
-
-            var userDto = new UserDto(userDetails.Id, userDetails.NomeCompleto, userDetails.Email);
             
             var userRoles = await signInManager.UserManager.GetRolesAsync(user!);
 
