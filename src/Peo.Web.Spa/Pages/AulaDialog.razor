@@ -82,10 +82,6 @@
         </MudForm>
     </DialogContent>
 
-@*     <DialogActions>
-        <MudButton Variant="Variant.Text" OnClick="Cancelar">Cancelar</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@_salvando" OnClick="Salvar">Salvar</MudButton>
-    </DialogActions> *@
     <DialogActions>
         <MudButton Variant="Variant.Text" OnClick="() => Dialog.Cancel()">Cancelar</MudButton>
         @if (!ReadOnly)
