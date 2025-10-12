@@ -6,5 +6,7 @@ public record AulaMatriculaResponse(
     Guid AulaId,
     DateTime? DataInicio,
     DateTime? DataConclusao,
-    string Status
+    string Status,
+    string? TituloCurso,
+    string? TituloAula
 );

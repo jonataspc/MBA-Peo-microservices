@@ -2326,6 +2326,12 @@ namespace Peo.Web.Spa.Services
         [System.Text.Json.Serialization.JsonPropertyName("status")]
         public string Status { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("tituloCurso")]
+        public string TituloCurso { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("tituloAula")]
+        public string TituloAula { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0))")]

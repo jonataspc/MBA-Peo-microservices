@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Peo.Web.Bff.Services.GestaoAlunos.Dtos;
+using Peo.Web.Bff.Services.GestaoConteudo;
+using Peo.Web.Bff.Services.GestaoConteudo.Dtos;
 using System.Net;
 
 namespace Peo.Web.Bff.Services.GestaoAlunos
 {
-    public class GestaoAlunosService(HttpClient httpClient)
+    public class GestaoAlunosService(HttpClient httpClient, GestaoConteudoService gestaoConteudoService)
     {        
         public async Task<Results<Ok<MatriculaCursoResponse>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> MatricularCursoAsync(MatriculaCursoRequest request, CancellationToken ct)
         {
@@ -65,13 +67,74 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
                 throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
             }
 
-            var aulasResponse = await response.Content.ReadFromJsonAsync<IEnumerable<AulaMatriculaResponse>>(cancellationToken: ct);
-            if (aulasResponse == null)
+            var aulasMatriculaResponse = await response.Content.ReadFromJsonAsync<IEnumerable<AulaMatriculaResponseBase>>(cancellationToken: ct);
+            if (aulasMatriculaResponse == null)
             {
                 return TypedResults.BadRequest<object>("Failed to deserialize aulas matricula response");
             }
 
-            return TypedResults.Ok(aulasResponse);
+            var enrichedAulas = new List<AulaMatriculaResponse>();
+
+            // Group by CursoId to minimize API calls
+            var groupedByCurso = aulasMatriculaResponse.GroupBy(a => a.CursoId);
+
+            foreach (var cursoGroup in groupedByCurso)
+            {
+                var cursoId = cursoGroup.Key;
+                
+                // Get course details
+                var cursoResult = await gestaoConteudoService.ObterCursoPorIdAsync(cursoId, ct);
+                string tituloCurso = "";
+                
+                try
+                {
+                    var cursoOkResult = cursoResult.Result;
+                    if (cursoOkResult is Ok<Curso> okCurso)
+                    {
+                        tituloCurso = okCurso.Value?.Titulo ?? string.Empty ;
+                    }
+                }
+                catch
+                {
+                    // Keep default title if error occurs
+                }
+
+                // Get course lessons
+                var aulasResult = await gestaoConteudoService.ObterAulasDoCursoAsync(cursoId, ct);
+                var aulasTitulos = new Dictionary<Guid, string>();
+                
+                try
+                {
+                    var aulasOkResult = aulasResult.Result;
+                    if (aulasOkResult is Ok<ObterTodasAulasResponse> okAulas)
+                    {
+                        aulasTitulos = okAulas.Value?.Aulas.ToDictionary(a => a.Id, a => a.Titulo) ;
+                    }
+                }
+                catch
+                {
+                    // Keep empty dictionary if error occurs
+                }
+
+                // Enrich each aula with titles
+                foreach (var aulaMatricula in cursoGroup)
+                {
+                    var tituloAula = aulasTitulos?.GetValueOrDefault(aulaMatricula.AulaId, "");
+                    
+                    enrichedAulas.Add(new AulaMatriculaResponse(
+                        aulaMatricula.MatriculaId,
+                        aulaMatricula.CursoId,
+                        aulaMatricula.AulaId,
+                        aulaMatricula.DataInicio,
+                        aulaMatricula.DataConclusao,
+                        aulaMatricula.Status,
+                        tituloCurso,
+                        tituloAula
+                    ));
+                }
+            }
+
+            return TypedResults.Ok(enrichedAulas.AsEnumerable());
         }
 
         public async Task<Results<Ok<ConcluirMatriculaResponse>, ValidationProblem, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ConcluirMatriculaAsync(ConcluirMatriculaRequest request, CancellationToken ct)
@@ -187,4 +250,14 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
             return TypedResults.Ok(historicoAlunoResponse);
         }
     }
+
+    // Helper record for the base response without titles
+    internal record AulaMatriculaResponseBase(
+        Guid MatriculaId,
+        Guid CursoId,
+        Guid AulaId,
+        DateTime? DataInicio,
+        DateTime? DataConclusao,
+        string Status
+    );
 }

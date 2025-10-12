@@ -1097,6 +1097,14 @@
           },
           "status": {
             "type": "string"
+          },
+          "tituloCurso": {
+            "type": "string",
+            "nullable": true
+          },
+          "tituloAula": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
