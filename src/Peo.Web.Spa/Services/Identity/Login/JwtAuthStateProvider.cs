@@ -64,7 +64,7 @@ namespace Peo.Web.Spa.Services.Identity.Login
                 using var doc = JsonDocument.Parse(payload);
                 foreach (var p in doc.RootElement.EnumerateObject())
                 {
-                    if (p.Name == ClaimTypes.Role)
+                    if (p.Name == ClaimTypes.Role && p.Value.ToString().Contains(','))
                     {
                         userRolesValue = JsonSerializer.Deserialize<string[]>(p.Value)!;
                     }
@@ -77,10 +77,13 @@ namespace Peo.Web.Spa.Services.Identity.Login
             catch { /* ignore parsing errors */ }
 
             // Extract and normalize role claims
-            var roleClaims = userRolesValue
+            if (userRolesValue is not null)
+            {
+                var roleClaims = userRolesValue
                 .Select(role => new Claim(ClaimTypes.Role, role.Trim()));
 
-            claims.AddRange(roleClaims);
+                claims.AddRange(roleClaims);
+            }
 
             return claims;
         }
