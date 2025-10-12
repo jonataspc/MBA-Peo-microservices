@@ -38,6 +38,11 @@ namespace Peo.Web.Bff.Configuration
                 return await service.ConsultarMatriculasAlunoAsync(ct);
             });
 
+            endpoints.MapGet("/matricula/{id:guid}/aulas", async (Guid id, GestaoAlunosService service, CancellationToken ct) =>
+            {
+                return await service.ObterAulasMatriculaAsync(id, ct);
+            });
+
             endpoints.MapPost("/matricula/concluir", async (ConcluirMatriculaRequest request, GestaoAlunosService service, CancellationToken ct) =>
             {
                 return await service.ConcluirMatriculaAsync(request, ct);

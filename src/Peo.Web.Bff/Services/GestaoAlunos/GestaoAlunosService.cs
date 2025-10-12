@@ -52,6 +52,27 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
         }
 
 
+        public async Task<Results<Ok<IEnumerable<AulaMatriculaResponse>>, ValidationProblem, UnauthorizedHttpResult, BadRequest, BadRequest<object>>> ObterAulasMatriculaAsync(Guid matriculaId, CancellationToken ct)
+        {
+            var response = await httpClient.GetAsync($"/v1/aluno/matricula/{matriculaId}/aulas", ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    return TypedResults.Unauthorized();
+                }
+
+                throw new HttpRequestException($"Request failed: {response.StatusCode} - {await response.Content.ReadAsStringAsync(ct)}");
+            }
+
+            var aulasResponse = await response.Content.ReadFromJsonAsync<IEnumerable<AulaMatriculaResponse>>(cancellationToken: ct);
+            if (aulasResponse == null)
+            {
+                return TypedResults.BadRequest<object>("Failed to deserialize aulas matricula response");
+            }
+
+            return TypedResults.Ok(aulasResponse);
+        }
 
         public async Task<Results<Ok<ConcluirMatriculaResponse>, ValidationProblem, BadRequest, UnauthorizedHttpResult, BadRequest<object>>> ConcluirMatriculaAsync(ConcluirMatriculaRequest request, CancellationToken ct)
         {
@@ -166,4 +187,4 @@ namespace Peo.Web.Bff.Services.GestaoAlunos
             return TypedResults.Ok(historicoAlunoResponse);
         }
     }
-} 
+}
