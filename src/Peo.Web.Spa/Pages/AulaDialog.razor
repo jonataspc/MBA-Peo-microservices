@@ -97,7 +97,7 @@
     [Parameter] public AulaVm Model { get; set; } = new();
 
     private MudForm? _form;
-    private bool _salvando;
+    //private bool _salvando;
 
     public enum AulaDialogMode { Create, Edit, View }
 
@@ -178,7 +178,7 @@
             return;
         }
 
-        _salvando = true;
+        //_salvando = true;
         try
         {
             var (ok, msg, aulaId) = await Service.Cadastrar(Model);
@@ -193,7 +193,9 @@
         {
             Snackbar.Add($"Erro: {ex.Message}", Severity.Error);
         }
-        finally { _salvando = false; }
+        finally { 
+            //_salvando = false; 
+            }
     }
 
     private void Cancelar() => Dialog.Cancel();
