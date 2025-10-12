@@ -55,15 +55,33 @@ namespace Peo.Web.Spa.Services.Identity.Login
         private static IEnumerable<Claim> ParseClaims(string token)
         {
             var claims = new List<Claim>();
+            string[] userRolesValue = null!;
+
             try
             {
                 var parts = token.Split('.');
                 var payload = Convert.FromBase64String(Pad(parts[1].Replace('-', '+').Replace('_', '/')));
                 using var doc = JsonDocument.Parse(payload);
                 foreach (var p in doc.RootElement.EnumerateObject())
-                    claims.Add(new Claim(p.Name, p.Value.ToString()));
+                {
+                    if (p.Name == ClaimTypes.Role)
+                    {
+                        userRolesValue = JsonSerializer.Deserialize<string[]>(p.Value)!;
+                    }
+                    else
+                    {
+                        claims.Add(new Claim(p.Name, p.Value.ToString()));
+                    }
+                }
             }
             catch { /* ignore parsing errors */ }
+
+            // Extract and normalize role claims
+            var roleClaims = userRolesValue
+                .Select(role => new Claim(ClaimTypes.Role, role.Trim()));
+
+            claims.AddRange(roleClaims);
+
             return claims;
         }
 

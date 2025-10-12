@@ -16,6 +16,7 @@ namespace Peo.GestaoAlunos.WebApi.Endpoints
             .WithTags("Aluno")
             .MapEndpoint<EndpointMatriculaCurso>()
             .MapEndpoint<EndpointObterMatriculas>()
+            .MapEndpoint<EndpointObterAulasMatricula>()
             .MapEndpoint<EndpointConcluirMatricula>()
             .MapEndpoint<EndpointObterHistorico>()
             .MapEndpoint<EndpointCertificadosAluno>()
