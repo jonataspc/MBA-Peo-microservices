@@ -1,4 +1,5 @@
 using Peo.Core.Interfaces.Data;
+using Peo.GestaoAlunos.Domain.Dtos;
 using Peo.GestaoAlunos.Domain.Entities;
 
 namespace Peo.GestaoAlunos.Domain.Repositories;
@@ -30,4 +31,6 @@ public interface IAlunoRepository : IRepository<Aluno>
     Task<IEnumerable<Certificado>> GetCertificadosByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken);
 
     Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, bool apenasConcluidas, CancellationToken cancellationToken);
+
+    Task<IEnumerable<AulaMatriculaDto>> GetAulasByMatriculaIdAsync(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken);
 }

@@ -3,6 +3,7 @@ using Peo.Core.DomainObjects;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Messages.IntegrationRequests;
 using Peo.Core.Messages.IntegrationResponses;
+using Peo.GestaoAlunos.Domain.Dtos;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Domain.Repositories;
 using Peo.GestaoAlunos.Domain.Services;
@@ -225,5 +226,14 @@ public class AlunoService(
         var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id, apenasConcluidas, cancellationToken);
 
         return matriculas;
+    }
+
+    public async Task<IEnumerable<AulaMatriculaDto>> ObterAulasMatricula(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken = default)
+    {
+        var aluno = await ObterAlunoPorUserIdAsync(alunoId, cancellationToken);
+
+        var aulas = await alunoRepository.GetAulasByMatriculaIdAsync(aluno.Id, matriculaId, cancellationToken);
+
+        return aulas;
     }
 }
