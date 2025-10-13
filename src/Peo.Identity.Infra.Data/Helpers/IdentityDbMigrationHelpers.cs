@@ -80,7 +80,8 @@ namespace Peo.Identity.Infra.Data.Helpers
 
             if (result.Succeeded)
             {
-                await userManager.ConfirmEmailAsync(adminUser, await userManager.GenerateEmailConfirmationTokenAsync(adminUser));                
+                await userManager.ConfirmEmailAsync(adminUser, await userManager.GenerateEmailConfirmationTokenAsync(adminUser));
+                await userManager.AddToRoleAsync(adminUser, AccessRoles.Aluno);
                 await userManager.AddToRoleAsync(adminUser, AccessRoles.Admin);
             }
         }
