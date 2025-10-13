@@ -53,6 +53,10 @@ namespace Peo.Web.Bff.Configuration
                 return await service.CadastrarAulaAsync(cursoId, request, ct);
             });
 
+            endpoints.MapDelete("/curso/{cursoId:guid}/aula/{aulaId:guid}",
+                async (Guid cursoId, Guid aulaId, GestaoConteudoService service, CancellationToken ct) =>
+                    await service.ExcluirAulaAsync(cursoId, aulaId, ct));
+
             return app;
         }
     }

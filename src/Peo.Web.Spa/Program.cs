@@ -30,13 +30,16 @@ builder.Services.AddScoped<ThemeService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthStateProvider>();
 
-builder.Services.AddScoped<AuthHeaderHandler>();
+//builder.Services.AddScoped<AuthHeaderHandler>();
+builder.Services.AddTransient<AuthHeaderHandler>();
 
-var apiBase = builder.Configuration["ApiBaseUrl"]
-              ?? "https://localhost:7276/v1/";
+var apiBase = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7276/";
 
-builder.Services.AddHttpClient("Api")
-                .AddHttpMessageHandler<AuthHeaderHandler>();
+builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri(apiBase))
+        .AddHttpMessageHandler<AuthHeaderHandler>();
+
+// >>> registre o serviço usado pela página Aulas <<<
+builder.Services.AddScoped<AulasService>();
 
 builder.Services.AddScoped(sp =>
 {
