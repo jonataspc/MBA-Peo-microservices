@@ -1,29 +1,43 @@
 ﻿@using MudBlazor
 @using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
 @inject WebApiClient Api
 @inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudDialog>
     <TitleContent>Adicionar Curso</TitleContent>
 
-    <DialogContent>        
-        <EditForm EditContext="_editContext">
-            <DataAnnotationsValidator />
-            <MudStack Spacing="2">
-                <MudTextField @bind-Value="_model.Titulo" Label="Título" Required="true" />
-                <MudTextField @bind-Value="_model.InstrutorNome" Label="Instrutor" />
-                <MudTextField @bind-Value="_model.ConteudoProgramatico" Label="Conteúdo programático" Lines="4" />
-                <MudTextField @bind-Value="_tags" Label="Tags (separe por vírgula)" />
-                <MudTextField @bind-Value="_model.Descricao" Label="Descrição" Lines="3" />
-                <MudNumericField @bind-Value="_model.Preco" Label="Preço" Min="0" Required="true" />
-            </MudStack>
-        </EditForm>
+    <DialogContent>
+        @if (!_isAdminChecked)
+        {
+            <MudProgressCircular Indeterminate="true" Size="Size.Large" />
+        }
+        else if (!_isAdmin)
+        {
+            <MudText Color="Color.Error" Typo="Typo.h6">Acesso restrito: apenas administradores podem adicionar cursos.</MudText>
+        }
+        else
+        {
+            <EditForm EditContext="_editContext">
+                <DataAnnotationsValidator />
+                <MudStack Spacing="2">
+                    <MudTextField @bind-Value="_model.Titulo" Label="Título" Required="true" />
+                    <MudTextField @bind-Value="_model.InstrutorNome" Label="Instrutor" />
+                    <MudTextField @bind-Value="_model.ConteudoProgramatico" Label="Conteúdo programático" Lines="4" />
+                    <MudTextField @bind-Value="_tags" Label="Tags (separe por vírgula)" />
+                    <MudTextField @bind-Value="_model.Descricao" Label="Descrição" Lines="3" />
+                    <MudNumericField @bind-Value="_model.Preco" Label="Preço" Min="0" Required="true" />
+                </MudStack>
+            </EditForm>
+        }
     </DialogContent>
 
     <DialogActions>
         <MudButton OnClick="Cancel">Cancelar</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled"
-                   OnClick="SaveClick" Disabled="@_busy">
+                   OnClick="SaveClick" Disabled="@(_busy || !_isAdmin)">
             @if (_busy)
             {
                 <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
@@ -40,15 +54,40 @@
     private string? _tags;
     private readonly CursoForm _model = new();
     private EditContext _editContext = default!;
+    private bool _isAdmin;
+    private bool _isAdminChecked;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(_model);
+        await CheckAdminAsync();
+    }
+
+    private async Task CheckAdminAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _isAdmin = true;
+        _isAdminChecked = true;
+
+        var claim = user.Claims.ToList();
+        var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+        var isAdmin = user.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin");
+        
+        foreach( var r in roles)
+        {
+            Console.WriteLine($"Role: {r}");
+        }
+
+        if (!_isAdmin)
+        {
+            Snackbar.Add("Acesso restrito: apenas administradores podem adicionar cursos.", Severity.Error);
+        }
     }
 
     private async Task SaveClick()
     {
-        if (!_editContext.Validate())
+        if (!_editContext.Validate() || !_isAdmin)
             return;
 
         await SaveAsync();
@@ -59,15 +98,15 @@
         try
         {
             _busy = true;
-                        
+
             var req = new CursoRequest
             {
                 Titulo = _model.Titulo!,
                 Descricao = _model.Descricao,
                 Preco = _model.Preco,
-                InstrutorNome = _model.InstrutorNome,   
+                InstrutorNome = _model.InstrutorNome,
                 ConteudoProgramatico = _model.ConteudoProgramatico,
-                Tags = ParseTags(_tags)             
+                Tags = ParseTags(_tags)
             };
 
             await Api.PostV1ConteudoCursoAsync(req, CancellationToken.None);
@@ -76,7 +115,12 @@
         }
         catch (ApiException ex)
         {
-            Snackbar.Add($"Erro ao salvar ({ex.StatusCode}): {ex.Message}", Severity.Error);
+            if (ex.StatusCode == 403)
+            {
+                Snackbar.Add("Você não tem permissão para adicionar cursos.", Severity.Error);
+            }
+            else
+                Snackbar.Add($"Erro ao salvar ({ex.StatusCode}): {ex.Message}", Severity.Error);
         }
         catch (Exception ex)
         {
@@ -102,8 +146,8 @@
     private sealed class CursoForm
     {
         [Required, MinLength(2)] public string? Titulo { get; set; }
-        public string? InstrutorNome { get; set; }          
-        public string? ConteudoProgramatico { get; set; }   
+        public string? InstrutorNome { get; set; }
+        public string? ConteudoProgramatico { get; set; }
         public string? Descricao { get; set; }
         [Range(0, double.MaxValue)] public decimal Preco { get; set; }
     }
