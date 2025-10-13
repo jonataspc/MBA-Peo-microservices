@@ -13,7 +13,6 @@ namespace Peo.Web.Spa.Pages.Alunos
         private List<ProgressoMatricula> _progressoMatricula = new();
         private Dictionary<Guid, Curso> _cursosCache = new();
         private Guid _cursoSelecionadoId;
-        private bool _carregando = true;
         private string? _mensagemErro;
 
         // Injeções de Dependência
@@ -31,8 +30,7 @@ namespace Peo.Web.Spa.Pages.Alunos
 
         private async Task CarregarDados()
         {
-            _carregando = true;
-            _mensagemErro = null;
+               _mensagemErro = null;
 
             try
             {
@@ -53,15 +51,12 @@ namespace Peo.Web.Spa.Pages.Alunos
             }
             catch (Exception ex)
             {
-                _mensagemErro = "Erro ao carregar dados. Tente novamente.";
+                _mensagemErro = "Erro ao carregar dados. Tente novamente. " + ex.Message;
                 Snackbar.Add(_mensagemErro, Severity.Error);
-                // Log: ex.Message, ex.StackTrace
             }
-            finally
-            {
-                _carregando = false;
-            }
+
         }
+
 
         private async Task ObterCursos()
         {
@@ -106,6 +101,7 @@ namespace Peo.Web.Spa.Pages.Alunos
             return new CursoMatriculado
             {
                 CursoId = matricula.CursoId,
+                MatriculaId = matricula.Id,
                 NomeCurso = curso.Titulo,
                 DescricaoCurso = curso.Descricao,
                 DataMatricula = matricula.DataMatricula.DateTime,
@@ -122,91 +118,69 @@ namespace Peo.Web.Spa.Pages.Alunos
                 ?.NomeCurso ?? "Curso não encontrado";
         }
 
-        private void OnCursoSelecionado(Guid cursoId)
-        {
-            _cursoSelecionadoId = cursoId;
-        }
+
 
         #region aulas disponiveis
         private async Task ListarAulas()
         {
-            
-            RetornaAulasDaMatriculaMock(_cursoSelecionadoId);
+            var matriculaId = _cursosMatriculados.FirstOrDefault(c => c.CursoId == _cursoSelecionadoId)?.MatriculaId;
+            if (matriculaId == null || matriculaId == Guid.Empty)
+            {
+                _progressoMatricula.Clear();
+                return;
+            }
+
+            await RetornaAulasDaMatricula((Guid)matriculaId);
 
         }
 
         private async Task StartClass(ProgressoMatricula itemClicado)
         {
-            // Sua lógica para iniciar a aula vai aqui.
-            // Por exemplo, navegar para outra página, salvar no banco, etc.
-            Console.WriteLine($"Iniciando a aula: {itemClicado.TituloAula}");
-            Snackbar.Add($"Iniciando a aula: {itemClicado.TituloAula}", Severity.Info);
 
-            // Exemplo: Navegar para a página da aula
-            // NavigationManager.NavigateTo($"/aula/{itemClicado.Id}");
+            var iniciaAula = await Api.PostV1AlunoMatriculaAulaIniciarAsync(new()
+            {
+                MatriculaId = itemClicado.MatriculaId,
+                AulaId = itemClicado.AulaId
+            }, _cts!.Token);
+
+            Snackbar.Add($"Iniciando a aula: {itemClicado.TituloAula}", Severity.Info);
+            await ListarAulas();
         }
         private async Task CloseClass(ProgressoMatricula itemClicado)
         {
-            // Sua lógica para iniciar a aula vai aqui.
-            // Por exemplo, navegar para outra página, salvar no banco, etc.
-            Console.WriteLine($"Finalizando a aula: {itemClicado.TituloAula}");
+
+            var finalizaAula = await Api.PostV1AlunoMatriculaAulaConcluirAsync(new()
+            {
+                MatriculaId = itemClicado.MatriculaId,
+                AulaId = itemClicado.AulaId
+            }, _cts!.Token);
             Snackbar.Add($"Finalizando a aula: {itemClicado.TituloAula}", Severity.Info);
-
-            // Exemplo: Navegar para a página da aula
-            // NavigationManager.NavigateTo($"/aula/{itemClicado.Id}");
+            await ListarAulas();
         }
-        #endregion
 
+        private async Task RetornaAulasDaMatricula(Guid matriculaId)
+        { 
+            _progressoMatricula = new List<ProgressoMatricula>();
 
-
-
-        private void RetornaAulasDaMatriculaMock(Guid MatriculaId)
-        {
-            _progressoMatricula = new List<ProgressoMatricula>
+            var minhasAulas = await Api.GetV1AlunoMatriculaAulasAsync(matriculaId, _cts!.Token);
+            foreach (var aula in minhasAulas)
             {
-                new ProgressoMatricula
+                _progressoMatricula.Add(new ProgressoMatricula
                 {
-                    id = Guid.NewGuid(),
-                    MatriculaId = MatriculaId,
-                    AulaId = Guid.NewGuid(),
-                    TituloAula = "Introdução ao Curso",
-                    DataInicio = DateTime.Now.AddDays(-10),
-                    DataConclusao = DateTime.Now.AddDays(-9)
-                },
-                new ProgressoMatricula
-                {
-                    id = Guid.NewGuid(),
-                    MatriculaId = MatriculaId,
-                    AulaId = Guid.NewGuid(),
-                    TituloAula = "Aula 1: Conceitos Básicos",
-                    DataInicio = DateTime.Now.AddDays(-8),
-                    DataConclusao = DateTime.Now.AddDays(-7)
-                },
-                new ProgressoMatricula
-                {
-                    id = Guid.NewGuid(),
-                    MatriculaId = MatriculaId,
-                    AulaId = Guid.NewGuid(),
-                    TituloAula = "Aula 2: Ferramentas Essenciais",
-                    DataInicio = DateTime.Now.AddDays(-6),
-                    DataConclusao = null // Ainda não concluída
-                },
-                new ProgressoMatricula
-                {
-                    id = Guid.NewGuid(),
-                    MatriculaId = MatriculaId,
-                    AulaId = Guid.NewGuid(),
-                    TituloAula = "Aula 3: Práticas Avançadas",
-                    DataInicio = DateTime.MinValue, // Ainda não iniciada
-                    DataConclusao = null
-                }
-            };
-            foreach (var aula in _progressoMatricula)
-            {
-                Console.WriteLine($"Aula: {aula.TituloAula}, Início: {aula.DataInicio}, Conclusão: {aula.DataConclusao}");
+                    MatriculaId = matriculaId,
+                    AulaId = aula.AulaId,
+                    TituloAula = aula.TituloAula,
+                    DataInicio = aula.DataInicio?.DateTime,
+                    DataConclusao = aula.DataConclusao?.DateTime,
+                    Status = aula.Status
+                });
+
             }
 
         }
+        #endregion
+
+       
         public void Dispose()
         {
             _cts?.Cancel();
@@ -217,6 +191,7 @@ namespace Peo.Web.Spa.Pages.Alunos
     public class CursoMatriculado
     {
         public Guid CursoId { get; set; }
+        public Guid MatriculaId { get; set; }
         public string? NomeCurso { get; set; }
         public string? DescricaoCurso { get; set; }
         public DateTime DataMatricula { get; set; }
@@ -226,12 +201,13 @@ namespace Peo.Web.Spa.Pages.Alunos
 
     public class ProgressoMatricula
     {
-        public Guid id { get; set; }
+       // public Guid id { get; set; }
         public Guid MatriculaId { get; set; }
         public Guid AulaId { get; set; }
-        public String TituloAula { get; set; } 
-        public DateTime DataInicio { get; set; }
+        public String? TituloAula { get; set; } 
+        public DateTime? DataInicio { get; set; }
         public DateTime? DataConclusao { get; set; }
+        public string? Status { get;set; } 
 
     }
 
