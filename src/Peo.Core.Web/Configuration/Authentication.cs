@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Peo.Core.Dtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace Peo.Core.Web.Configuration
@@ -29,7 +30,10 @@ namespace Peo.Core.Web.Configuration
                             ValidateIssuerSigningKey = true,
                             ValidIssuer = jwtSettings.Issuer,
                             ValidAudience = jwtSettings.Audience,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                            RoleClaimType = ClaimTypes.Role,
+                            NameClaimType = ClaimTypes.Name
+
                         };
                     });
 

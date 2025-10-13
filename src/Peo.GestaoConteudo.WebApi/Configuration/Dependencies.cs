@@ -3,10 +3,9 @@ using Peo.Core.Dtos;
 using Peo.Core.Infra.ServiceBus.Services;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Web.Services;
-using Peo.GestaoConteudo.Application;
 using Peo.GestaoConteudo.Application.Consumers;
-using Peo.GestaoConteudo.Application.DiConfig;
-using Peo.GestaoConteudo.Infra.Data.DiConfig;
+using Peo.GestaoConteudo.Application.DependencyInjectionConfiguration;
+using Peo.GestaoConteudo.Infra.Data.DependencyInjectionConfiguration;
 
 namespace Peo.GestaoConteudo.WebApi.Configuration
 {

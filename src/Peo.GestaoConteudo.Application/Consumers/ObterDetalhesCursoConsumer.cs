@@ -10,7 +10,7 @@ namespace Peo.GestaoConteudo.Application.Consumers
     {
         public async Task Consume(ConsumeContext<ObterDetalhesCursoRequest> context)
         {
-            var curso = await cursoRepository.GetAsync(context.Message.CursoId);
+            var curso = await cursoRepository.GetAsync(context.Message.CursoId, CancellationToken.None);
 
             await context.RespondAsync<ObterDetalhesCursoResponse>(
                 new ObterDetalhesCursoResponse(curso?.Id, curso?.Aulas.Count, curso?.Titulo, curso?.Preco)

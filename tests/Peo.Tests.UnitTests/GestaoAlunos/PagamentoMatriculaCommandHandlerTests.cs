@@ -12,7 +12,7 @@ using Peo.Faturamento.Application.Dtos.Requests;
 using Peo.Faturamento.Domain.Entities;
 using Peo.Faturamento.Domain.ValueObjects;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 
 namespace Peo.Tests.UnitTests.GestaoAlunos;
 
@@ -49,9 +49,9 @@ public class PagamentoMatriculaCommandHandlerTests
         var cartaoCredito = new CartaoCredito("1234567890123456", "12/25", "123", "Usuário Teste");
         var pagamento = new Pagamento(matriculaId, valor);
         pagamento.ProcessarPagamento(Guid.CreateVersion7().ToString());
-        pagamento.ConfirmarPagamento(new CartaoCreditoData { Hash = "hash-123" });
+        pagamento.ConfirmarPagamento(new DadosDoCartaoCredito { Hash = "hash-123" });
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
@@ -103,7 +103,7 @@ public class PagamentoMatriculaCommandHandlerTests
         var matricula = new Matricula(alunoId, cursoId);
         var valor = 99.99m;
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
 
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();

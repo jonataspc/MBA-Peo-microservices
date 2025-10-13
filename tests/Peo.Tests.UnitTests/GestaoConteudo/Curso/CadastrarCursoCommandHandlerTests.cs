@@ -47,7 +47,7 @@ public class CadastrarCursoCommandHandlerTests
             c.ConteudoProgramatico!.Conteudo == comando.ConteudoProgramatico &&
             c.Preco == comando.Preco &&
             c.Tags.SequenceEqual(comando.Tags!)
-        )), Times.Once);
+        ), CancellationToken.None), Times.Once);
 
         _repositorioMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }

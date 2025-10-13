@@ -10,7 +10,7 @@ public class Handler(IRepository<Domain.Entities.Curso> repository) : IRequestHa
 {
     public async Task<Result<Response>> Handle(Query request, CancellationToken cancellationToken)
     {
-        var cursos = await repository.GetAsync(request.CursoId);
+        var cursos = await repository.GetAsync(request.CursoId, CancellationToken.None);
         return Result.Success(new Response(cursos.Adapt<ConteudoProgramaticoResponse>()));
     }
 }

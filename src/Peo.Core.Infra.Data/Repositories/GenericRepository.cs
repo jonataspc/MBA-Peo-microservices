@@ -34,12 +34,12 @@ namespace Peo.Core.Infra.Data.Repositories
             return this;
         }
 
-        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        public async Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
-            await _dbContext.AddRangeAsync(entities).ConfigureAwait(false);
+            await _dbContext.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
 
@@ -48,10 +48,10 @@ namespace Peo.Core.Infra.Data.Repositories
                 query = query.AsNoTracking();
             }
 
-            return await query.ToListAsync().ConfigureAwait(false);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public virtual async Task<TEntity?> GetAsync(Guid id)
+        public virtual async Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
         {
             var dbSet = _dbContext.Set<TEntity>();
 
@@ -59,15 +59,15 @@ namespace Peo.Core.Infra.Data.Repositories
             {
                 return await dbSet.AsNoTracking()
                                   .Where(x => x.Id == id)
-                                  .FirstOrDefaultAsync();
+                                  .FirstOrDefaultAsync(cancellationToken);
             }
             else
             {
-                return await dbSet.FindAsync(id).ConfigureAwait(false);
+                return await dbSet.FindAsync(id, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        public virtual async Task<IEnumerable<TEntity>?> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<IEnumerable<TEntity>?> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
         {
             var query = _dbContext.Set<TEntity>().Where(predicate);
 
@@ -76,24 +76,24 @@ namespace Peo.Core.Infra.Data.Repositories
                 query = query.AsNoTracking();
             }
 
-            return await query.ToListAsync().ConfigureAwait(false);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public virtual void Insert(TEntity entity)
+        public virtual void Insert(TEntity entity, CancellationToken cancellationToken)
         {
             _dbContext.Set<TEntity>().Add(entity);
         }
 
-        public virtual void Update(TEntity entity)
+        public virtual void Update(TEntity entity, CancellationToken cancellationToken)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
         {
             return await _dbContext.Set<TEntity>()
                                    .AsNoTracking()
-                                   .AnyAsync(predicate)
+                                   .AnyAsync(predicate, cancellationToken)
                                    .ConfigureAwait(false);
         }
     }

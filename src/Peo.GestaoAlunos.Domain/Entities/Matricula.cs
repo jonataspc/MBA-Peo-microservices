@@ -1,3 +1,4 @@
+using Peo.Core.DomainObjects;
 using Peo.Core.Entities.Base;
 using Peo.GestaoAlunos.Domain.ValueObjects;
 
@@ -13,7 +14,7 @@ public class Matricula : EntityBase
     public int PercentualProgresso { get; private set; }
     public virtual Aluno? Aluno { get; set; }
 
-    protected Matricula()
+    public Matricula()
     { }
 
     public Matricula(Guid alunoId, Guid cursoId)
@@ -23,12 +24,13 @@ public class Matricula : EntityBase
         DataMatricula = DateTime.Now;
         Status = StatusMatricula.PendentePagamento;
         PercentualProgresso = 0;
+        Validar();
     }
 
     public void AtualizarProgresso(int percentual)
     {
         if (percentual < 0 || percentual > 100)
-            throw new ArgumentException("O percentual de progresso deve estar entre 0 e 100");
+            throw new DomainException("O percentual de progresso deve estar entre 0 e 100");
 
         PercentualProgresso = percentual;
     }
@@ -48,5 +50,13 @@ public class Matricula : EntityBase
     public void Cancelar()
     {
         Status = StatusMatricula.Cancelado;
+    }
+
+    private void Validar()
+    {
+        if (AlunoId == Guid.Empty)
+            throw new DomainException("O campo AlunoId é obrigatório.");
+        if (CursoId == Guid.Empty)
+            throw new DomainException("O campo CursoId é obrigatório.");
     }
 }

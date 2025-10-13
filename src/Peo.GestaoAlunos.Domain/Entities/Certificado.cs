@@ -1,4 +1,5 @@
-﻿using Peo.Core.Entities.Base;
+﻿using Peo.Core.DomainObjects;
+using Peo.Core.Entities.Base;
 
 namespace Peo.GestaoAlunos.Domain.Entities;
 
@@ -10,7 +11,7 @@ public class Certificado : EntityBase
     public string? NumeroCertificado { get; private set; }
     public virtual Matricula Matricula { get; private set; } = null!;
 
-    public Certificado()
+    protected Certificado()
     {
     }
 
@@ -20,5 +21,14 @@ public class Certificado : EntityBase
         Conteudo = conteudo;
         DataEmissao = dataEmissao;
         NumeroCertificado = numeroCertificado;
+        Validar();
+    }
+
+    private void Validar()
+    {
+        if (MatriculaId == Guid.Empty)
+            throw new DomainException("O campo MatriculaId é obrigatório.");
+        if (string.IsNullOrWhiteSpace(Conteudo))
+            throw new DomainException("O campo Conteudo é obrigatório.");
     }
 }

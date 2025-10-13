@@ -7,16 +7,17 @@
         <MudDivider Class="my-2"/>
         <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
 
-        <MudNavGroup Title="Cursos"
-                         Icon="@Icons.Material.Filled.School"
-                         Expanded="true">
-             <MudNavLink Href="/instrutor"
-                         Icon="@Icons.Material.Filled.Person">
-                    Instrutor
+        <MudNavGroup Title="Cursos" Icon="@Icons.Material.Filled.School"  Expanded="true">
+             
+             <MudNavLink Href="/cursos" 
+                    Icon="@Icons.Material.Filled.Book">
+                    Cursos
              </MudNavLink>
-            <MudNavLink Href="/cursos" Icon="@Icons.Material.Filled.Book">Cursos</MudNavLink>
-            <MudNavLink Href="/aulas" Icon="@Icons.Material.Filled.Monitor">Aulas</MudNavLink>
-            <MudNavLink Href="/conteudo" Icon="@Icons.Material.Filled.Folder">Conteudo programático</MudNavLink>
+
+               <MudNavLink Href="/aulas" 
+                        Icon="@Icons.Material.Filled.PlayCircle">
+                    Aulas
+                </MudNavLink>
 
         </MudNavGroup>
 
@@ -25,26 +26,26 @@
                 Matricula
             </MudNavLink>
 
-            <MudNavLink Href="/alunosmatriculados" Icon="@Icons.Material.Filled.BookOnline">
-                Alunos Matriculados
+            <MudNavLink Href="/historico" Icon="@Icons.Material.Filled.History">
+                Histórico
             </MudNavLink>
+
+            <MudNavLink Href="/certificados" Icon="@Icons.Material.Filled.School">
+                Certificados
+            </MudNavLink>
+
+            <MudNavLink Href="/alunosaulas" Icon="@Icons.Material.Filled.Newspaper">
+                Minhas aulas
+            </MudNavLink>
+
 
         </MudNavGroup>
         
         
 
-        <MudNavGroup Title="Financeiro"
-                     Icon="@Icons.Material.Filled.School"
-                     Expanded="true">
-            <MudNavLink Href="/faturamento"
-                        Icon="@Icons.Material.Filled.Person">
-                Faturamento
-            </MudNavLink>
-            <MudNavLink Href="/relatorio"
-                        Icon="@Icons.Material.Filled.Book">
-                Relatorio
-            </MudNavLink>
-        </MudNavGroup>
+
+
+
         <MudNavGroup Title="Configurações" Icon="@Icons.Material.Filled.Settings" Expanded="true">
             <MudNavLink Href="/usuarios" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">Usuários</MudNavLink>
             <MudNavLink Href="/parametros" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Segurança</MudNavLink>

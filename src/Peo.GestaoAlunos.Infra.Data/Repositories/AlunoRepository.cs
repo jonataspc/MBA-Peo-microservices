@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Peo.Core.Infra.Data.Repositories;
+using Peo.GestaoAlunos.Domain.Dtos;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 using Peo.GestaoAlunos.Infra.Data.Contexts;
 
 namespace Peo.GestaoAlunos.Infra.Data.Repositories;
@@ -12,81 +13,109 @@ public class AlunoRepository : GenericRepository<Aluno, GestaoAlunosContext>, IA
     {
     }
 
-    public async Task<Aluno?> GetByIdAsync(Guid alunoId)
+    public async Task<Aluno?> GetByIdAsync(Guid alunoId, CancellationToken cancellationToken)
     {
-        return await _dbContext.Alunos.FirstOrDefaultAsync(e => e.Id == alunoId);
+        return await _dbContext.Alunos.FirstOrDefaultAsync(e => e.Id == alunoId, cancellationToken);
     }
 
-    public async Task AddAsync(Aluno aluno)
+    public async Task AddAsync(Aluno aluno, CancellationToken cancellationToken)
     {
-        await AddRangeAsync(new[] { aluno });
+        await AddRangeAsync(new[] { aluno }, cancellationToken);
     }
 
-    public async Task AddMatriculaAsync(Matricula matricula)
+    public async Task AddMatriculaAsync(Matricula matricula, CancellationToken cancellationToken)
     {
-        await _dbContext.Matriculas.AddAsync(matricula);
+        await _dbContext.Matriculas.AddAsync(matricula, cancellationToken);
     }
 
-    public async Task<Matricula?> GetMatriculaByIdAsync(Guid matriculaId)
+    public async Task<Matricula?> GetMatriculaByIdAsync(Guid matriculaId, CancellationToken cancellationToken)
     {
         return await _dbContext.Matriculas
             .Include(m => m.Aluno)
-            .FirstOrDefaultAsync(m => m.Id == matriculaId);
+            .FirstOrDefaultAsync(m => m.Id == matriculaId, cancellationToken);
     }
 
-    public Task AtualizarMatricula(Matricula matricula)
+    public Task AtualizarMatricula(Matricula matricula, CancellationToken cancellationToken)
     {
         _dbContext.Matriculas.Update(matricula);
         return Task.CompletedTask;
     }
 
-    public async Task AddProgressoMatriculaAsync(ProgressoMatricula progresso)
+    public async Task AddProgressoMatriculaAsync(ProgressoMatricula progresso, CancellationToken cancellationToken)
     {
-        await _dbContext.ProgressosMatricula.AddAsync(progresso);
+        await _dbContext.ProgressosMatricula.AddAsync(progresso, cancellationToken);
     }
 
-    public async Task<ProgressoMatricula?> GetProgressoMatriculaAsync(Guid matriculaId, Guid aulaId)
+    public async Task<ProgressoMatricula?> GetProgressoMatriculaAsync(Guid matriculaId, Guid aulaId, CancellationToken cancellationToken)
     {
         return await _dbContext.ProgressosMatricula
-            .FirstOrDefaultAsync(p => p.MatriculaId == matriculaId && p.AulaId == aulaId);
+            .FirstOrDefaultAsync(p => p.MatriculaId == matriculaId && p.AulaId == aulaId, cancellationToken);
     }
 
-    public Task AtualizarProgressoMatriculaAsync(ProgressoMatricula progresso)
+    public Task AtualizarProgressoMatriculaAsync(ProgressoMatricula progresso, CancellationToken cancellationToken)
     {
         _dbContext.ProgressosMatricula.Update(progresso);
         return Task.CompletedTask;
     }
 
-    public async Task<int> GetAulasConcluidasCountAsync(Guid matriculaId)
+    public async Task<int> CountAulasConcluidasAsync(Guid matriculaId, CancellationToken cancellationToken)
     {
         return await _dbContext.ProgressosMatricula
-            .CountAsync(p => p.MatriculaId == matriculaId && p.DataConclusao.HasValue);
+            .CountAsync(p => p.MatriculaId == matriculaId && p.DataConclusao.HasValue, cancellationToken);
     }
 
-    public async Task AddCertificadoAsync(Certificado certificado)
+    public async Task AddCertificadoAsync(Certificado certificado, CancellationToken cancellationToken)
     {
-        await _dbContext.Certificados.AddAsync(certificado);
+        await _dbContext.Certificados.AddAsync(certificado, cancellationToken);
     }
 
-    public async Task<Aluno?> GetByUserIdAsync(Guid usuarioId)
+    public async Task<Aluno?> GetByUserIdAsync(Guid usuarioId, CancellationToken cancellationToken)
     {
         return await _dbContext.Alunos.Where(s => s.UsuarioId == usuarioId)
                                            .AsNoTracking()
-                                           .FirstOrDefaultAsync();
+                                           .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Certificado>> GetCertificadosByAlunoIdAsync(Guid alunoId)
+    public async Task<IEnumerable<Certificado>> GetCertificadosByAlunoIdAsync(Guid alunoId, CancellationToken cancellationToken)
     {
-        var matriculas = await _dbContext.Matriculas.Where(m => m.AlunoId == alunoId).ToListAsync();
+        var matriculas = await _dbContext.Matriculas.Where(m => m.AlunoId == alunoId).ToListAsync(cancellationToken);
         var matriculaIds = matriculas.Select(m => m.Id).ToList();
-        return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync();
+        return await _dbContext.Certificados.Where(c => matriculaIds.Contains(c.MatriculaId)).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId)
+    public async Task<IEnumerable<Matricula>> GetMatriculasByAlunoIdAsync(Guid alunoId, bool apenasConcluidas, CancellationToken cancellationToken)
     {
-        return await _dbContext.Matriculas
-            .Where(m => m.AlunoId == alunoId)
+        var query = _dbContext.Matriculas
+            .Include(m => m.Aluno)
+            .Where(m => m.AlunoId == alunoId);
+
+        if (apenasConcluidas)
+        {
+            query = query.Where(m => m.DataConclusao != null);
+        }
+
+        return await query
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<AulaMatriculaDto>> GetAulasByMatriculaIdAsync(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken)
+    {
+        var query = _dbContext.Matriculas
+            .Where(m => m.AlunoId == alunoId && m.Id == matriculaId)
+            .SelectMany(m => _dbContext.ProgressosMatricula.Where(p => p.MatriculaId == m.Id),
+                (m, p) => new AulaMatriculaDto(
+                    m.Id,
+                    m.CursoId,
+                    p.AulaId,
+                    p.DataInicio,
+                    p.DataConclusao,
+                    p.EstaConcluido ? "Concluido" : "Pendente"
+                )
+            );
+
+        return await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 }

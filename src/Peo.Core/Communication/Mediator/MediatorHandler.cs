@@ -5,33 +5,26 @@ using Peo.Core.Messages.Notifications;
 
 namespace Peo.Core.Communication.Mediator
 {
-    public class MediatorHandler : IMediatorHandler
+    public class MediatorHandler(IMediator mediator) : IMediatorHandler
     {
-        private readonly IMediator _mediator;
-
-        public MediatorHandler(IMediator mediator)
+        public async Task<bool> EnviarComandoAsync<T>(T comando, CancellationToken token) where T : Command
         {
-            _mediator = mediator;
+            return await mediator.Send(comando);
         }
 
-        public async Task<bool> EnviarComandoAsync<T>(T comando) where T : Command
+        public async Task PublicarEventoAsync<T>(T evento, CancellationToken token = default) where T : Event
         {
-            return await _mediator.Send(comando);
+            await mediator.Publish(evento);
         }
 
-        public async Task PublicarEventoAsync<T>(T evento) where T : Event
+        public async Task PublicarNotificacaoAsync<T>(T notificacao, CancellationToken token = default) where T : DomainNotification
         {
-            await _mediator.Publish(evento);
+            await mediator.Publish(notificacao);
         }
 
-        public async Task PublicarNotificacaoAsync<T>(T notificacao) where T : DomainNotification
+        public async Task PublicarDomainEventAsync<T>(T notificacao, CancellationToken token = default) where T : DomainEvent
         {
-            await _mediator.Publish(notificacao);
-        }
-
-        public async Task PublicarDomainEventAsync<T>(T notificacao) where T : DomainEvent
-        {
-            await _mediator.Publish(notificacao);
+            await mediator.Publish(notificacao);
         }
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Peo.Core.Interfaces.Services;
 using Peo.GestaoAlunos.Application.Dtos.Responses;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Services;
 
 namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
 {
@@ -24,7 +24,7 @@ namespace Peo.GestaoAlunos.Application.Queries.ObterMatriculas
         {
             try
             {
-                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculas(_appIdentityUser.GetUserId(), cancellationToken);
+                IEnumerable<Matricula> matriculas = await _alunoService.ObterMatriculas(_appIdentityUser.GetUserId(), request.ApenasConcluidas, cancellationToken);
 
                 return Result.Success(matriculas.Adapt<IEnumerable<MatriculaResponse>>());
             }

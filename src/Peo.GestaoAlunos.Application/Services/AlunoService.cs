@@ -3,8 +3,10 @@ using Peo.Core.DomainObjects;
 using Peo.Core.Interfaces.Services;
 using Peo.Core.Messages.IntegrationRequests;
 using Peo.Core.Messages.IntegrationResponses;
+using Peo.GestaoAlunos.Domain.Dtos;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
+using Peo.GestaoAlunos.Domain.Services;
 using Peo.GestaoAlunos.Domain.ValueObjects;
 
 namespace Peo.GestaoAlunos.Application.Services;
@@ -18,14 +20,14 @@ public class AlunoService(
     public async Task<Aluno> CriarAlunoAsync(Guid usuarioId, CancellationToken cancellationToken = default)
     {
         var aluno = new Aluno(usuarioId);
-        await alunoRepository.AddAsync(aluno);
+        await alunoRepository.AddAsync(aluno, cancellationToken);
         await alunoRepository.UnitOfWork.CommitAsync(cancellationToken);
         return aluno;
     }
 
     public async Task<Matricula> MatricularAlunoAsync(Guid alunoId, Guid cursoId, CancellationToken cancellationToken = default)
     {
-        var aluno = await alunoRepository.GetByIdAsync(alunoId);
+        var aluno = await alunoRepository.GetByIdAsync(alunoId, cancellationToken);
         if (aluno == null)
             throw new ArgumentException("Aluno não encontrado", nameof(alunoId));
 
@@ -34,7 +36,7 @@ public class AlunoService(
         if (responseCurso.Message == null || responseCurso.Message.CursoId == null)
             throw new ArgumentException("Curso não encontrado ou sem preço definido", nameof(cursoId));
 
-        var cursoJaMatriculado = await alunoRepository.AnyAsync(s => s.Id == alunoId && s.Matriculas.Any(e => e.CursoId == cursoId));
+        var cursoJaMatriculado = await alunoRepository.AnyAsync(s => s.Id == alunoId && s.Matriculas.Any(e => e.CursoId == cursoId), cancellationToken);
 
         if (cursoJaMatriculado)
         {
@@ -42,7 +44,7 @@ public class AlunoService(
         }
 
         var matricula = new Matricula(alunoId, cursoId);
-        await alunoRepository.AddMatriculaAsync(matricula);
+        await alunoRepository.AddMatriculaAsync(matricula, cancellationToken);
         await alunoRepository.UnitOfWork.CommitAsync(cancellationToken);
         return matricula;
     }
@@ -56,7 +58,7 @@ public class AlunoService(
 
     public async Task<Aluno> ObterAlunoPorUserIdAsync(Guid usuarioId, CancellationToken cancellationToken = default)
     {
-        var aluno = await alunoRepository.GetByUserIdAsync(usuarioId);
+        var aluno = await alunoRepository.GetByUserIdAsync(usuarioId, cancellationToken);
 
         aluno ??= await CriarAlunoAsync(usuarioId, cancellationToken);
         return aluno;
@@ -64,7 +66,7 @@ public class AlunoService(
 
     public async Task<ProgressoMatricula> IniciarAulaAsync(Guid matriculaId, Guid aulaId, CancellationToken cancellationToken = default)
     {
-        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId)
+        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId, cancellationToken)
             ?? throw new ArgumentException("Matrícula não encontrada", nameof(matriculaId));
 
         await ValidarAlunoEhUsuarioLogado(matricula, cancellationToken);
@@ -72,12 +74,12 @@ public class AlunoService(
         if (matricula.Status != StatusMatricula.Ativo)
             throw new InvalidOperationException("Não é possível iniciar aula para matrícula inativa");
 
-        var progressoExistente = await alunoRepository.GetProgressoMatriculaAsync(matriculaId, aulaId);
+        var progressoExistente = await alunoRepository.GetProgressoMatriculaAsync(matriculaId, aulaId, cancellationToken);
         if (progressoExistente != null)
             throw new InvalidOperationException("Aula já iniciada");
 
         var progresso = new ProgressoMatricula(matriculaId, aulaId);
-        await alunoRepository.AddProgressoMatriculaAsync(progresso);
+        await alunoRepository.AddProgressoMatriculaAsync(progresso, cancellationToken);
         await alunoRepository.UnitOfWork.CommitAsync(cancellationToken);
 
         return progresso;
@@ -95,12 +97,12 @@ public class AlunoService(
 
     public async Task<ProgressoMatricula> ConcluirAulaAsync(Guid matriculaId, Guid aulaId, CancellationToken cancellationToken = default)
     {
-        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId)
+        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId, cancellationToken)
             ?? throw new ArgumentException("Matrícula não encontrada", nameof(matriculaId));
 
         await ValidarAlunoEhUsuarioLogado(matricula, cancellationToken);
 
-        var progresso = await alunoRepository.GetProgressoMatriculaAsync(matriculaId, aulaId)
+        var progresso = await alunoRepository.GetProgressoMatriculaAsync(matriculaId, aulaId, cancellationToken)
             ?? throw new ArgumentException("Aula não iniciada", nameof(aulaId));
 
         if (progresso.EstaConcluido)
@@ -108,7 +110,7 @@ public class AlunoService(
 
         // Marcar aula como concluída
         progresso.MarcarComoConcluido();
-        await alunoRepository.AtualizarProgressoMatriculaAsync(progresso);
+        await alunoRepository.AtualizarProgressoMatriculaAsync(progresso, cancellationToken);
 
         // Calcular e atualizar progresso geral
         var responseCurso = await requestClientObterDetalhesCurso.GetResponse<ObterDetalhesCursoResponse>(new ObterDetalhesCursoRequest(matricula.CursoId));
@@ -119,9 +121,9 @@ public class AlunoService(
         if (responseCurso.Message.TotalAulas == null)
             throw new ArgumentException("Total de aulas do curso não informado", nameof(matricula.CursoId));
         var totalAulas = responseCurso.Message.TotalAulas.Value;
-        var aulasConcluidas = await alunoRepository.GetAulasConcluidasCountAsync(matriculaId);
+        var aulasConcluidas = await alunoRepository.CountAulasConcluidasAsync(matriculaId, cancellationToken);
 
-        var novoPercentualProgresso = (int)(aulasConcluidas * 100.0 / totalAulas);
+        var novoPercentualProgresso = (int)((aulasConcluidas + 1) * 100.0 / totalAulas);
         matricula.AtualizarProgresso(novoPercentualProgresso);
 
         // Se todas as aulas foram concluídas, marcar matrícula como concluída
@@ -130,7 +132,7 @@ public class AlunoService(
             matricula.Concluir();
         }
 
-        await alunoRepository.AtualizarMatricula(matricula);
+        await alunoRepository.AtualizarMatricula(matricula, cancellationToken);
         await alunoRepository.UnitOfWork.CommitAsync(cancellationToken);
 
         return progresso;
@@ -138,7 +140,7 @@ public class AlunoService(
 
     public async Task<int> ObterProgressoGeralCursoAsync(Guid matriculaId, CancellationToken cancellationToken = default)
     {
-        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId)
+        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId, cancellationToken)
             ?? throw new ArgumentException("Matrícula não encontrada", nameof(matriculaId));
 
         await ValidarAlunoEhUsuarioLogado(matricula, cancellationToken);
@@ -148,7 +150,7 @@ public class AlunoService(
 
     public async Task<Matricula> ConcluirMatriculaAsync(Guid matriculaId, CancellationToken cancellationToken = default)
     {
-        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId)
+        var matricula = await alunoRepository.GetMatriculaByIdAsync(matriculaId, cancellationToken)
             ?? throw new ArgumentException("Matrícula não encontrada", nameof(matriculaId));
 
         await ValidarAlunoEhUsuarioLogado(matricula, cancellationToken);
@@ -163,13 +165,13 @@ public class AlunoService(
             throw new ArgumentException("Curso não encontrado", nameof(matricula.CursoId));
 
         var totalAulas = responseCurso.Message.TotalAulas;
-        var aulasConcluidas = await alunoRepository.GetAulasConcluidasCountAsync(matriculaId);
+        var aulasConcluidas = await alunoRepository.CountAulasConcluidasAsync(matriculaId, cancellationToken);
 
         if (aulasConcluidas < totalAulas)
             throw new InvalidOperationException($"Não é possível concluir matrícula. {aulasConcluidas} de {totalAulas} aulas concluídas.");
 
         matricula.Concluir();
-        await alunoRepository.AtualizarMatricula(matricula);
+        await alunoRepository.AtualizarMatricula(matricula, cancellationToken);
 
         var numeroCertificado = GerarNumeroCertificado();
 
@@ -179,7 +181,7 @@ public class AlunoService(
             dataEmissao: DateTime.Now,
             numeroCertificado: numeroCertificado
         );
-        await alunoRepository.AddCertificadoAsync(certificado);
+        await alunoRepository.AddCertificadoAsync(certificado, cancellationToken);
 
         await alunoRepository.UnitOfWork.CommitAsync(cancellationToken);
 
@@ -209,20 +211,29 @@ public class AlunoService(
 
     public async Task<IEnumerable<Certificado>> ObterCertificadosDoAlunoAsync(Guid alunoId, CancellationToken cancellationToken = default)
     {
-        var aluno = await alunoRepository.GetByIdAsync(alunoId);
+        var aluno = await alunoRepository.GetByIdAsync(alunoId, cancellationToken);
         if (aluno == null)
             throw new ArgumentException("Aluno não encontrado", nameof(alunoId));
 
-        var certificados = await alunoRepository.GetCertificadosByAlunoIdAsync(alunoId);
+        var certificados = await alunoRepository.GetCertificadosByAlunoIdAsync(alunoId, cancellationToken);
         return certificados;
     }
 
-    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Matricula>> ObterMatriculas(Guid usuarioId, bool apenasConcluidas, CancellationToken cancellationToken = default)
     {
         var aluno = await ObterAlunoPorUserIdAsync(usuarioId, cancellationToken);
 
-        var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id);
+        var matriculas = await alunoRepository.GetMatriculasByAlunoIdAsync(aluno.Id, apenasConcluidas, cancellationToken);
 
         return matriculas;
+    }
+
+    public async Task<IEnumerable<AulaMatriculaDto>> ObterAulasMatricula(Guid alunoId, Guid matriculaId, CancellationToken cancellationToken = default)
+    {
+        var aluno = await ObterAlunoPorUserIdAsync(alunoId, cancellationToken);
+
+        var aulas = await alunoRepository.GetAulasByMatriculaIdAsync(aluno.Id, matriculaId, cancellationToken);
+
+        return aulas;
     }
 }

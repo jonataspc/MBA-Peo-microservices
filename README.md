@@ -1,111 +1,111 @@
 [![.NET](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml)
 
-# **PEO - Plataforma de Educação Online**
+# **PEO - Plataforma de EducaÃ§Ã£o Online**
 
-## **Apresentação**
+## **ApresentaÃ§Ã£o**
 
-Bem-vindo ao repositório do projeto **Peo**. Este projeto é uma entrega do MBA DevXpert Full Stack .NET e é referente ao terceiro módulo do MBA Desenvolvedor.IO.
+Bem-vindo ao repositÃ³rio do projeto **Peo**. Este projeto Ã© uma entrega do MBA DevXpert Full Stack .NET e Ã© referente ao terceiro mÃ³dulo do MBA Desenvolvedor.IO.
 
-O objetivo principal é desenvolver uma plataforma educacional online com múltiplos bounded contexts (BC), aplicando DDD, TDD, CQRS e padrões arquiteturais para gestão eficiente de conteúdos educacionais, alunos e processos financeiros. 
+O objetivo principal Ã© desenvolver uma plataforma educacional online com mÃºltiplos bounded contexts (BC), aplicando DDD, TDD, CQRS e padrÃµes arquiteturais para gestÃ£o eficiente de conteÃºdos educacionais, alunos e processos financeiros. 
 
 
 ### **Autores**
-* Jonatas
-* Filipe
-* Joseleno 
-* Eduardo 
-* Marcelo 
-* Leandro 
-* Paulo
+- **Eduardo Gimenes**
+- **Filipe Alan Elias**
+- **Jonatas Cruz**
+- **Joseleno Santos** 
+- **Leandro Andreotti** 
+- **Paulo Cesar Carneiro**
+- **Marcelo Menezes**
 
 ## **Proposta do Projeto**
 
 O projeto consiste em:
 
-- **API RESTful:** Exposição dos endpoints necessários para os casos de uso.
-- **Autenticação e Autorização:** Implementação de controle de acesso, diferenciando administradores e alunos.
-- **Acesso a Dados:** Implementação de acesso ao banco de dados através de ORM.
+- **API RESTful:** ExposiÃ§Ã£o dos endpoints necessÃ¡rios para os casos de uso.
+- **AutenticaÃ§Ã£o e AutorizaÃ§Ã£o:** ImplementaÃ§Ã£o de controle de acesso, diferenciando administradores e alunos.
+- **Acesso a Dados:** ImplementaÃ§Ã£o de acesso ao banco de dados atravÃ©s de ORM.
 
 ## **Tecnologias Utilizadas**
 
-- **Linguagem de Programação:** C#
+- **Linguagem de ProgramaÃ§Ã£o:** C#
 - **Frameworks:**
   - ASP.NET Core MVC
   - ASP.NET Core Web API
   - Entity Framework Core
 - **Banco de Dados:** SQL Server / SQLite
-- **Autenticação e Autorização:**
+- **AutenticaÃ§Ã£o e AutorizaÃ§Ã£o:**
   - ASP.NET Core Identity
-  - JWT (JSON Web Token) para autenticação na API
-- **Documentação da API:** Swagger
+  - JWT (JSON Web Token) para autenticaÃ§Ã£o na API
+- **DocumentaÃ§Ã£o da API:** Swagger
 
 ## **Estrutura do Projeto**
 
-A estrutura do projeto é organizada da seguinte forma:
+A estrutura do projeto Ã© organizada da seguinte forma:
 
-- src: códigos-fonte da solução  
-- tests: testes de integração e de unidade.
-- docs: [documentação do projeto](./docs/README.md) e requisitos
+- src: cÃ³digos-fonte da soluÃ§Ã£o  
+- tests: testes de integraÃ§Ã£o e de unidade.
+- docs: [documentaÃ§Ã£o do projeto](./docs/README.md) e requisitos
 	
-- README.md: Arquivo de Documentação do Projeto
-- FEEDBACK.md: Arquivo para Consolidação dos Feedbacks
+- README.md: Arquivo de DocumentaÃ§Ã£o do Projeto
+- FEEDBACK.md: Arquivo para ConsolidaÃ§Ã£o dos Feedbacks
 - DEVELOPMENT.md: Notas de apoio para o desenvolvimento
-- .gitignore: Arquivo de Ignoração do Git
+- .gitignore: Arquivo de IgnoraÃ§Ã£o do Git
 - .gitattributes: Atributos do Git
-- .editorconfig: Preferências de Estilo de Código
+- .editorconfig: PreferÃªncias de Estilo de CÃ³digo
 
 ## **Como Executar o Projeto**
 
-### **Pré-requisitos**
+### **PrÃ©-requisitos**
 
 - .NET SDK 9.0 ou superior
 - SQL Server ou SQLite
-- Visual Studio 2022 ou superior (ou qualquer IDE de sua preferência)
+- Visual Studio 2022 ou superior (ou qualquer IDE de sua preferÃªncia)
 - Git
 
-### **Passos para Execução**
+### **Passos para ExecuÃ§Ã£o**
 
-1. **Clone o Repositório:**
+1. **Clone o RepositÃ³rio:**
    - `git clone https://github.com/jonataspc/MBA-Peo-microservices.git`
    - `cd MBA-Peo`
 
-2. **Configuração do Banco de Dados:**
-   - No arquivo `\src\Peo.Web.Api\appsettings.json`, configure a string de conexão do SQL Server.
-   - Rode o projeto para que a configuração do Seed crie o banco e popule com os dados básicos
+2. **ConfiguraÃ§Ã£o do Banco de Dados:**
+   - No arquivo `\src\Peo.Web.Api\appsettings.json`, configure a string de conexÃ£o do SQL Server.
+   - Rode o projeto para que a configuraÃ§Ã£o do Seed crie o banco e popule com os dados bÃ¡sicos
 
 
 3. **Executar a API:**
    - `cd src\Peo.Web.Api`
    - `dotnet run --launch-profile "https"`
-   - Acesse a documentação da API em: https://localhost:7113/
+   - Acesse a documentaÃ§Ã£o da API em: https://localhost:7113/
 
-## **Instruções de Configuração**
+## **InstruÃ§Ãµes de ConfiguraÃ§Ã£o**
 
-- **JWT para API:** As chaves de configuração do JWT estão no `\src\Peo.Web.Api\appsettings.json`.
-- **Migrações do Banco de Dados:** As migrações são gerenciadas pelo Entity Framework Core. Não é necessário aplicar manualmente devido a configuração do seed de dados. 
+- **JWT para API:** As chaves de configuraÃ§Ã£o do JWT estÃ£o no `\src\Peo.Web.Api\appsettings.json`.
+- **MigraÃ§Ãµes do Banco de Dados:** As migraÃ§Ãµes sÃ£o gerenciadas pelo Entity Framework Core. NÃ£o Ã© necessÃ¡rio aplicar manualmente devido a configuraÃ§Ã£o do seed de dados. 
 
-## **Documentação da API**
+## **DocumentaÃ§Ã£o da API**
 
-A documentação da API está disponível através do Swagger. Após iniciar a API, acesse a documentação em https://localhost:7113/
+A documentaÃ§Ã£o da API estÃ¡ disponÃ­vel atravÃ©s do Swagger. ApÃ³s iniciar a API, acesse a documentaÃ§Ã£o em https://localhost:7113/
 
-## **Documentação do projeto**
-Uma documentação extensiva pode ser obtida [aqui](./docs/README.md).
+## **DocumentaÃ§Ã£o do projeto**
+Uma documentaÃ§Ã£o extensiva pode ser obtida [aqui](./docs/README.md).
 
 
 ## **Code coverage e CI**
-A cobertura de código pode ser gerada manualmente/localmente através do script `\scripts\run-tests-with-coverage.ps1` (que utiliza dotCover) e pode ser visualizada no caminho `\scripts\report.html`. 
+A cobertura de cÃ³digo pode ser gerada manualmente/localmente atravÃ©s do script `\scripts\run-tests-with-coverage.ps1` (que utiliza dotCover) e pode ser visualizada no caminho `\scripts\report.html`. 
 
-No repositório GitHub a action de compilação executa a compilação e os testes, além de gerar o relatório de cobertura de código e armazena-lo como artefato, que pode ser obtido: 
-- Acesse a aba "Actions" do repositório.
-- Escolha o último workflow executado.
-- Na seção Artifacts, baixar o arquivo ZIP, contendo o relatório em HTML.
+No repositÃ³rio GitHub a action de compilaÃ§Ã£o executa a compilaÃ§Ã£o e os testes, alÃ©m de gerar o relatÃ³rio de cobertura de cÃ³digo e armazena-lo como artefato, que pode ser obtido: 
+- Acesse a aba "Actions" do repositÃ³rio.
+- Escolha o Ãºltimo workflow executado.
+- Na seÃ§Ã£o Artifacts, baixar o arquivo ZIP, contendo o relatÃ³rio em HTML.
  
 
 
 
 
-## **Avaliação**
+## **AvaliaÃ§Ã£o**
 
-- Este projeto é parte de um curso acadêmico e não aceita contribuições externas. 
-- Para feedbacks ou dúvidas utilize o recurso de Issues
-- O arquivo `FEEDBACK.md` é um resumo das avaliações do instrutor e deverá ser modificado apenas por ele.
+- Este projeto Ã© parte de um curso acadÃªmico e nÃ£o aceita contribuiÃ§Ãµes externas. 
+- Para feedbacks ou dÃºvidas utilize o recurso de Issues
+- O arquivo `FEEDBACK.md` Ã© um resumo das avaliaÃ§Ãµes do instrutor e deverÃ¡ ser modificado apenas por ele.

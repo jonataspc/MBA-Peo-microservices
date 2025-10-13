@@ -2,7 +2,7 @@
 using Peo.Core.DomainObjects.Result;
 using Peo.Core.Dtos;
 using Peo.Core.Messages.IntegrationCommands;
-using Peo.Faturamento.Domain.Interfaces.Services;
+using Peo.Faturamento.Domain.Services;
 
 namespace Peo.Faturamento.Application.Handlers
 {
@@ -13,7 +13,7 @@ namespace Peo.Faturamento.Application.Handlers
     {
         public async Task<Result<ProcessarPagamentoMatriculaResponse>> Handle(ProcessarPagamentoMatriculaCommand request, CancellationToken cancellationToken)
         {
-            var pagamento = await pagamentoService.ProcessarPagamentoMatriculaAsync(request.MatriculaId, request.Valor, request.DadosCartao);
+            var pagamento = await pagamentoService.ProcessarPagamentoMatriculaAsync(request.MatriculaId, request.Valor, request.DadosCartao, cancellationToken);
 
             if (pagamento.Status == Domain.ValueObjects.StatusPagamento.Falha)
             {

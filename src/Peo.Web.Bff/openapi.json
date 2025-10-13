@@ -427,6 +427,49 @@
         }
       }
     },
+    "/v1/aluno/matricula/{id}/aulas": {
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "operationId": "GetV1AlunoMatriculaAulas",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AulaMatriculaResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/aluno/matricula/concluir": {
       "post": {
         "tags": [
@@ -574,6 +617,68 @@
                 "schema": {}
               }
             }
+          }
+        }
+      }
+    },
+    "/v1/aluno/progresso-matriculas": {
+      "get": {
+        "tags": [
+          "Alunos"
+        ],
+        "operationId": "GetV1AlunoProgressoMatriculas",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoricoAlunoProgressoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/historico/cursos-completo": {
+      "get": {
+        "tags": [
+          "Histórico"
+        ],
+        "operationId": "ObterHistoricoCompletoCursos",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObterHistoricoCompletoCursosResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": ""
           }
         }
       }
@@ -770,7 +875,7 @@
           "descricao": {
             "type": "string"
           },
-          "nomeInstrutor": {
+          "instrutorNome": {
             "type": "string"
           },
           "conteudoProgramatico": {
@@ -964,6 +1069,45 @@
           }
         }
       },
+      "AulaMatriculaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "aulaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dataInicio": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "tituloCurso": {
+            "type": "string",
+            "nullable": true
+          },
+          "tituloAula": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ConcluirMatriculaResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1078,6 +1222,96 @@
           "numeroCertificado": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "HistoricoAlunoProgressoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "alunoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ObterHistoricoCompletoCursosResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "historico": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoricoCursoCompletoResponse"
+            }
+          }
+        }
+      },
+      "HistoricoCursoCompletoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "matriculaId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "aluno": {
+            "type": "string"
+          },
+          "cursoId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "nomeCurso": {
+            "type": "string"
+          },
+          "descricaoCurso": {
+            "type": "string",
+            "nullable": true
+          },
+          "instrutorNome": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataMatricula": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataConclusao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "percentualProgresso": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }

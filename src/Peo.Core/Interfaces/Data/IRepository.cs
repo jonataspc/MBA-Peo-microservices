@@ -7,19 +7,19 @@ namespace Peo.Core.Interfaces.Data
     {
         IUnitOfWork UnitOfWork { get; }
 
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken);
 
-        Task<T?> GetAsync(Guid id);
+        Task<T?> GetAsync(Guid id, CancellationToken cancellationToken);
 
-        Task<IEnumerable<T>?> GetAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
 
-        Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
 
-        void Insert(T entity);
+        void Insert(T entity, CancellationToken cancellationToken);
 
-        Task AddRangeAsync(IEnumerable<T> entities);
+        Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken);
 
-        void Update(T entity);
+        void Update(T entity, CancellationToken cancellationToken);
 
         IRepository<T> WithTracking();
 

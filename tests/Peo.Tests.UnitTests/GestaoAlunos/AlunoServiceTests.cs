@@ -7,7 +7,7 @@ using Peo.Core.Messages.IntegrationRequests;
 using Peo.Core.Messages.IntegrationResponses;
 using Peo.GestaoAlunos.Application.Services;
 using Peo.GestaoAlunos.Domain.Entities;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 using Peo.GestaoAlunos.Domain.ValueObjects;
 using System.Linq.Expressions;
 
@@ -40,7 +40,6 @@ public class AlunoServiceTests
     {
         // Arrange
         var usuarioId = Guid.CreateVersion7();
-        var alunoEsperado = new Aluno(usuarioId);
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
@@ -50,7 +49,7 @@ public class AlunoServiceTests
         // Assert
         resultado.Should().NotBeNull();
         resultado.UsuarioId.Should().Be(usuarioId);
-        _alunoRepositoryMock.Verify(x => x.AddAsync(It.Is<Aluno>(s => s.UsuarioId == usuarioId)), Times.Once);
+        _alunoRepositoryMock.Verify(x => x.AddAsync(It.Is<Aluno>(s => s.UsuarioId == usuarioId), CancellationToken.None), Times.Once);
         _alunoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -61,13 +60,12 @@ public class AlunoServiceTests
         var alunoId = Guid.CreateVersion7();
         var cursoId = Guid.CreateVersion7();
         var aluno = new Aluno(Guid.CreateVersion7());
-        var matriculaEsperada = new Matricula(alunoId, cursoId);
 
         // Setup curso response mock
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
         mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
 
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync(aluno);
 
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
@@ -76,7 +74,7 @@ public class AlunoServiceTests
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockResponse.Object);
 
-        _alunoRepositoryMock.Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Aluno, bool>>>()))
+        _alunoRepositoryMock.Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Aluno, bool>>>(), CancellationToken.None))
             .ReturnsAsync(false);
 
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
@@ -89,7 +87,7 @@ public class AlunoServiceTests
         resultado.Should().NotBeNull();
         resultado.AlunoId.Should().Be(alunoId);
         resultado.CursoId.Should().Be(cursoId);
-        _alunoRepositoryMock.Verify(x => x.AddMatriculaAsync(It.Is<Matricula>(m => m.AlunoId == alunoId && m.CursoId == cursoId)), Times.Once);
+        _alunoRepositoryMock.Verify(x => x.AddMatriculaAsync(It.Is<Matricula>(m => m.AlunoId == alunoId && m.CursoId == cursoId), CancellationToken.None), Times.Once);
         _alunoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -99,7 +97,7 @@ public class AlunoServiceTests
         // Arrange
         var alunoId = Guid.CreateVersion7();
         var cursoId = Guid.CreateVersion7();
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync((Aluno?)null);
 
         // Act & Assert
@@ -118,7 +116,7 @@ public class AlunoServiceTests
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
         mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(null, null, null, null));
 
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync(aluno);
 
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
@@ -144,13 +142,13 @@ public class AlunoServiceTests
 
         matricula.ConfirmarPagamento();
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
-        _alunoRepositoryMock.Setup(x => x.GetProgressoMatriculaAsync(matriculaId, aulaId))
+        _alunoRepositoryMock.Setup(x => x.GetProgressoMatriculaAsync(matriculaId, aulaId, CancellationToken.None))
             .ReturnsAsync((ProgressoMatricula?)null);
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -163,7 +161,7 @@ public class AlunoServiceTests
         resultado.MatriculaId.Should().Be(matriculaId);
         resultado.AulaId.Should().Be(aulaId);
         resultado.EstaConcluido.Should().BeFalse();
-        _alunoRepositoryMock.Verify(x => x.AddProgressoMatriculaAsync(It.Is<ProgressoMatricula>(p => p.MatriculaId == matriculaId && p.AulaId == aulaId)), Times.Once);
+        _alunoRepositoryMock.Verify(x => x.AddProgressoMatriculaAsync(It.Is<ProgressoMatricula>(p => p.MatriculaId == matriculaId && p.AulaId == aulaId), CancellationToken.None), Times.Once);
         _alunoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -184,20 +182,20 @@ public class AlunoServiceTests
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
         mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
-        _alunoRepositoryMock.Setup(x => x.GetProgressoMatriculaAsync(matriculaId, aulaId))
+        _alunoRepositoryMock.Setup(x => x.GetProgressoMatriculaAsync(matriculaId, aulaId, CancellationToken.None))
             .ReturnsAsync(progresso);
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
             It.IsAny<ObterDetalhesCursoRequest>(),
             It.IsAny<CancellationToken>(),
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockResponse.Object);
-        _alunoRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.CountAulasConcluidasAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(9);
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -225,11 +223,11 @@ public class AlunoServiceTests
         var matricula = new Matricula(alunoMatriculaId, Guid.CreateVersion7());
         var aluno = new Aluno(usuarioAtualId) { Id = alunoDiferenteId };
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
 
         // Act & Assert
@@ -248,11 +246,11 @@ public class AlunoServiceTests
         var matricula = new Matricula(alunoMatriculaId, Guid.CreateVersion7());
         var aluno = new Aluno(usuarioAtualId) { Id = alunoDiferenteId };
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
 
         // Act & Assert
@@ -272,10 +270,10 @@ public class AlunoServiceTests
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
         mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
 
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioId, CancellationToken.None))
             .ReturnsAsync((Aluno?)null);
 
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>(), CancellationToken.None))
             .ReturnsAsync(aluno);
 
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
@@ -284,10 +282,10 @@ public class AlunoServiceTests
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockResponse.Object);
 
-        _alunoRepositoryMock.Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Aluno, bool>>>()))
+        _alunoRepositoryMock.Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Aluno, bool>>>(), CancellationToken.None))
             .ReturnsAsync(false);
 
-        _alunoRepositoryMock.Setup(x => x.AddMatriculaAsync(It.IsAny<Matricula>()))
+        _alunoRepositoryMock.Setup(x => x.AddMatriculaAsync(It.IsAny<Matricula>(), CancellationToken.None))
             .Returns(Task.CompletedTask);
 
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
@@ -299,8 +297,8 @@ public class AlunoServiceTests
         // Assert
         resultado.Should().NotBeNull();
         resultado.CursoId.Should().Be(cursoId);
-        _alunoRepositoryMock.Verify(x => x.AddAsync(It.Is<Aluno>(s => s.UsuarioId == usuarioId)), Times.Once);
-        _alunoRepositoryMock.Verify(x => x.AddMatriculaAsync(It.Is<Matricula>(m => m.CursoId == cursoId)), Times.Once);
+        _alunoRepositoryMock.Verify(x => x.AddAsync(It.Is<Aluno>(s => s.UsuarioId == usuarioId), CancellationToken.None), Times.Once);
+        _alunoRepositoryMock.Verify(x => x.AddMatriculaAsync(It.Is<Matricula>(m => m.CursoId == cursoId), CancellationToken.None), Times.Once);
         _alunoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce);
     }
 
@@ -315,11 +313,11 @@ public class AlunoServiceTests
         var aluno = new Aluno(usuarioAtualId) { Id = alunoId };
         matricula.AtualizarProgresso(75);
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
 
         // Act
@@ -350,11 +348,11 @@ public class AlunoServiceTests
         var mockUsuarioResponse = new Mock<Response<ObterDetalhesUsuarioResponse>>();
         mockUsuarioResponse.Setup(x => x.Message).Returns(new ObterDetalhesUsuarioResponse("Usuario Teste"));
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
             It.IsAny<ObterDetalhesCursoRequest>(),
@@ -366,14 +364,14 @@ public class AlunoServiceTests
             It.IsAny<CancellationToken>(),
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockUsuarioResponse.Object);
-        _alunoRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.CountAulasConcluidasAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(10);
-        _alunoRepositoryMock.Setup(x => x.AddCertificadoAsync(It.IsAny<Certificado>()))
+        _alunoRepositoryMock.Setup(x => x.AddCertificadoAsync(It.IsAny<Certificado>(), CancellationToken.None))
             .Returns(Task.CompletedTask);
         _alunoRepositoryMock.Setup(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync(aluno);
 
         // Act
@@ -384,7 +382,7 @@ public class AlunoServiceTests
         resultado.Status.Should().Be(StatusMatricula.Concluido);
         resultado.DataConclusao.Should().NotBeNull();
         resultado.PercentualProgresso.Should().Be(100);
-        _alunoRepositoryMock.Verify(x => x.AddCertificadoAsync(It.IsAny<Certificado>()), Times.Once);
+        _alunoRepositoryMock.Verify(x => x.AddCertificadoAsync(It.IsAny<Certificado>(), CancellationToken.None), Times.Once);
         _alunoRepositoryMock.Verify(x => x.UnitOfWork.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -404,18 +402,18 @@ public class AlunoServiceTests
         var mockResponse = new Mock<Response<ObterDetalhesCursoResponse>>();
         mockResponse.Setup(x => x.Message).Returns(new ObterDetalhesCursoResponse(cursoId, 10, "Curso Teste", 100.00m));
 
-        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.GetMatriculaByIdAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(matricula);
         _appIdentityUserMock.Setup(x => x.GetUserId())
             .Returns(usuarioAtualId);
-        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId))
+        _alunoRepositoryMock.Setup(x => x.GetByUserIdAsync(usuarioAtualId, CancellationToken.None))
             .ReturnsAsync(aluno);
         _obterDetalhesCursoRequestMock.Setup(x => x.GetResponse<ObterDetalhesCursoResponse>(
             It.IsAny<ObterDetalhesCursoRequest>(),
             It.IsAny<CancellationToken>(),
             It.IsAny<RequestTimeout>()))
             .ReturnsAsync(mockResponse.Object);
-        _alunoRepositoryMock.Setup(x => x.GetAulasConcluidasCountAsync(matriculaId))
+        _alunoRepositoryMock.Setup(x => x.CountAulasConcluidasAsync(matriculaId, CancellationToken.None))
             .ReturnsAsync(8);
 
         // Act & Assert
@@ -434,9 +432,9 @@ public class AlunoServiceTests
             new Certificado(matriculaId, "Certificado 2", DateTime.Now, "CERT-002")
         };
 
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync(new Aluno(Guid.CreateVersion7()));
-        _alunoRepositoryMock.Setup(x => x.GetCertificadosByAlunoIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetCertificadosByAlunoIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync(certificados);
 
         // Act
@@ -453,7 +451,7 @@ public class AlunoServiceTests
     {
         // Arrange
         var alunoId = Guid.CreateVersion7();
-        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId))
+        _alunoRepositoryMock.Setup(x => x.GetByIdAsync(alunoId, CancellationToken.None))
             .ReturnsAsync((Aluno?)null);
 
         // Act & Assert

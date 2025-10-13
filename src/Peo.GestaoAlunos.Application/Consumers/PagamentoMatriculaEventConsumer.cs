@@ -1,7 +1,7 @@
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Peo.Core.Messages.IntegrationEvents;
-using Peo.GestaoAlunos.Domain.Interfaces;
+using Peo.GestaoAlunos.Domain.Repositories;
 
 namespace Peo.GestaoAlunos.Application.Consumers
 {
@@ -28,7 +28,8 @@ namespace Peo.GestaoAlunos.Application.Consumers
 
             logger.LogInformation("Processing PagamentoMatriculaConfirmadoEvent for MatriculaId: {MatriculaId}", message.MatriculaId);
 
-            var matricula = await alunoRepository.GetMatriculaByIdAsync(message.MatriculaId)
+            var cancellationToken = context.CancellationToken;
+            var matricula = await alunoRepository.GetMatriculaByIdAsync(message.MatriculaId, cancellationToken)
                             ?? throw new InvalidOperationException($"Matrícula com ID {message.MatriculaId} não encontrada");
 
             matricula.ConfirmarPagamento();

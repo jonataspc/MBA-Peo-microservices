@@ -6,7 +6,6 @@ using Peo.Core.Web.Services;
 using Peo.Faturamento.Application.Services;
 using Peo.Faturamento.Infra.Data.Helpers;
 using Peo.Faturamento.Integrations.Paypal.Services;
-using Peo.GestaoAlunos.Application.Endpoints;
 using Peo.GestaoAlunos.Domain.Entities;
 using Peo.GestaoAlunos.Infra.Data.Helpers;
 using Peo.GestaoConteudo.Application.Consumers;
@@ -38,7 +37,7 @@ public class ArchitectTests
             typeof(Peo.Core.Web.Api.IEndpoint).Assembly,
             typeof(Peo.Core.Infra.Data.Contexts.Base.DbContextBase ).Assembly,
             typeof(GestaoAlunosDbMigrationHelpers).Assembly,
-            typeof(EndpointsAluno ).Assembly,
+            typeof(Peo.GestaoAlunos.WebApi.Endpoints.EndpointsAluno ).Assembly,
             typeof(Peo.Identity.Infra.Data.Helpers.IdentityDbMigrationHelpers).Assembly,
             typeof(Peo.Identity.Application.Services.TokenService).Assembly,
             typeof(GestaoConteudoDbMigrationHelpers).Assembly,
