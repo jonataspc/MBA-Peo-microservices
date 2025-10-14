@@ -30,9 +30,11 @@ O projeto consiste em:
 
 - **Linguagem de Programação:** C#
 - **Frameworks:**
-  - ASP.NET Core MVC
+  - ASP.NET Blazor
   - ASP.NET Core Web API
   - Entity Framework Core
+  - MudBlazor
+  - NSwag
 - **Banco de Dados:** SQL Server / SQLite
 - **Autenticação e Autorização:**
   - ASP.NET Core Identity
@@ -78,6 +80,12 @@ A estrutura do projeto é organizada da seguinte forma:
    - `cd src\Peo.Web.Api`
    - `dotnet run --launch-profile "https"`
    - Acesse a documentação da API em: https://localhost:7113/
+
+4. **Credenciais de teste para usuário administrativo:**
+
+Usuário: admin@admin.com
+ 
+Senha: @dmin!
 
 ## **Instruções de Configuração**
 

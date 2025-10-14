@@ -14,26 +14,7 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Close"
                                OnClick="() => Dialog.Cancel()"
                                aria-label="Fechar" />
-            </MudStack>
-            <!-- Curso (selecionável no modal) -->
-            <MudSelect T="Guid?"
-                       Label="Curso"
-                       Value="CursoSelecionado"
-                       ValueChanged="@(v => CursoSelecionado = v)"
-                       For="@(() => CursoSelecionado)"
-                       Disabled="@ReadOnly"
-                       Placeholder="@(_carregandoCursos ? "Carregando cursos..." : "Selecione...")"
-                       ToStringFunc="@(id => _cursos.FirstOrDefault(x => x.Id == id)?.Titulo
-                               ?? id?.ToString() ?? string.Empty)">
-
-                @if (!_carregandoCursos)
-                {
-                    @foreach (var c in _cursos)
-                    {
-                        <MudSelectItem Value="@((Guid?)c.Id)">@c.Titulo</MudSelectItem>
-                    }
-                }
-            </MudSelect>
+            </MudStack> 
 
 
             <!-- Dados da aula -->
@@ -96,8 +77,7 @@
     [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
     [Parameter] public AulaVm Model { get; set; } = new();
 
-    private MudForm? _form;
-    //private bool _salvando;
+    private MudForm? _form; 
 
     public enum AulaDialogMode { Create, Edit, View }
 
@@ -110,22 +90,7 @@
         AulaDialogMode.Edit => "Editar Aula",
         _ => "Nova Aula"
     };
-
-    // ---- cursos (para o select) ----
-    private List<CursoOption> _cursos = new();
-    private bool _carregandoCursos;
-
-    private Guid? _cursoSelecionado;
-    private Guid? CursoSelecionado
-    {
-        get => _cursoSelecionado;
-        set { 
-            _cursoSelecionado = value;
-            Model.CursoId = value ?? Guid.Empty;
-        }
-    }
-
-    // ---- arquivos ----
+ 
     private string? _arquivoTitulo;
     private string? _arquivoUrl;
 
@@ -149,42 +114,20 @@
         set => Model.Duracao = value ?? TimeSpan.Zero;
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        _carregandoCursos = true;
-        try
-        {
-            _cursos = await Service.ObterCursos();
-
-            CursoSelecionado = (Model.CursoId != Guid.Empty && _cursos.Any(c => c.Id == Model.CursoId))
-            ? Model.CursoId
-            : null;
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Erro ao carregar cursos: {ex.Message}", Severity.Error);
-        }
-        finally { _carregandoCursos = false; }
-    }
+ 
 
     private async Task Salvar()
     {
         await _form!.Validate();
         if (!_form.IsValid) return;
 
-        if (Model.CursoId == Guid.Empty)
-        {
-            Snackbar.Add("Selecione o curso.", Severity.Warning);
-            return;
-        }
-
-        //_salvando = true;
+        
         try
         {
             var (ok, msg, aulaId) = await Service.Cadastrar(Model);
             if (ok)
             {
-                Snackbar.Add($"Aula criada (Id: {aulaId}).", Severity.Success);
+                Snackbar.Add($"Aula criada", Severity.Success);
                 Dialog.Close(DialogResult.Ok(true));
             }
             else Snackbar.Add($"Falha ao criar aula: {msg}", Severity.Error);
@@ -193,8 +136,7 @@
         {
             Snackbar.Add($"Erro: {ex.Message}", Severity.Error);
         }
-        finally { 
-            //_salvando = false; 
+        finally {  
             }
     }
 

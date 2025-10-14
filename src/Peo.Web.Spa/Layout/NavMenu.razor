@@ -1,55 +1,37 @@
-﻿
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+
 <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
 
     <MudNavMenu Dense="true">
         <MudText Typo="Typo.h1" Class="pa-4">PEO</MudText>
         <MudText Typo="Typo.body2" Class="px-4 pb-4">Plataforma de Educação Online</MudText>
-        <MudDivider Class="my-2"/>
+        <MudDivider Class="my-2" />
         <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
 
-        <MudNavGroup Title="Cursos" Icon="@Icons.Material.Filled.School"  Expanded="true">
-             
-             <MudNavLink Href="/cursos" 
-                    Icon="@Icons.Material.Filled.Book">
-                    Cursos
-             </MudNavLink>
-
-               <MudNavLink Href="/aulas" 
-                        Icon="@Icons.Material.Filled.PlayCircle">
-                    Aulas
-                </MudNavLink>
-
-        </MudNavGroup>
-
-        <MudNavGroup Title="Alunos"Icon="@Icons.Material.Filled.People" Expanded="true">
-            <MudNavLink Href="/matricula"Icon="@Icons.Material.Filled.Class">
-                Matricula
+        @if (_isAdmin)
+        {
+            <MudNavLink Href="/cursos" 
+                        Icon="@Icons.Material.Filled.Book">
+                Gestão de Conteúdo
             </MudNavLink>
+        }
 
-            <MudNavLink Href="/historico" Icon="@Icons.Material.Filled.History">
-                Histórico
-            </MudNavLink>
+        <MudNavLink Href="/matricula" Icon="@Icons.Material.Filled.Class">
+            Matricula
+        </MudNavLink>
 
-            <MudNavLink Href="/certificados" Icon="@Icons.Material.Filled.School">
-                Certificados
-            </MudNavLink>
+        <MudNavLink Href="/alunosaulas" Icon="@Icons.Material.Filled.Newspaper">
+            Minhas aulas
+        </MudNavLink>
 
-            <MudNavLink Href="/alunosaulas" Icon="@Icons.Material.Filled.Newspaper">
-                Minhas aulas
-            </MudNavLink>
+        <MudNavLink Href="/historico" Icon="@Icons.Material.Filled.History">
+            Histórico
+        </MudNavLink>
 
+        <MudNavLink Href="/certificados" Icon="@Icons.Material.Filled.School">
+            Certificados
+        </MudNavLink>
 
-        </MudNavGroup>
-        
-        
-
-
-
-
-        <MudNavGroup Title="Configurações" Icon="@Icons.Material.Filled.Settings" Expanded="true">
-            <MudNavLink Href="/usuarios" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">Usuários</MudNavLink>
-            <MudNavLink Href="/parametros" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Segurança</MudNavLink>
-        </MudNavGroup>
     </MudNavMenu>
 
 </MudPaper>

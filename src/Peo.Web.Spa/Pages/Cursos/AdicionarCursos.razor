@@ -1,6 +1,7 @@
 ﻿@using MudBlazor
 @using System.ComponentModel.DataAnnotations
 @using System.Security.Claims
+@using System.Globalization
 @inject WebApiClient Api
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
@@ -28,7 +29,7 @@
                     <MudTextField @bind-Value="_model.ConteudoProgramatico" Label="Conteúdo programático" Lines="4" />
                     <MudTextField @bind-Value="_tags" Label="Tags (separe por vírgula)" />
                     <MudTextField @bind-Value="_model.Descricao" Label="Descrição" Lines="3" />
-                    <MudNumericField @bind-Value="_model.Preco" Label="Preço" Min="0" Required="true" />
+                    <MudNumericField @bind-Value="_model.Preco" Label="Preço" Min="1" Required="true" Adornment="Adornment.Start" Culture=@_pt Format="C" />
                 </MudStack>
             </EditForm>
         }
@@ -50,6 +51,7 @@
 @code {
     [CascadingParameter] private IMudDialogInstance? MudDialog { get; set; }
 
+    public CultureInfo _pt = CultureInfo.GetCultureInfo("pt-BR");
     private bool _busy;
     private string? _tags;
     private readonly CursoForm _model = new();

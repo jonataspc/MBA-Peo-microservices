@@ -1,5 +1,4 @@
 ﻿@page "/cursos/{CursoId:guid}/aulas"
-@page "/aulas"
 @using MudBlazor
 @using Peo.Web.Spa.Models
 @using Peo.Web.Spa.Services
@@ -11,7 +10,7 @@
 @inject NavigationManager Nav
 @inject ISnackbar Snackbar
 @inject ILogger<Aulas> Logger
-
+@inject WebApiClient Api
 
 
 <PageTitle>Aulas</PageTitle>
@@ -26,14 +25,7 @@
                       AdornmentIcon="@Icons.Material.Filled.Search"
                       Immediate="true"
                       DebounceInterval="250" />
-        <MudSelect T="Guid?" Value="_cursoSelecionado" ValueChanged="OnCursoChange"
-                   For="@(()=> _cursoSelecionado)" Dense="true" Style="min-width: 280px">
-            <MudSelectItem Value="@((Guid?)Guid.Empty)">Todos os cursos</MudSelectItem>
-            @foreach (var c in _cursos)
-            {
-                <MudSelectItem Value="@((Guid?)c.Id)">@c.Titulo</MudSelectItem>
-            }
-        </MudSelect>
+
 
         <MudSpacer />
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="AbrirCriar">
@@ -44,10 +36,7 @@
     <MudTable Items="_aulas" Dense="true" Hover="true" Bordered="true" Class="mt-4"
               RowsPerPage="10" Breakpoint="Breakpoint.Sm">
         <HeaderContent>
-            @if (_cursoSelecionado == Guid.Empty)
-            {
-                <MudTh>Curso</MudTh>
-            }
+            <MudTh>Curso</MudTh>
             <MudTh style="width:90px">Duração</MudTh>
             <MudTh>Título</MudTh>
             <MudTh>Vídeo</MudTh>
@@ -55,12 +44,9 @@
             <MudTh Class="text-right"> Ações </MudTh>
         </HeaderContent>
         <RowTemplate>
-            @if (_cursoSelecionado == Guid.Empty)
-            {
-                <MudTd DataLabel="Curso">
-                    @(_cursoNome.TryGetValue(context.CursoId, out var nome) ? nome : "-")
-                </MudTd>
-            }
+            <MudTd DataLabel="Curso">
+                @(_cursoNome)
+            </MudTd>
             <MudTd>@context.Duracao.ToString(@"hh\:mm")</MudTd>
             <MudTd>@context.Titulo<br /><MudText Typo="Typo.caption" Class="text-secondary">@context.Descricao</MudText></MudTd>
             <MudTd><MudLink Href="@context.UrlVideo" Target="_blank">@context.UrlVideo</MudLink></MudTd>
@@ -85,13 +71,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Visibility"
                                    Size="Size.Small"
                                    OnClick="@(() => VisualizarAula(context))" />
-                </MudTooltip>
-                <MudTooltip Text="Remover aula">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Error"
-                                   Size="Size.Small"
-                                   OnClick="@(() => RemoverAula(context))" />
-                </MudTooltip>
+                </MudTooltip>                
             </MudTd>
         </RowTemplate>
         <PagerContent><MudTablePager /></PagerContent>
@@ -105,11 +85,13 @@
     [Parameter] public AulaDialogMode Mode { get; set; } = AulaDialogMode.Create;
 
     [SupplyParameterFromQuery(Name = "courseId")]
-
+        
     public Guid? CourseIdQuery { get; set; }
     private List<AulaVm> _todas = new();
     private List<AulaVm> _aulas = new();
     private List<AulaVm> _todasAulas = new();
+    private string _cursoNome = string.Empty;
+    private CancellationTokenSource? _cts;
 
     // === BUSCA ===
     private string _busca = string.Empty;
@@ -125,20 +107,26 @@
         }
     }
 
-    // filtro
-    private Guid? _cursoSelecionado;
-    private List<CursoOption> _cursos = new();
-    private Dictionary<Guid, string> _cursoNome = new();
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _cursos = await Service.ObterCursos();
-            _cursoNome = _cursos.ToDictionary(c => c.Id, c => c.Titulo);
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = new CancellationTokenSource();
+            var curso = await Api.GetV1ConteudoCurso2Async(CursoId, _cts!.Token);
+            _cursoNome = curso.Titulo;
 
-            _cursoSelecionado = Guid.Empty;
-            await CarregarPorSelecao();
+            await Carregar(CursoId);
+
+
+
         }
         catch (Exception ex)
         {
@@ -146,30 +134,6 @@
         }
     }
 
-    private async Task OnCursoChange(Guid? id)
-    {
-        _cursoSelecionado = id;
-        await CarregarPorSelecao();
-    }
-
-    private async Task CarregarTodosCursos()
-    {
-        var lista = new List<AulaVm>();
-
-        foreach (var c in _cursos)
-        {
-            var aulas = await Service.ObterAulasDoCurso(c.Id);
-            foreach (var a in aulas) a.CursoId = c.Id;
-            lista.AddRange(aulas);
-        }
-
-        _todasAulas = lista
-            .OrderBy(a => _cursoNome.GetValueOrDefault(a.CursoId))
-            .ThenBy(a => a.Titulo)
-            .ToList();
-
-        AplicarFiltro();
-    }
 
     private void AplicarFiltro()
     {
@@ -206,53 +170,16 @@
         return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
     }
 
-    // quando trocar o filtro de curso (“Todos”|curso X), no final sempre:
-    private async Task CarregarPorSelecao()
-    {
-        if (_cursoSelecionado == Guid.Empty) await CarregarTodosCursos();
-        else if (_cursoSelecionado is Guid id && id != Guid.Empty) await Carregar(id);
-        else { _todasAulas = new(); AplicarFiltro(); }
-    }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        // rota ou querystring
-        if (CursoId == Guid.Empty && CourseIdQuery.HasValue)
-            CursoId = CourseIdQuery.Value;
 
-        if (CursoId != Guid.Empty)
-            await Carregar(CursoId);
-        else
-            await CarregarPrimeiroCurso();
-    }
+ 
 
-    private async Task CarregarPrimeiroCurso()
-    {
-        try
-        {
-            var cursos = await Service.ObterCursos();
-            if (cursos.Count > 0)
-            {
-                CursoId = cursos[0].Id;
-                await Carregar(CursoId);
-            }
-            else
-            {
-                _aulas.Clear();
-                StateHasChanged();
-            }
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Erro ao carregar cursos: {ex.Message}", Severity.Error);
-        }
-    }
     private async Task Carregar(Guid cursoId)
     {
         Logger.LogWarning("Carregar");
         var aulas = await Service.ObterAulasDoCurso(cursoId);
         foreach (var a in aulas) a.CursoId = cursoId;
-        
+
         _todasAulas = aulas;
         AplicarFiltro();
     }
@@ -260,33 +187,33 @@
     private async Task AbrirCriar()
     {
         var vm = new AulaVm
-            {
-                CursoId = (_cursoSelecionado == Guid.Empty) ? Guid.Empty : (_cursoSelecionado ?? Guid.Empty),
-                Duracao = TimeSpan.FromMinutes(30)
-            };
+        {
+            Duracao = TimeSpan.FromMinutes(30),
+            CursoId = CursoId,
+        };
 
-        var dlg = await DialogService.ShowAsync<AulaDialog>("Nova Aula",
+        var dlg = await DialogService.ShowAsync<AulaDialog>(" ",
             new DialogParameters { ["Model"] = vm },
             new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseOnEscapeKey = true });
 
         var result = await dlg.Result;
 
         if (result is { Canceled: false })
-            await CarregarPorSelecao();
+            await Carregar(CursoId);
     }
 
     private async Task VisualizarAula(AulaVm aula)
     {
         var vm = new AulaVm
-            {
-                Id = aula.Id,
-                CursoId = aula.CursoId,
-                Titulo = aula.Titulo,
-                Descricao = aula.Descricao,
-                UrlVideo = aula.UrlVideo,
-                Duracao = aula.Duracao,
-                Arquivos = aula.Arquivos?.Select(x => new ArquivoAulaVm { Id = x.Id, Titulo = x.Titulo, Url = x.Url }).ToList() ?? new()
-            };
+        {
+            Id = aula.Id,
+            CursoId = aula.CursoId,
+            Titulo = aula.Titulo,
+            Descricao = aula.Descricao,
+            UrlVideo = aula.UrlVideo,
+            Duracao = aula.Duracao,
+            Arquivos = aula.Arquivos?.Select(x => new ArquivoAulaVm { Id = x.Id, Titulo = x.Titulo, Url = x.Url }).ToList() ?? new()
+        };
 
         var dlg = await DialogService.ShowAsync<AulaDialog>("Detalhes da Aula",
             new DialogParameters { ["Model"] = vm, ["Mode"] = AulaDialogMode.View },
@@ -305,7 +232,7 @@
         if (confirmou != true) return;
 
         var (ok, msg) = await Service.ExcluirAula(aula.CursoId, aula.Id);
-        if (ok) { Snackbar.Add("Aula removida.", Severity.Success); await CarregarPorSelecao(); }
+        if (ok) { Snackbar.Add("Aula removida.", Severity.Success); await Carregar(CursoId); }
         else { Snackbar.Add(msg ?? "Falha ao remover aula.", Severity.Error); }
     }
 }

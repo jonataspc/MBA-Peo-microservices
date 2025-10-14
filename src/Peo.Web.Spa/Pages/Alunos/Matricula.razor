@@ -2,6 +2,7 @@
 @using System.Linq
 @inject WebApiClient webApiClient
 @inject ISnackbar snackbar
+@attribute [Authorize(Roles = "Aluno")]
 
 <h3>Efetuar Matricula</h3>
 
@@ -39,7 +40,7 @@ else
                            Class="mt-2"
                            OnClick="Salvar" Disabled="string.IsNullOrWhiteSpace(cursoSelecionado)|| fazerPagamento ">
 
-                    Salvar
+                    Matricular
                 </MudButton>
             </MudItem>
         </MudGrid>
@@ -121,7 +122,7 @@ else
             }
 
             if (fazerPagamento)
-                snackbar.Add("Matrícula já foi realizada anteriormente! Por favor, prossiga para o pagamento.", Severity.Warning);
+                snackbar.Add("Matrícula realizada com sucesso! Por favor, prossiga para o pagamento.", Severity.Warning);
 
         }
         catch (Exception ex)
