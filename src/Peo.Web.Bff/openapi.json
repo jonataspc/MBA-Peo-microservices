@@ -358,6 +358,59 @@
         }
       }
     },
+    "/v1/conteudo/curso/{cursoId}/aula/{aulaId}": {
+      "delete": {
+        "tags": [
+          "Conteúdo"
+        ],
+        "operationId": "DeleteV1ConteudoCursoAula",
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "aulaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExcluirAulaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/v1/aluno/matricula": {
       "post": {
         "tags": [
@@ -1012,6 +1065,16 @@
           },
           "url": {
             "type": "string"
+          }
+        }
+      },
+      "ExcluirAulaResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aulaId": {
+            "type": "string",
+            "format": "guid"
           }
         }
       },

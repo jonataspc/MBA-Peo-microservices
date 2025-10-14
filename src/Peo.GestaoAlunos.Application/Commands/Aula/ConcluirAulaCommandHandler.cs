@@ -21,14 +21,21 @@ public class ConcluirAulaCommandHandler : IRequestHandler<ConcluirAulaCommand, R
         {
             var progresso = await _alunoService.ConcluirAulaAsync(request.Request.MatriculaId, request.Request.AulaId, cancellationToken);
 
+            var percent = await _alunoService.ObterProgressoGeralCursoAsync(progresso.MatriculaId, cancellationToken);
+
             var response = new ProgressoAulaResponse(
                 progresso.MatriculaId,
                 progresso.AulaId,
                 progresso.EstaConcluido,
                 progresso.DataInicio,
                 progresso.DataConclusao,
-                await _alunoService.ObterProgressoGeralCursoAsync(progresso.MatriculaId, cancellationToken)
+                percent
             );
+
+            if (percent == 100)
+            {
+                await _alunoService.ConcluirMatriculaAsync(progresso.MatriculaId, cancellationToken);
+            }
 
             return Result.Success(response);
         }

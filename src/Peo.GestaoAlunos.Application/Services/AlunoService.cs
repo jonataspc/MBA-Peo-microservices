@@ -126,12 +126,7 @@ public class AlunoService(
         var novoPercentualProgresso = (int)((aulasConcluidas + 1) * 100.0 / totalAulas);
         matricula.AtualizarProgresso(novoPercentualProgresso);
 
-        // Se todas as aulas foram concluídas, marcar matrícula como concluída
-        if (novoPercentualProgresso == 100)
-        {
-            matricula.Concluir();
-        }
-
+       
         await alunoRepository.AtualizarMatricula(matricula, cancellationToken);
         await alunoRepository.UnitOfWork.CommitAsync(cancellationToken);
 

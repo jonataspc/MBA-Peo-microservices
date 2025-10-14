@@ -26,8 +26,7 @@
     {
         <MudAlert Severity="Severity.Info" Class="mb-4">
             <MudText Typo="Typo.body1">
-                Você ainda não está matriculado em nenhum curso. 
-                <MudLink Href="/cursos" Color="Color.Primary">Explore nossos cursos disponíveis!</MudLink>
+                Você ainda não está matriculado em nenhum curso.
             </MudText>
         </MudAlert>
     }
@@ -95,7 +94,10 @@
 
         <MudDivider Class="my-2" />
 
-        <MudText Typo="Typo.h5" Class="mb-3">Cursos concluídos</MudText>
+        @if (_cursos.Any(x => x.DataConclusao is not null))
+        {
+            <MudText Typo="Typo.h5" Class="mb-3">Cursos concluídos</MudText>
+        }        
 
         <MudGrid>
             @foreach (var curso in _cursos.Where(x => x.DataConclusao is not null))

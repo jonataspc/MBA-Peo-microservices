@@ -15,14 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Pages\Faturamento\" />
-	  <Folder Include="Pages\GestaoAlunos\" />
-	  <Folder Include="Pages\GestaoConteudo\" />
-	  <Folder Include="Pages\Financeiro\" />
-	  <Folder Include="Pages\Configuracoes\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Content Update="wwwroot\appsettings.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

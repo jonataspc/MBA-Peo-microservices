@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Peo.Web.Spa.Services;
+using System.Globalization;
 
 
 namespace Peo.Web.Spa.Pages.Cursos
@@ -12,10 +13,11 @@ namespace Peo.Web.Spa.Pages.Cursos
         [Inject] IDialogService DialogService { get; set; } = null!;
         [Inject] ISnackbar Snackbar { get; set; } = null!;
         private CancellationTokenSource? _cts;
+        public CultureInfo _pt = CultureInfo.GetCultureInfo("pt-BR");
 
         protected override async Task OnInitializedAsync()
         {
-            await ObterCursos();
+            await ObterCursos();            
         }
 
         private async Task AdicionarCurso()

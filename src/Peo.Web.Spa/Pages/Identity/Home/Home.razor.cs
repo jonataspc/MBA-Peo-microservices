@@ -31,7 +31,7 @@ namespace Peo.Web.Spa.Pages.Identity.Home
                 StateHasChanged();
 
                 var response = await Api.ObterHistoricoCompletoCursosAsync(_cts.Token);
-                _cursos = response?.Historico ?? Enumerable.Empty<HistoricoCursoCompletoResponse>();
+                _cursos = response?.Historico.Where(c => c.Status != "PendentePagamento") ?? Enumerable.Empty<HistoricoCursoCompletoResponse>();
             }
             catch (ApiException ex)
             {
@@ -50,7 +50,7 @@ namespace Peo.Web.Spa.Pages.Identity.Home
 
         private void IniciarOuContinuarCurso(Guid matriculaId)
         {
-            Navigation.NavigateTo($"/player/{matriculaId}");
+            Navigation.NavigateTo($"/alunosaulas");
         }
 
         private static Color GetProgressColor(int progress)

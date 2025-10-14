@@ -79,7 +79,7 @@ namespace Peo.Web.Spa.Pages.Alunos
             // Usa List para melhor performance
             _cursosMatriculados = matriculas
                 .Select(m => CriarCursoMatriculado(m))
-                .Where(cm => cm != null)
+                .Where(cm => cm != null && cm.Status != "PendentePagamento")
                 .Select(cm => cm!)
                 .ToList();
 
