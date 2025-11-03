@@ -32,14 +32,22 @@ O projeto consiste em:
 - **Frameworks:**
   - ASP.NET Blazor
   - ASP.NET Core Web API
+  - ASP.NET Aspire
   - Entity Framework Core
+- **Componentes/Bibliotecas:**
   - MudBlazor
   - NSwag
-- **Banco de Dados:** SQL Server / SQLite
+  - MassTransit
+  - MediatR
+- **Banco de Dados:** 
+  - SQL Server / SQLite
+- **Mensageria:** 
+  - RabbitMQ
 - **Autenticação e Autorização:**
   - ASP.NET Core Identity
   - JWT (JSON Web Token) para autenticação na API
-- **Documentação da API:** Swagger
+- **Documentação da API:** 
+  - Swagger
 
 ## **Estrutura do Projeto**
 
@@ -62,6 +70,7 @@ A estrutura do projeto é organizada da seguinte forma:
 
 - .NET SDK 9.0 ou superior
 - SQL Server ou SQLite
+- Docker (ou outra solução de container)
 - Visual Studio 2022 ou superior (ou qualquer IDE de sua preferência)
 - Git
 
@@ -72,14 +81,17 @@ A estrutura do projeto é organizada da seguinte forma:
    - `cd MBA-Peo`
 
 2. **Configuração do Banco de Dados:**
-   - No arquivo `\src\Peo.Web.Api\appsettings.json`, configure a string de conexão do SQL Server.
+   - Por padrão, em ambiente de desenvolvimento, o projeto está configurado para utilizar SQLite.
+   - Caso necessário configure a string de conexão nas aplicações Web-API (`\src\Peo.XXX.WebApi\appsettings.XXX.json`).
    - Rode o projeto para que a configuração do Seed crie o banco e popule com os dados básicos
 
 
-3. **Executar a API:**
-   - `cd src\Peo.Web.Api`
+3. **Executar o Aspire AppHost (garantir que o Docker esteja em execução):**
+   - `cd .\src\Peo.AppHost\`
    - `dotnet run --launch-profile "https"`
-   - Acesse a documentação da API em: https://localhost:7113/
+   - O dashboard do Aspire estará disponível em: https://localhost:17005 (utilizar o link disponível no console após o comando `dotnet run`))
+   - Acesse a documentação da API do BFF (*backend for frontend*) em: https://localhost:7276/
+   - O frontend Blazor estará disponível em: https://localhost:7031/ . Utilizar os dados de login (admin) fornecidos abaixo ou registre um novo usuário (aluno).
 
 4. **Credenciais de teste para usuário administrativo:**
 
@@ -89,12 +101,12 @@ Senha: @dmin!
 
 ## **Instruções de Configuração**
 
-- **JWT para API:** As chaves de configuração do JWT estão no `\src\Peo.Web.Api\appsettings.json`.
+- **JWT para API:** As chaves de configuração do JWT estão nos arquivos `\src\Peo.XXX.Api\appsettings.json`.
 - **Migrações do Banco de Dados:** As migrações são gerenciadas pelo Entity Framework Core. Não é necessário aplicar manualmente devido a configuração do seed de dados. 
 
 ## **Documentação da API**
 
-A documentação da API está disponível através do Swagger. Após iniciar a API, acesse a documentação em https://localhost:7113/
+A documentação da API BFF está disponível através do Swagger. Após iniciar a API, acesse a documentação em https://localhost:7276/
 
 ## **Documentação do projeto**
 Uma documentação extensiva pode ser obtida [aqui](./docs/README.md).
