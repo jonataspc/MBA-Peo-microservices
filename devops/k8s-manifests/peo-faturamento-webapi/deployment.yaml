@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-faturamento-webapi
+  labels:
+    app: peo-faturamento-webapi
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-faturamento-webapi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: peo-faturamento-webapi
+    spec:
+      containers:
+      - name: peo-faturamento-webapi
+        image: peo-faturamento-webapi:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        envFrom:
+        - configMapRef:
+            name: peo-faturamento-webapi-env
+        - secretRef:
+            name: peo-faturamento-webapi-secrets
+      terminationGracePeriodSeconds: 180

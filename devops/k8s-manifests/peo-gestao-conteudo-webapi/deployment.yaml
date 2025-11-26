@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-gestao-conteudo-webapi
+  labels:
+    app: peo-gestao-conteudo-webapi
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-gestao-conteudo-webapi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: peo-gestao-conteudo-webapi
+    spec:
+      containers:
+      - name: peo-gestao-conteudo-webapi
+        image: peo-gestao-conteudo-webapi:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        envFrom:
+        - configMapRef:
+            name: peo-gestao-conteudo-webapi-env
+        - secretRef:
+            name: peo-gestao-conteudo-webapi-secrets
+      terminationGracePeriodSeconds: 180

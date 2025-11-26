@@ -4,19 +4,16 @@
 
 ## **Apresentação**
 
-Bem-vindo ao repositório do projeto **Peo**. Este projeto é uma entrega do MBA DevXpert Full Stack .NET e é referente ao terceiro módulo do MBA Desenvolvedor.IO.
+Bem-vindo ao repositório do projeto **Peo**. Este projeto é uma entrega do MBA DevXpert Full Stack .NET e é referente ao quinto módulo do MBA Desenvolvedor.IO.
 
-O objetivo principal é desenvolver uma plataforma educacional online com múltiplos bounded contexts (BC), aplicando DDD, TDD, CQRS e padrões arquiteturais para gestão eficiente de conteúdos educacionais, alunos e processos financeiros. 
+O objetivo principal é desenvolver uma plataforma educacional online com múltiplos bounded contexts (BC), aplicando DDD, TDD, CQRS, microsserviços e padrões arquiteturais para gestão eficiente de conteúdos educacionais, alunos e processos financeiros. 
+
+Além disso são aplicados conceitos de devops, como Git/GitHub, Docker, GitHub Actions, Kubernetes e Cultura DevOps.
 
 
-### **Autores**
-- **Eduardo Gimenes**
-- **Filipe Alan Elias**
+
+### **Autor**
 - **Jonatas Cruz**
-- **Joseleno Santos** 
-- **Leandro Andreotti** 
-- **Paulo Cesar Carneiro**
-- **Marcelo Menezes**
 
 ## **Proposta do Projeto**
 
@@ -48,7 +45,14 @@ O projeto consiste em:
   - JWT (JSON Web Token) para autenticação na API
 - **Documentação da API:** 
   - Swagger
-
+- **Devops:** 
+  - Aspir8 (geração automatizada dos manifestos a partir do Aspire)
+  - kubernetes
+  - SonarQube
+  - GitHub Actions
+  - Imagens ASPNET e SDK Alpine
+	 
+	 
 ## **Estrutura do Projeto**
 
 A estrutura do projeto é organizada da seguinte forma:
@@ -56,6 +60,7 @@ A estrutura do projeto é organizada da seguinte forma:
 - src: códigos-fonte da solução  
 - tests: testes de integração e de unidade.
 - docs: [documentação do projeto](./docs/README.md) e requisitos
+- devops: scripts e manifestos para deploy (kubernetes/Docker)
 	
 - README.md: Arquivo de Documentação do Projeto
 - FEEDBACK.md: Arquivo para Consolidação dos Feedbacks
@@ -121,8 +126,24 @@ No repositório GitHub a action de compilação executa a compilação e os test
 - Na seção Artifacts, baixar o arquivo ZIP, contendo o relatório em HTML.
  
 
+## **Devops**
+- Para geração dos manifestos do Kubernetes e deploy, utilize Aspir8 (https://github.com/prom3theu5/aspirational-manifests) à partir do path `\src\Peo.AppHost`
 
+```bash
+dotnet tool install -g aspirate --prerelease
 
+# k8s
+aspirate generate --output-path ..\..\devops\k8s-manifests
+
+# docker-compose
+aspirate generate --output-path ..\..\devops\docker-compose-manifests --output-format compose
+
+```
+
+Aplicar os manifestos no cluster Kubernetes:
+```bash
+kubectl apply -k .\devops\k8s-manifests
+```
 
 ## **Avaliação**
 

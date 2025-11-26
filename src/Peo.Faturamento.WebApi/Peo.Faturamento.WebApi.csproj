@@ -7,6 +7,8 @@
     <UserSecretsId>50a5f25e-fe19-4fd1-a24c-61c7c99fb547</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+	<ContainerFamily>alpine</ContainerFamily>
+	<ContainerRepository>peo-faturamento-webapi</ContainerRepository>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,16 @@
+namespace: peo
+
+resources:
+- messaging
+- peo-faturamento-webapi
+- peo-gestao-alunos-webapi
+- peo-gestao-conteudo-webapi
+- peo-identity-webapi
+- peo-bff
+- namespace.yaml
+- dashboard.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+

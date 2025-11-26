@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-bff
+  labels:
+    app: peo-bff
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-bff
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: peo-bff
+    spec:
+      containers:
+      - name: peo-bff
+        image: peo-bff:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        envFrom:
+        - configMapRef:
+            name: peo-bff-env
+      terminationGracePeriodSeconds: 180
