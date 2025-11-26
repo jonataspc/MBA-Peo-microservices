@@ -7,6 +7,8 @@
     <UserSecretsId>88c77f06-955f-4ae4-b37e-01754b1e9de6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+	<ContainerFamily>alpine</ContainerFamily>
+	<ContainerRepository>peo-gestao-alunos-webapi</ContainerRepository>
   </PropertyGroup>
 
   <ItemGroup>

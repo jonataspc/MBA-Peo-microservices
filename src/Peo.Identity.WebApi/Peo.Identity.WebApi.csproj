@@ -7,6 +7,8 @@
     <UserSecretsId>21f724ff-46b4-40b3-bad0-f39458bc07b6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+	<ContainerFamily>alpine</ContainerFamily>
+	<ContainerRepository>peo-identity-webapi</ContainerRepository>
   </PropertyGroup>
 
   <ItemGroup>
