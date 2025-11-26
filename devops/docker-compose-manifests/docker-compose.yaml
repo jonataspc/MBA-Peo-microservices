@@ -1,0 +1,121 @@
+services:
+  aspire-dashboard:
+    container_name: "aspire-dashboard"
+    image: "mcr.microsoft.com/dotnet/aspire-dashboard:9.0"
+    environment:
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
+    ports:
+    - target: 18888
+      published: 18888
+    restart: unless-stopped
+  messaging:
+    container_name: "messaging"
+    image: "docker.io/library/rabbitmq:4.1-management"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "JAW7EoeLSzaNm5wFMqWW6E"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://aspire-dashboard:18889"
+      OTEL_SERVICE_NAME: "messaging"
+    volumes:
+    - "peo-apphost-4605c7b3ec-messaging-data:/var/lib/rabbitmq"
+    ports:
+    - target: 5672
+      published: 5672
+    - target: 15672
+      published: 15672
+    restart: unless-stopped
+  peo-faturamento-webapi:
+    container_name: "peo-faturamento-webapi"
+    image: "peo-faturamento-webapi:latest"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "8080"
+      ConnectionStrings__messaging: "amqp://guest:JAW7EoeLSzaNm5wFMqWW6E@messaging:5672"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://aspire-dashboard:18889"
+      OTEL_SERVICE_NAME: "peo-faturamento-webapi"
+    ports:
+    - target: 8080
+      published: 10000
+    - target: 8443
+      published: 10001
+    restart: unless-stopped
+  peo-gestao-alunos-webapi:
+    container_name: "peo-gestao-alunos-webapi"
+    image: "peo-gestao-alunos-webapi:latest"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "8080"
+      ConnectionStrings__messaging: "amqp://guest:JAW7EoeLSzaNm5wFMqWW6E@messaging:5672"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://aspire-dashboard:18889"
+      OTEL_SERVICE_NAME: "peo-gestao-alunos-webapi"
+    ports:
+    - target: 8080
+      published: 10002
+    - target: 8443
+      published: 10003
+    restart: unless-stopped
+  peo-gestao-conteudo-webapi:
+    container_name: "peo-gestao-conteudo-webapi"
+    image: "peo-gestao-conteudo-webapi:latest"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "8080"
+      ConnectionStrings__messaging: "amqp://guest:JAW7EoeLSzaNm5wFMqWW6E@messaging:5672"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://aspire-dashboard:18889"
+      OTEL_SERVICE_NAME: "peo-gestao-conteudo-webapi"
+    ports:
+    - target: 8080
+      published: 10004
+    - target: 8443
+      published: 10005
+    restart: unless-stopped
+  peo-identity-webapi:
+    container_name: "peo-identity-webapi"
+    image: "peo-identity-webapi:latest"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "8080"
+      ConnectionStrings__messaging: "amqp://guest:JAW7EoeLSzaNm5wFMqWW6E@messaging:5672"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://aspire-dashboard:18889"
+      OTEL_SERVICE_NAME: "peo-identity-webapi"
+    ports:
+    - target: 8080
+      published: 10006
+    - target: 8443
+      published: 10007
+    restart: unless-stopped
+  peo-bff:
+    container_name: "peo-bff"
+    image: "peo-bff:latest"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "8080"
+      services__peo-faturamento-webapi__http__0: "http://peo-faturamento-webapi:8080"
+      services__peo-gestao-alunos-webapi__http__0: "http://peo-gestao-alunos-webapi:8080"
+      services__peo-gestao-conteudo-webapi__http__0: "http://peo-gestao-conteudo-webapi:8080"
+      services__peo-identity-webapi__http__0: "http://peo-identity-webapi:8080"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://aspire-dashboard:18889"
+      OTEL_SERVICE_NAME: "peo-bff"
+    ports:
+    - target: 8080
+      published: 10008
+    - target: 8443
+      published: 10009
+    restart: unless-stopped
+volumes:
+  peo-apphost-4605c7b3ec-messaging-data: {}

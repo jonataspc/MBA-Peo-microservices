@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-gestao-alunos-webapi
+  labels:
+    app: peo-gestao-alunos-webapi
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-gestao-alunos-webapi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: peo-gestao-alunos-webapi
+    spec:
+      containers:
+      - name: peo-gestao-alunos-webapi
+        image: peo-gestao-alunos-webapi:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        envFrom:
+        - configMapRef:
+            name: peo-gestao-alunos-webapi-env
+        - secretRef:
+            name: peo-gestao-alunos-webapi-secrets
+      terminationGracePeriodSeconds: 180
