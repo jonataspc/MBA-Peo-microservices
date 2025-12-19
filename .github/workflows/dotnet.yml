@@ -1,4 +1,4 @@
-name: Build, Test and SonarQube
+name: CI/CD Pipeline - .NET
 
 on:
   push:
