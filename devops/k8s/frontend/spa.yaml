@@ -1,0 +1,83 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peo-spa-config
+  namespace: peo-platform
+data:
+  appsettings.json: |
+    { "ApiBaseUrl": "http://localhost:30001/" }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-frontend
+  namespace: peo-platform
+  labels:
+    app: peo-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: peo-frontend
+  template:
+    metadata:
+      labels:
+        app: peo-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: peo-frontend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        volumeMounts:
+        - name: spa-config
+          mountPath: /usr/share/nginx/html/appsettings.json
+          subPath: appsettings.json
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+      volumes:
+      - name: spa-config
+        configMap:
+          name: peo-spa-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-frontend
+  namespace: peo-platform
+  labels:
+    app: peo-frontend
+spec:
+  selector:
+    app: peo-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    nodePort: 30000
+  type: NodePort
