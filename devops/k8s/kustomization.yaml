@@ -4,33 +4,26 @@ kind: Kustomization
 namespace: peo-platform
 
 resources:
-  # Base configurations
   - base/namespace.yaml
   - base/secrets.yaml
   - base/configmap.yaml
-  
-  # Infrastructure
   - infrastructure/sqlserver.yaml
   - infrastructure/rabbitmq.yaml
-  
-  # Microservices APIs
   - microservices/identity-api.yaml
   - microservices/gestaoconteudo-api.yaml
   - microservices/gestaoalunos-api.yaml
   - microservices/faturamento-api.yaml
-  
-  # Frontend
   - frontend/bff.yaml
   - frontend/spa.yaml
 
-# Common labels to all resources
-commonLabels:
-  app.kubernetes.io/name: peo-platform
-  app.kubernetes.io/version: "1.1.0"
-  app.kubernetes.io/component: microservices
-  app.kubernetes.io/part-of: peo-platform
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: peo-platform
+      app.kubernetes.io/version: "1.1.0"
+      app.kubernetes.io/component: microservices
+      app.kubernetes.io/part-of: peo-platform
 
-# Images to use (para produção, altere para imagens do registry)
 images:
   - name: peo-identity-api
     newTag: latest
