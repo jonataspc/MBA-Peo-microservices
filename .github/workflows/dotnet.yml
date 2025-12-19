@@ -10,6 +10,23 @@ env:
   DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
 
 jobs:
+  
+  build:
+    name: Build-WarnAsError
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x' 
+ 
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -WarnAsError
+
 
   build-test-sonarqube:
     name: Build, Test and SonarQube
@@ -55,7 +72,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore -WarnAsError
+        run: dotnet build --configuration Debug --no-restore
 
       - name: Install dotCover
         run: dotnet tool install --global JetBrains.dotCover.CommandLineTools --version 2025.1.5
