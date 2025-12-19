@@ -1,0 +1,121 @@
+name: Docker Build and Deploy to DockerHub
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+
+jobs:
+  get-version:
+    name: Get Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Get version from project file
+        id: get-version
+        run: |
+          version=$(grep -o "<Version>[^<]*<\/Version>" src/Peo.Core/Peo.Core.csproj | sed "s/<[^>]*>//g")
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Version found: $version"
+
+  build-and-deploy:
+    name: Build and Deploy Docker Images
+    runs-on: ubuntu-latest
+    needs: get-version
+    strategy:
+      matrix:
+        service:
+          - name: peo-faturamento-webapi
+            dockerfile: src/Peo.Faturamento.WebApi/Dockerfile
+            context: .
+          - name: peo-gestaoalunos-webapi  
+            dockerfile: src/Peo.GestaoAlunos.WebApi/Dockerfile
+            context: .
+          - name: peo-gestaoconteudo-webapi
+            dockerfile: src/Peo.GestaoConteudo.WebApi/Dockerfile
+            context: .
+          - name: peo-identity-webapi
+            dockerfile: src/Peo.Identity.WebApi/Dockerfile
+            context: .
+          - name: peo-web-bff
+            dockerfile: src/Peo.Web.Bff/Dockerfile
+            context: .
+          - name: peo-web-spa
+            dockerfile: src/Peo.Web.Spa/Dockerfile
+            context: .
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service.name }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ needs.get-version.outputs.version }}
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service.context }}
+          file: ${{ matrix.service.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+      - name: Update repo description on DockerHub
+        uses: peter-evans/dockerhub-description@v4
+        continue-on-error: true
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service.name }}
+          short-description: "${{ matrix.service.name }} - Peo Microservices Platform"
+          readme-filepath: ./README.md
+
+  deploy-notification:
+    name: Deploy Notification
+    runs-on: ubuntu-latest
+    needs: [get-version, build-and-deploy]
+    if: always()
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "## ?? Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.get-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ needs.build-and-deploy.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ?? Services Deployed:" >> $GITHUB_STEP_SUMMARY
+          echo "- peo-faturamento-webapi" >> $GITHUB_STEP_SUMMARY
+          echo "- peo-gestaoalunos-webapi" >> $GITHUB_STEP_SUMMARY  
+          echo "- peo-gestaoconteudo-webapi" >> $GITHUB_STEP_SUMMARY
+          echo "- peo-identity-webapi" >> $GITHUB_STEP_SUMMARY
+          echo "- peo-web-bff" >> $GITHUB_STEP_SUMMARY
+          echo "- peo-web-spa" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**DockerHub Registry:** https://hub.docker.com/u/${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_STEP_SUMMARY
