@@ -29,8 +29,8 @@
 		<ProjectReference Include="..\Peo.ServiceDefaults\Peo.ServiceDefaults.csproj" />
 	</ItemGroup>
 
-	<!-- 1) Gera openapi.json (BFF) -->
-	<Target Name="GenerateOpenApiDoc" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(BffNswagConfig)')">
+	<!-- 1) Gera openapi.json (BFF) - Skip during Docker build -->
+	<Target Name="GenerateOpenApiDoc" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(BffNswagConfig)') AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">
 		<PropertyGroup>
 			<_NSwagExe Condition="'$(NSwagExe_Net90)' != ''">$(NSwagExe_Net90)</_NSwagExe>
 			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net80)' != ''">$(NSwagExe_Net80)</_NSwagExe>
@@ -51,7 +51,7 @@
 		<SpaWorkingDir>$(MSBuildProjectDirectory)\..\Peo.Web.Spa</SpaWorkingDir>
 	</PropertyGroup>
 
-	<Target Name="GenerateSpaClientFromBff" AfterTargets="GenerateOpenApiDoc" Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(SpaClientNswag)') AND Exists('$(SpaOpenApi)')">
+	<Target Name="GenerateSpaClientFromBff" AfterTargets="GenerateOpenApiDoc" Condition="'$(DesignTimeBuild)' != 'true' AND Exists('$(SpaClientNswag)') AND Exists('$(SpaOpenApi)') AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">
 		<PropertyGroup>
 			<_NSwagExe Condition="'$(NSwagExe_Net90)' != ''">$(NSwagExe_Net90)</_NSwagExe>
 			<_NSwagExe Condition="'$(_NSwagExe)' == '' AND '$(NSwagExe_Net80)' != ''">$(NSwagExe_Net80)</_NSwagExe>
