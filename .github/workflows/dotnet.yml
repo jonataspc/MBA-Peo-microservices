@@ -73,19 +73,19 @@ jobs:
       - name: Build
         run: dotnet build --configuration Debug --no-restore
 
-      - name: Install dotCover
-        run: dotnet tool install --global JetBrains.dotCover.CommandLineTools --version 2025.1.5
+      # - name: Install dotCover
+      #   run: dotnet tool install --global JetBrains.dotCover.CommandLineTools --version 2025.1.5
         
-      - name: Test + code coverage
-        run: dotCover cover-dotnet --output report.html --ReportType HTML --Filters="+:module=Peo.*" -- test 
+      # - name: Test + code coverage
+      #   run: dotCover cover-dotnet --output report.html --ReportType HTML --Filters="+:module=Peo.*" -- test 
 
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: |
-              report/**/*
-              report.html
+      # - name: Archive code coverage results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: code-coverage-report
+      #     path: |
+      #         report/**/*
+      #         report.html
 
       - name: Test with coverage
         run: |
