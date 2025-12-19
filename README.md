@@ -1,4 +1,7 @@
-[![.NET](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml)
+[![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet?style=flat&logo=dotnet)](https://dotnet.microsoft.com/)
+[![CI](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jonataspc_MBA-Peo-microservices)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=coverage)](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=coverage)
 
 # **PEO - Plataforma de Educação Online**
 
