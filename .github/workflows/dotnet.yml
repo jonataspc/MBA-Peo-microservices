@@ -60,9 +60,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
+          version=$(grep -o "<Version>[^<]*<\/Version>" src/Peo.Core/Peo.Core.csproj | sed "s/<[^>]*>//g")
           dotnet sonarscanner begin \
             /k:"jonataspc_MBA-Peo-microservices" \
             /o:"jonataspc" \
+            /v:"$version" \
             /d:sonar.host.url="$SONAR_HOST_URL" \
             /d:sonar.login="$SONAR_TOKEN" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"

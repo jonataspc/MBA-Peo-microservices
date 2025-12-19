@@ -59,6 +59,7 @@ public class ArchitectTests
             .InAssemblies(GetDomainAssemblies())
             .Should()
             .OnlyHaveDependencyOn(
+            "Coverlet.Core",
             "System",
             "Microsoft",
             "MediatR",
