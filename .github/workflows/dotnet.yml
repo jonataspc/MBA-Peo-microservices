@@ -42,12 +42,13 @@ jobs:
       - name: SonarQube Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           dotnet sonarscanner begin \
             /k:"jonataspc_MBA-Peo-microservices" \
             /o:"jonataspc" \
-            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="$SONAR_HOST_URL" \
+            /d:sonar.login="$SONAR_TOKEN" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
 
       - name: Restore dependencies
@@ -84,4 +85,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner end \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+            /d:sonar.login="$SONAR_TOKEN"
