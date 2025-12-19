@@ -26,6 +26,9 @@ WORKDIR /usr/share/nginx/html
 # Copy published Blazor WebAssembly files
 COPY --from=publish /app/publish/wwwroot .
 
+# Override appsettings.json for production
+COPY src/Peo.Web.Spa/wwwroot/appsettings.Production.json ./appsettings.json
+
 # Copy custom nginx configuration if needed
 COPY src/Peo.Web.Spa/nginx.conf /etc/nginx/nginx.conf
 

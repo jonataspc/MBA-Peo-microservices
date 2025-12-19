@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # ===============================
+  # Development Overrides
+  # ===============================
+
+  peo-identity-api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft.AspNetCore: Information
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  peo-gestaoconteudo-api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft.AspNetCore: Information
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  peo-gestaoalunos-api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft.AspNetCore: Information
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  peo-faturamento-api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft.AspNetCore: Information
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  peo-bff:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft.AspNetCore: Information
+      Security__CorsPolicy__AllowedOrigins__0: "http://localhost:3000"
+      Security__CorsPolicy__AllowedOrigins__1: "https://localhost:7031"
+      Security__CorsPolicy__AllowedOrigins__2: "http://localhost:5251"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  sqlserver:
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"

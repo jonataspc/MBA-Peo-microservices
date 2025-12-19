@@ -85,6 +85,32 @@ A estrutura do projeto é organizada da seguinte forma:
 
 ### **Passos para Execução**
 
+#### **Opção 1: Docker Compose (Recomendado)**
+
+```bash
+# Clone o repositório
+git clone https://github.com/jonataspc/MBA-Peo-microservices.git
+cd MBA-Peo-microservices
+
+# Copie o arquivo de ambiente (opcional)
+cp .env.example .env
+
+# Inicie toda a plataforma em modo desenvolvimento
+docker compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+
+# Ou em modo produção
+docker compose up -d --build
+```
+
+**URLs após inicialização:**
+- **Frontend Blazor:** http://localhost:3000
+- **BFF API:** http://localhost:5000
+- **RabbitMQ Management:** http://localhost:15672 (guest/guest)
+
+📖 **Guia completo:** Veja [README.Docker.md](./README.Docker.md) para instruções detalhadas.
+
+#### **Opção 2: Desenvolvimento Local com Aspire**
+
 1. **Clone o Repositório:**
    - `git clone https://github.com/jonataspc/MBA-Peo-microservices.git`
    - `cd MBA-Peo`
@@ -93,7 +119,6 @@ A estrutura do projeto é organizada da seguinte forma:
    - Por padrão, em ambiente de desenvolvimento, o projeto está configurado para utilizar SQLite.
    - Caso necessário configure a string de conexão nas aplicações Web-API (`\src\Peo.XXX.WebApi\appsettings.XXX.json`).
    - Rode o projeto para que a configuração do Seed crie o banco e popule com os dados básicos
-
 
 3. **Executar o Aspire AppHost (garantir que o Docker esteja em execução):**
    - `cd .\src\Peo.AppHost\`
