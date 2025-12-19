@@ -1,5 +1,6 @@
 [![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet?style=flat&logo=dotnet)](https://dotnet.microsoft.com/)
 [![CI](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml/badge.svg)](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/dotnet.yml)
+[![Docker Deploy](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/docker-deploy.yml/badge.svg)](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/docker-deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jonataspc_MBA-Peo-microservices)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jonataspc_MBA-Peo-microservices)
 
@@ -147,6 +148,43 @@ Aplicar os manifestos no cluster Kubernetes:
 ```bash
 kubectl apply -k .\devops\k8s-manifests
 ```
+
+### **Deploy Automático para DockerHub**
+
+O projeto inclui uma pipeline automatizada para build e deploy das imagens Docker para o DockerHub quando há push na branch `main`.
+
+#### **Configuração dos Secrets no GitHub:**
+
+Para que o deploy automático funcione, configure os seguintes secrets no repositório GitHub:
+
+1. **DOCKERHUB_USERNAME**: Seu nome de usuário do DockerHub
+2. **DOCKERHUB_TOKEN**: Token de acesso do DockerHub (recomendado em vez da senha)
+
+**Como criar um token no DockerHub:**
+1. Acesse [DockerHub](https://hub.docker.com/) e faça login
+2. Vá para Account Settings → Security → Access Tokens
+3. Clique em "New Access Token"
+4. Dê um nome descritivo (ex: "GitHub Actions Deploy")
+5. Copie o token gerado (guarde em local seguro, não será exibido novamente)
+
+**Como adicionar secrets no GitHub:**
+1. Vá para o repositório no GitHub
+2. Clique em Settings → Secrets and variables → Actions
+3. Clique em "New repository secret"
+4. Adicione os dois secrets mencionados acima
+
+#### **Serviços que serão deployados:**
+- `peo-faturamento-webapi`
+- `peo-gestaoalunos-webapi`  
+- `peo-gestaoconteudo-webapi`
+- `peo-identity-webapi`
+- `peo-web-bff`
+- `peo-web-spa`
+
+As imagens serão taggeadas com:
+- `latest` (sempre a versão mais recente da main)
+- Versão do projeto (extraída do arquivo `Peo.Core.csproj`)
+- Hash do commit para rastreabilidade
 
 ## **Avaliação**
 
