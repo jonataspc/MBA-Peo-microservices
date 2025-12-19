@@ -87,13 +87,13 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --no-restore -WarnAsError
 
       - name: Test with coverage
         run: |
           dotnet test \
             --no-build \
-            --configuration Release \
+            --configuration Debug \
             /p:CollectCoverage=true \
             /p:CoverletOutput=TestResults/coverage.opencover.xml \
             /p:CoverletOutputFormat=opencover
