@@ -1,0 +1,247 @@
+version: '3.8'
+
+services:
+  # ===============================
+  # Infrastructure Services
+  # ===============================
+  
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: peo-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"
+    ports:
+      - "5672:5672"     # AMQP port
+      - "15672:15672"   # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: peo-sqlserver
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${SA_PASSWORD}' -Q 'SELECT 1' -C -N -l 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ===============================
+  # Microservices - APIs
+  # ===============================
+
+  peo-identity-api:
+    build:
+      context: .
+      dockerfile: src/Peo.Identity.WebApi/Dockerfile
+    container_name: peo-identity-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoIdentity;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "https://peo-identity-api/"
+      Jwt__Audience: "https://peo-identity-api/"
+    ports:
+      - "5001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  peo-gestaoconteudo-api:
+    build:
+      context: .
+      dockerfile: src/Peo.GestaoConteudo.WebApi/Dockerfile
+    container_name: peo-gestaoconteudo-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoGestaoConteudo;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "https://peo-gestaoconteudo-api/"
+      Jwt__Audience: "https://peo-gestaoconteudo-api/"
+    ports:
+      - "5002:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      peo-identity-api:
+        condition: service_healthy
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  peo-gestaoalunos-api:
+    build:
+      context: .
+      dockerfile: src/Peo.GestaoAlunos.WebApi/Dockerfile
+    container_name: peo-gestaoalunos-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoGestaoAlunos;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "https://peo-gestaoalunos-api/"
+      Jwt__Audience: "https://peo-gestaoalunos-api/"
+    ports:
+      - "5003:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      peo-identity-api:
+        condition: service_healthy
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  peo-faturamento-api:
+    build:
+      context: .
+      dockerfile: src/Peo.Faturamento.WebApi/Dockerfile
+    container_name: peo-faturamento-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoFaturamento;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "https://peo-faturamento-api/"
+      Jwt__Audience: "https://peo-faturamento-api/"
+    ports:
+      - "5004:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      peo-identity-api:
+        condition: service_healthy
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ===============================
+  # Backend for Frontend (BFF)
+  # ===============================
+
+  peo-bff:
+    build:
+      context: .
+      dockerfile: src/Peo.Web.Bff/Dockerfile
+    container_name: peo-bff
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "https://peo-bff/"
+      Jwt__Audience: "https://peo-bff/"
+      Endpoints__Identity: "http://peo-identity-api/"
+      Endpoints__GestaoConteudo: "http://peo-gestaoconteudo-api/"
+      Endpoints__GestaoAlunos: "http://peo-gestaoalunos-api/"
+      Endpoints__Faturamento: "http://peo-faturamento-api/"
+      Security__CorsPolicy__AllowedOrigins__0: "http://localhost:3000"
+      Security__CorsPolicy__AllowedOrigins__1: "http://peo-frontend"
+    ports:
+      - "5000:80"
+    depends_on:
+      peo-identity-api:
+        condition: service_healthy
+      peo-gestaoconteudo-api:
+        condition: service_healthy
+      peo-gestaoalunos-api:
+        condition: service_healthy
+      peo-faturamento-api:
+        condition: service_healthy
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ===============================
+  # Frontend - Blazor WebAssembly SPA
+  # ===============================
+
+  peo-frontend:
+    build:
+      context: .
+      dockerfile: src/Peo.Web.Spa/Dockerfile
+    container_name: peo-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      peo-bff:
+        condition: service_healthy
+    networks:
+      - peo-network
+    environment:
+      NGINX_PORT: 80
+    restart: unless-stopped
+
+# ===============================
+# Networks & Volumes
+# ===============================
+
+networks:
+  peo-network:
+    driver: bridge
+    name: peo-network
+
+volumes:
+  rabbitmq_data:
+    name: peo_rabbitmq_data
+  sqlserver_data:
+    name: peo_sqlserver_data

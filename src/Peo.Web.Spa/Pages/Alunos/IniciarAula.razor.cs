@@ -115,7 +115,7 @@ namespace Peo.Web.Spa.Pages.Alunos
         {
             return _cursosMatriculados
                 .FirstOrDefault(c => c.CursoId == cursoId)
-                ?.NomeCurso ?? "Curso não encontrado";
+                ?.NomeCurso ?? string.Empty;
         }
 
 

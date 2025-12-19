@@ -24,9 +24,9 @@ namespace Peo.Core.Web.Configuration
 
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidateLifetime = true,
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            ValidateLifetime = false,
                             ValidateIssuerSigningKey = true,
                             ValidIssuer = jwtSettings.Issuer,
                             ValidAudience = jwtSettings.Audience,
