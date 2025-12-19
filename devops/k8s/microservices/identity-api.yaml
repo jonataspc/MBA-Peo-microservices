@@ -1,0 +1,109 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-identity-api
+  namespace: peo-platform
+  labels:
+    app: peo-identity-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: peo-identity-api
+  template:
+    metadata:
+      labels:
+        app: peo-identity-api
+    spec:
+      containers:
+      - name: identity-api
+        image: peo-identity-api:latest
+        imagePullPolicy: Never  # Para desenvolvimento local
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: peo-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: ASPNETCORE_URLS
+          valueFrom:
+            configMapKeyRef:
+              name: peo-config
+              key: ASPNETCORE_URLS
+        - name: ConnectionStrings__SqlServerConnection
+          value: "Server=peo-sqlserver;Database=PeoIdentity;User Id=sa;Password=$(SA_PASSWORD);TrustServerCertificate=true;"
+        - name: ConnectionStrings__messaging
+          value: "amqp://$(RABBITMQ_USER):$(RABBITMQ_PASSWORD)@peo-rabbitmq:5672/"
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD
+        - name: RABBITMQ_USER
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: RABBITMQ_USER
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: RABBITMQ_PASSWORD
+        - name: Jwt__Key
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: JWT_KEY
+        - name: Jwt__Issuer
+          valueFrom:
+            configMapKeyRef:
+              name: peo-config
+              key: JWT_ISSUER_IDENTITY
+        - name: Jwt__Audience
+          valueFrom:
+            configMapKeyRef:
+              name: peo-config
+              key: JWT_AUDIENCE_IDENTITY
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-identity-api
+  namespace: peo-platform
+  labels:
+    app: peo-identity-api
+spec:
+  selector:
+    app: peo-identity-api
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  type: ClusterIP

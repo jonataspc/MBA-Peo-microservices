@@ -50,11 +50,12 @@ O projeto consiste em:
 - **Documentação da API:** 
   - Swagger
 - **Devops:** 
-  - Aspir8 (geração automatizada dos manifestos a partir do Aspire)
-  - kubernetes
-  - SonarQube
-  - GitHub Actions
-  - Imagens ASPNET e SDK Alpine
+- Kubernetes (manifestos e scripts completos)
+- Docker e Docker Compose
+- Aspir8 (geração automatizada dos manifestos)
+- SonarQube
+- GitHub Actions
+- Imagens ASPNET e SDK Alpine
 	 
 	 
 ## **Estrutura do Projeto**
@@ -85,7 +86,7 @@ A estrutura do projeto é organizada da seguinte forma:
 
 ### **Passos para Execução**
 
-#### **Opção 1: Docker Compose (Recomendado)**
+#### **Opção 1: Docker Compose**
 
 ```bash
 # Clone o repositório
@@ -109,7 +110,27 @@ docker compose up -d --build
 
 📖 **Guia completo:** Veja [README.Docker.md](./README.Docker.md) para instruções detalhadas.
 
-#### **Opção 2: Desenvolvimento Local com Aspire**
+#### **Opção 2: Kubernetes (Recomendado para produção)**
+
+Para execução em cluster Kubernetes:
+
+```bash
+# Clone o repositório
+git clone https://github.com/jonataspc/MBA-Peo-microservices.git
+cd MBA-Peo-microservices
+
+# Deploy usando kubectl
+kubectl apply -k devops/k8s/
+```
+
+**URLs após deploy:**
+- **Frontend Blazor:** http://localhost:30000
+- **BFF API:** http://localhost:30001  
+- **RabbitMQ Management:** http://localhost:30002
+
+📖 **Guia completo:** Veja [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md) para instruções detalhadas.
+
+#### **Opção 3: Desenvolvimento Local com Aspire**
 
 1. **Clone o Repositório:**
    - `git clone https://github.com/jonataspc/MBA-Peo-microservices.git`
@@ -155,23 +176,39 @@ No repositório GitHub a action de compilação executa a compilação e os test
 - Na seção Artifacts, baixar o arquivo ZIP, contendo o relatório em HTML.
  
 
-## **Devops**
-- Para geração dos manifestos do Kubernetes e deploy, utilize Aspir8 (https://github.com/prom3theu5/aspirational-manifests) à partir do path `\src\Peo.AppHost`
+## **DevOps e Deploy**
+
+### **Kubernetes (Recomendado para Produção)**
+
+A plataforma inclui manifestos completos para Kubernetes:
+
+```bash
+# Deploy rápido usando scripts
+./devops/scripts/deploy.sh full
+
+# Deploy manual
+kubectl apply -k devops/k8s/
+
+# URLs após deploy
+# Frontend: http://localhost:30000
+# BFF API: http://localhost:30001
+# RabbitMQ UI: http://localhost:30002
+```
+
+📖 **Guia completo de Kubernetes:** Veja [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md)
+
+### **Aspir8 (Geração Automática de Manifestos)**
+
+Para geração dos manifestos do Kubernetes e deploy, utilize Aspir8 a partir do path `\src\Peo.AppHost`:
 
 ```bash
 dotnet tool install -g aspirate --prerelease
 
 # k8s
-aspirate generate --output-path ..\..\devops\k8s-manifests
+aspirate generate --output-path ..\..\devops\k8s
 
 # docker-compose
 aspirate generate --output-path ..\..\devops\docker-compose-manifests --output-format compose
-
-```
-
-Aplicar os manifestos no cluster Kubernetes:
-```bash
-kubectl apply -k .\devops\k8s-manifests
 ```
 
 ### **Deploy Automático para DockerHub**
