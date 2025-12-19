@@ -43,22 +43,7 @@ spec:
         - name: spa-config
           mountPath: /usr/share/nginx/html/appsettings.json
           subPath: appsettings.json
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+ 
       volumes:
       - name: spa-config
         configMap:
