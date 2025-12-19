@@ -4,13 +4,13 @@ metadata:
   name: peo-config
   namespace: peo-platform
 data:
-  # Endpoints para comunicação interna
+  # Endpoints para comunicacao interna
   ENDPOINTS_IDENTITY: "http://peo-identity-api:80/"
   ENDPOINTS_GESTAOCONTEUDO: "http://peo-gestaoconteudo-api:80/"
   ENDPOINTS_GESTAOALUNOS: "http://peo-gestaoalunos-api:80/"
   ENDPOINTS_FATURAMENTO: "http://peo-faturamento-api:80/"
   
-  # Configurações JWT
+  # Configuracoes JWT
   JWT_ISSUER_IDENTITY: "https://peo-identity-api/"
   JWT_ISSUER_GESTAOCONTEUDO: "https://peo-gestaoconteudo-api/"
   JWT_ISSUER_GESTAOALUNOS: "https://peo-gestaoalunos-api/"
@@ -23,10 +23,10 @@ data:
   JWT_AUDIENCE_FATURAMENTO: "https://peo-faturamento-api/"
   JWT_AUDIENCE_BFF: "https://peo-bff/"
   
-  # Configurações CORS para BFF
+  # Config CORS para BFF
   CORS_ALLOWED_ORIGINS_0: "http://localhost:30000"
   CORS_ALLOWED_ORIGINS_1: "http://peo-frontend"
   
-  # Configurações de ambiente
+  # Configuracoes de ambiente
   ASPNETCORE_ENVIRONMENT: "Production"
   ASPNETCORE_URLS: "http://+:80"
