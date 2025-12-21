@@ -53,6 +53,26 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
         volumeMounts:
         # Monta o ConfigMap para sobrescrever appsettings.Production.json em runtime
         # Isso permite que o mesmo container funcione em Docker Compose (porta 5000) 
