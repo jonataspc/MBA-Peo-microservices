@@ -4,13 +4,32 @@ metadata:
   name: peo-config
   namespace: peo-platform
 data:
-  # Endpoints para comunicacao interna
+  # =================
+  # Database Services - Separate SQL Server Instances
+  # =================
+  DATABASE_IDENTITY_HOST: "peo-identity-sqlserver"
+  DATABASE_FATURAMENTO_HOST: "peo-faturamento-sqlserver"
+  DATABASE_GESTAOALUNOS_HOST: "peo-gestaoalunos-sqlserver"
+  DATABASE_GESTAOCONTEUDO_HOST: "peo-gestaoconteudo-sqlserver"
+  DATABASE_PORT: "1433"
+  
+  # Database Names (matching Docker Compose configuration)
+  DATABASE_IDENTITY_NAME: "identity-db"
+  DATABASE_FATURAMENTO_NAME: "faturamento-db"
+  DATABASE_GESTAOALUNOS_NAME: "gestao-alunos-db"
+  DATABASE_GESTAOCONTEUDO_NAME: "gestao-conteudo-db"
+  
+  # =================
+  # Microservices Endpoints
+  # =================
   ENDPOINTS_IDENTITY: "http://peo-identity-api:80/"
   ENDPOINTS_GESTAOCONTEUDO: "http://peo-gestaoconteudo-api:80/"
   ENDPOINTS_GESTAOALUNOS: "http://peo-gestaoalunos-api:80/"
   ENDPOINTS_FATURAMENTO: "http://peo-faturamento-api:80/"
   
-  # Configuracoes JWT
+  # =================
+  # JWT Configuration
+  # =================
   JWT_ISSUER_IDENTITY: "https://peo-identity-api/"
   JWT_ISSUER_GESTAOCONTEUDO: "https://peo-gestaoconteudo-api/"
   JWT_ISSUER_GESTAOALUNOS: "https://peo-gestaoalunos-api/"
@@ -23,10 +42,23 @@ data:
   JWT_AUDIENCE_FATURAMENTO: "https://peo-faturamento-api/"
   JWT_AUDIENCE_BFF: "https://peo-bff/"
   
-  # Config CORS para BFF
+  # =================
+  # CORS Configuration
+  # =================
   CORS_ALLOWED_ORIGINS_0: "http://localhost:30000"
   CORS_ALLOWED_ORIGINS_1: "http://peo-frontend"
+  CORS_ALLOWED_ORIGINS_2: "http://localhost:3000"
   
-  # Configuracoes de ambiente
+  # =================
+  # Environment Configuration
+  # =================
   ASPNETCORE_ENVIRONMENT: "Production"
   ASPNETCORE_URLS: "http://+:80"
+  
+  # =================
+  # External Database Access (NodePort mappings for development)
+  # =================
+  EXTERNAL_DATABASE_IDENTITY_PORT: "31433"
+  EXTERNAL_DATABASE_FATURAMENTO_PORT: "31434"
+  EXTERNAL_DATABASE_GESTAOALUNOS_PORT: "31435"
+  EXTERNAL_DATABASE_GESTAOCONTEUDO_PORT: "31436"

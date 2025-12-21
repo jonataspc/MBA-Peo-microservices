@@ -2,7 +2,17 @@
 
 ## 🎯 **Visão Geral**
 
-Esta documentação contém todos os manifestos necessários para executar a plataforma Peo no Kubernetes, seguindo os mesmos padrões do Docker Compose.
+Esta documentação contém todos os manifestos necessários para executar a plataforma Peo no Kubernetes, implementando o padrão **"Database per Service"** com instâncias SQL Server dedicadas para cada microserviço, proporcionando isolamento completo de dados e escalabilidade independente.
+
+## 🏗️ **Arquitetura de Database per Service**
+
+### 🗄️ **Instâncias de Banco de Dados:**
+| Serviço | Host Interno | Port Externo | Database | PVC |
+|---------|-------------|--------------|----------|-----|
+| **Identity** | peo-identity-sqlserver | 31433 | identity-db | identity-sqlserver-pvc |
+| **Faturamento** | peo-faturamento-sqlserver | 31434 | faturamento-db | faturamento-sqlserver-pvc |
+| **Gestão Alunos** | peo-gestaoalunos-sqlserver | 31435 | gestao-alunos-db | gestaoalunos-sqlserver-pvc |
+| **Gestão Conteúdo** | peo-gestaoconteudo-sqlserver | 31436 | gestao-conteudo-db | gestaoconteudo-sqlserver-pvc |
 
 ## 📋 **Pré-requisitos**
 
@@ -24,7 +34,19 @@ docker build -t peo-frontend:latest -f src/Peo.Web.Spa/Dockerfile .
 
 # Deploy usando Kustomize
 kubectl apply -k devops/k8s/
+
+# Verificar se todos os pods estão rodando
+kubectl get pods -n peo-platform -w
 ```
+
+### **⚠️ Importante: Configuração Multi-Ambiente**
+O frontend usa **ConfigMap override** para funcionar em diferentes ambientes sem rebuild:
+
+- **Visual Studio:** `appsettings.Development.json` → BFF em https://localhost:7276
+- **Docker Compose:** `appsettings.Production.json` → BFF em http://localhost:5000  
+- **Kubernetes:** ConfigMap override → BFF em http://localhost:30001
+
+O ConfigMap `peo-spa-config` sobrescreve a configuração apenas no Kubernetes, mantendo compatibilidade total com outros ambientes.
 
 ## 🌐 **URLs de Acesso**
 
@@ -42,8 +64,11 @@ kubectl apply -k devops/k8s/
 ### **RabbitMQ:** 
 - **Usuário:** guest / guest (configurável em secrets.yaml)
 
-### **SQL Server:**
-- **Usuário:** sa / MyStr0ngP@ssw0rd123 (configurável em secrets.yaml)
+### **SQL Server (Separadas por Serviço):**
+- **Identity DB:** sa / MyStr0ngP@ssw0rd123 (localhost:31433)
+- **Faturamento DB:** sa / MyStr0ngP@ssw0rd123 (localhost:31434) 
+- **Gestão Alunos DB:** sa / MyStr0ngP@ssw0rd123 (localhost:31435)
+- **Gestão Conteúdo DB:** sa / MyStr0ngP@ssw0rd123 (localhost:31436)
 
 ## ⚙️ **Configuração**
 
@@ -62,11 +87,19 @@ kubectl apply -k devops/k8s/
 ### **Recursos por Pod**
 | Serviço | CPU Request | CPU Limit | Memory Request | Memory Limit |
 |---------|-------------|-----------|----------------|--------------|
-| SQL Server | 500m | 2000m | 2Gi | 4Gi |
+| **Identity SQL Server** | 500m | 2000m | 2Gi | 4Gi |
+| **Faturamento SQL Server** | 500m | 2000m | 2Gi | 4Gi |
+| **Gestão Alunos SQL Server** | 500m | 2000m | 2Gi | 4Gi |
+| **Gestão Conteúdo SQL Server** | 500m | 2000m | 2Gi | 4Gi |
 | RabbitMQ | 250m | 500m | 512Mi | 1Gi |
 | APIs | 250m | 500m | 256Mi | 512Mi |
 | BFF | 250m | 500m | 256Mi | 512Mi |
 | Frontend | 100m | 200m | 128Mi | 256Mi |
+
+**⚠️ Requisitos Mínimos do Cluster:**
+- **CPU Total:** ~12 cores
+- **Memória Total:** ~24GB RAM  
+- **Storage:** ~40GB para PVCs (4 instâncias × 10GB cada)
 
 ## 📊 **Monitoramento**
 
@@ -144,7 +177,7 @@ kubectl logs <pod-name> -n peo-platform --previous
 ### **Problemas de conectividade**
 ```bash
 # Testar DNS interno
-kubectl exec -it <pod-name> -n peo-platform -- nslookup peo-sqlserver
+kubectl exec -it <pod-name> -n peo-platform -- nslookup peo-bff
 
 # Testar conectividade entre serviços
 kubectl exec -it <pod-name> -n peo-platform -- wget -O- http://peo-identity-api/health
@@ -152,11 +185,29 @@ kubectl exec -it <pod-name> -n peo-platform -- wget -O- http://peo-identity-api/
 
 ### **Problemas de banco de dados**
 ```bash
-# Conectar ao SQL Server
-kubectl exec -it deployment/peo-sqlserver -n peo-platform -- /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MyStr0ngP@ssw0rd123' -C
+# Conectar ao Identity SQL Server
+kubectl exec -it deployment/peo-identity-sqlserver -n peo-platform -- /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MyStr0ngP@ssw0rd123' -C
 
-# Verificar logs do SQL Server
-kubectl logs deployment/peo-sqlserver -n peo-platform
+# Conectar ao Faturamento SQL Server  
+kubectl exec -it deployment/peo-faturamento-sqlserver -n peo-platform -- /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MyStr0ngP@ssw0rd123' -C
+
+# Conectar ao Gestão Alunos SQL Server
+kubectl exec -it deployment/peo-gestaoalunos-sqlserver -n peo-platform -- /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MyStr0ngP@ssw0rd123' -C
+
+# Conectar ao Gestão Conteúdo SQL Server
+kubectl exec -it deployment/peo-gestaoconteudo-sqlserver -n peo-platform -- /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MyStr0ngP@ssw0rd123' -C
+
+# Verificar logs das instâncias SQL Server separadamente
+kubectl logs deployment/peo-identity-sqlserver -n peo-platform
+kubectl logs deployment/peo-faturamento-sqlserver -n peo-platform
+kubectl logs deployment/peo-gestaoalunos-sqlserver -n peo-platform
+kubectl logs deployment/peo-gestaoconteudo-sqlserver -n peo-platform
+
+# Port-forward para acesso externo (desenvolvimento)
+kubectl port-forward svc/peo-identity-sqlserver-external 1433:1433 -n peo-platform
+kubectl port-forward svc/peo-faturamento-sqlserver-external 1434:1433 -n peo-platform
+kubectl port-forward svc/peo-gestaoalunos-sqlserver-external 1435:1433 -n peo-platform
+kubectl port-forward svc/peo-gestaoconteudo-sqlserver-external 1436:1433 -n peo-platform
 ```
 
 ## 🧹 **Limpeza**
@@ -185,8 +236,14 @@ docker rmi $(docker images 'peo-*' -q)
    - Nunca commite secrets em plain text
 
 3. **💾 Persistent Volumes:**
-   - Configure StorageClass adequada
-   - Implemente backup automatizado dos PVs
+   - Configure StorageClass adequada para cada instância
+   - Implemente backup automatizado dos 4 PVs separadamente
+   - Considere replicação entre zonas para alta disponibilidade
+
+4. **🗄️ Database per Service:**
+   - Monitore recursos de cada instância SQL Server independentemente
+   - Configure backup/restore por instância
+   - Implemente monitoramento específico por domínio de negócio
 
 4. **🌐 Ingress:**
    - Configure um Ingress Controller

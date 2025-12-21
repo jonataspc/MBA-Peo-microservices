@@ -7,7 +7,7 @@ metadata:
   labels:
     app: peo-gestaoalunos-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: peo-gestaoalunos-api
@@ -33,8 +33,8 @@ spec:
             configMapKeyRef:
               name: peo-config
               key: ASPNETCORE_URLS
-        - name: ConnectionStrings__SqlServerConnection
-          value: "Server=peo-sqlserver;Database=PeoGestaoAlunos;User Id=sa;Password=$(SA_PASSWORD);TrustServerCertificate=true;"
+        - name: ConnectionStrings__gestao-alunos-db
+          value: "Server=peo-gestaoalunos-sqlserver;Database=gestao-alunos-db;User Id=sa;Password=$(SA_PASSWORD);TrustServerCertificate=true;"
         - name: ConnectionStrings__messaging
           value: "amqp://$(RABBITMQ_USER):$(RABBITMQ_PASSWORD)@peo-rabbitmq:5672/"
         - name: SA_PASSWORD

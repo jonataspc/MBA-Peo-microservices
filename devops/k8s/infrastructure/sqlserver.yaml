@@ -1,20 +1,41 @@
+# ==============================================================================
+# SEPARATE SQL SERVER INSTANCES FOR MICROSERVICES
+# ==============================================================================
+# 
+# This configuration implements the "Database per Service" pattern where each 
+# microservice has its own dedicated SQL Server instance for complete isolation
+#
+# Benefits:
+# - Complete data isolation between services
+# - Independent scaling per service  
+# - Fault isolation - one DB failure doesn't affect others
+# - Technology flexibility for future migrations
+# - Enhanced security boundaries
+#
+# ==============================================================================
+
 ---
+# IDENTITY SQL SERVER INSTANCE
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: peo-sqlserver
+  name: peo-identity-sqlserver
   namespace: peo-platform
   labels:
-    app: peo-sqlserver
+    app: peo-identity-sqlserver
+    service: identity
+    tier: database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: peo-sqlserver
+      app: peo-identity-sqlserver
   template:
     metadata:
       labels:
-        app: peo-sqlserver
+        app: peo-identity-sqlserver
+        service: identity
+        tier: database
     spec:
       containers:
       - name: sqlserver
@@ -31,6 +52,8 @@ spec:
           value: "Y"
         - name: MSSQL_PID
           value: "Express"
+        - name: MSSQL_COLLATION
+          value: "SQL_Latin1_General_CP1_CI_AS"
         resources:
           requests:
             memory: "2Gi"
@@ -39,44 +62,48 @@ spec:
             memory: "4Gi"
             cpu: "2000m"
         volumeMounts:
-        - name: sqlserver-data
+        - name: identity-sqlserver-data
           mountPath: /var/opt/mssql
         livenessProbe:
           exec:
             command:
-            - /bin/sh
+            - /bin/bash
             - -c
-            - "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $(SA_PASSWORD) -Q 'SELECT 1' -C -N -l 1"
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
           initialDelaySeconds: 60
           periodSeconds: 30
-          timeoutSeconds: 10
+          timeoutSeconds: 15
           failureThreshold: 3
         readinessProbe:
           exec:
             command:
-            - /bin/sh
+            - /bin/bash
             - -c
-            - "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $(SA_PASSWORD) -Q 'SELECT 1' -C -N -l 1"
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
           initialDelaySeconds: 30
-          periodSeconds: 10
+          periodSeconds: 15
           timeoutSeconds: 10
           failureThreshold: 3
       volumes:
-      - name: sqlserver-data
+      - name: identity-sqlserver-data
         persistentVolumeClaim:
-          claimName: sqlserver-pvc
+          claimName: identity-sqlserver-pvc
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: peo-sqlserver
+  name: peo-identity-sqlserver
   namespace: peo-platform
   labels:
-    app: peo-sqlserver
+    app: peo-identity-sqlserver
+    service: identity
+    tier: database
 spec:
   selector:
-    app: peo-sqlserver
+    app: peo-identity-sqlserver
   ports:
   - port: 1433
     targetPort: 1433
@@ -87,7 +114,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sqlserver-pvc
+  name: identity-sqlserver-pvc
   namespace: peo-platform
 spec:
   accessModes:
@@ -95,3 +122,414 @@ spec:
   resources:
     requests:
       storage: 10Gi
+
+---
+# External access for development/debugging
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-identity-sqlserver-external
+  namespace: peo-platform
+  labels:
+    app: peo-identity-sqlserver
+    service: identity
+    tier: database
+spec:
+  selector:
+    app: peo-identity-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    nodePort: 31433
+    protocol: TCP
+  type: NodePort
+
+---
+# FATURAMENTO SQL SERVER INSTANCE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-faturamento-sqlserver
+  namespace: peo-platform
+  labels:
+    app: peo-faturamento-sqlserver
+    service: faturamento
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-faturamento-sqlserver
+  template:
+    metadata:
+      labels:
+        app: peo-faturamento-sqlserver
+        service: faturamento
+        tier: database
+    spec:
+      containers:
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Express"
+        - name: MSSQL_COLLATION
+          value: "SQL_Latin1_General_CP1_CI_AS"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: faturamento-sqlserver-data
+          mountPath: /var/opt/mssql
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 15
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+      volumes:
+      - name: faturamento-sqlserver-data
+        persistentVolumeClaim:
+          claimName: faturamento-sqlserver-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-faturamento-sqlserver
+  namespace: peo-platform
+  labels:
+    app: peo-faturamento-sqlserver
+    service: faturamento
+    tier: database
+spec:
+  selector:
+    app: peo-faturamento-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: faturamento-sqlserver-pvc
+  namespace: peo-platform
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# External access for development/debugging
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-faturamento-sqlserver-external
+  namespace: peo-platform
+  labels:
+    app: peo-faturamento-sqlserver
+    service: faturamento
+    tier: database
+spec:
+  selector:
+    app: peo-faturamento-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    nodePort: 31434
+    protocol: TCP
+  type: NodePort
+
+---
+# GESTAO ALUNOS SQL SERVER INSTANCE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-gestaoalunos-sqlserver
+  namespace: peo-platform
+  labels:
+    app: peo-gestaoalunos-sqlserver
+    service: gestao-alunos
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-gestaoalunos-sqlserver
+  template:
+    metadata:
+      labels:
+        app: peo-gestaoalunos-sqlserver
+        service: gestao-alunos
+        tier: database
+    spec:
+      containers:
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Express"
+        - name: MSSQL_COLLATION
+          value: "SQL_Latin1_General_CP1_CI_AS"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: gestaoalunos-sqlserver-data
+          mountPath: /var/opt/mssql
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 15
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+      volumes:
+      - name: gestaoalunos-sqlserver-data
+        persistentVolumeClaim:
+          claimName: gestaoalunos-sqlserver-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-gestaoalunos-sqlserver
+  namespace: peo-platform
+  labels:
+    app: peo-gestaoalunos-sqlserver
+    service: gestao-alunos
+    tier: database
+spec:
+  selector:
+    app: peo-gestaoalunos-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gestaoalunos-sqlserver-pvc
+  namespace: peo-platform
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# External access for development/debugging
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-gestaoalunos-sqlserver-external
+  namespace: peo-platform
+  labels:
+    app: peo-gestaoalunos-sqlserver
+    service: gestao-alunos
+    tier: database
+spec:
+  selector:
+    app: peo-gestaoalunos-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    nodePort: 31435
+    protocol: TCP
+  type: NodePort
+
+---
+# GESTAO CONTEUDO SQL SERVER INSTANCE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peo-gestaoconteudo-sqlserver
+  namespace: peo-platform
+  labels:
+    app: peo-gestaoconteudo-sqlserver
+    service: gestao-conteudo
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peo-gestaoconteudo-sqlserver
+  template:
+    metadata:
+      labels:
+        app: peo-gestaoconteudo-sqlserver
+        service: gestao-conteudo
+        tier: database
+    spec:
+      containers:
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: "Express"
+        - name: MSSQL_COLLATION
+          value: "SQL_Latin1_General_CP1_CI_AS"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        volumeMounts:
+        - name: gestaoconteudo-sqlserver-data
+          mountPath: /var/opt/mssql
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 15
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1 AS HealthCheck" -C -N -l 1 -b
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+      volumes:
+      - name: gestaoconteudo-sqlserver-data
+        persistentVolumeClaim:
+          claimName: gestaoconteudo-sqlserver-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-gestaoconteudo-sqlserver
+  namespace: peo-platform
+  labels:
+    app: peo-gestaoconteudo-sqlserver
+    service: gestao-conteudo
+    tier: database
+spec:
+  selector:
+    app: peo-gestaoconteudo-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gestaoconteudo-sqlserver-pvc
+  namespace: peo-platform
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# External access for development/debugging
+apiVersion: v1
+kind: Service
+metadata:
+  name: peo-gestaoconteudo-sqlserver-external
+  namespace: peo-platform
+  labels:
+    app: peo-gestaoconteudo-sqlserver
+    service: gestao-conteudo
+    tier: database
+spec:
+  selector:
+    app: peo-gestaoconteudo-sqlserver
+  ports:
+  - port: 1433
+    targetPort: 1433
+    nodePort: 31436
+    protocol: TCP
+  type: NodePort

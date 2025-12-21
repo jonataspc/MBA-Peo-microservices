@@ -12,7 +12,11 @@ Esta documentação fornece um guia abrangente para a Plataforma de Educação O
 - .NET Core 9.0
 - ASP.NET Core WebAPI
 - Entity Framework Core
-- SQL Server / SQLite
+- SQL Server
+- Docker
+- kubernetes
+- Aspire
+- Blazor
 - Autenticação JWT
 - Padrão CQRS
 - Arquitetura DDD

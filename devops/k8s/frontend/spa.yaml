@@ -5,7 +5,8 @@ metadata:
   name: peo-spa-config
   namespace: peo-platform
 data:
-  appsettings.json: |
+  # Configuracao especifica para Kubernetes - sobrescreve appsettings.Production.json
+  appsettings.Production.json: |
     { "ApiBaseUrl": "http://localhost:30001/" }
 
 ---
@@ -17,7 +18,7 @@ metadata:
   labels:
     app: peo-frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: peo-frontend
@@ -40,14 +41,21 @@ spec:
             memory: "256Mi"
             cpu: "200m"
         volumeMounts:
+        # Monta o ConfigMap para sobrescrever appsettings.Production.json em runtime
+        # Isso permite que o mesmo container funcione em Docker Compose (porta 5000) 
+        # e Kubernetes (porta 30001) sem rebuild
         - name: spa-config
-          mountPath: /usr/share/nginx/html/appsettings.json
-          subPath: appsettings.json
+          mountPath: /usr/share/nginx/html/appsettings.Production.json
+          subPath: appsettings.Production.json
+          readOnly: true
  
       volumes:
       - name: spa-config
         configMap:
           name: peo-spa-config
+          items:
+          - key: appsettings.Production.json
+            path: appsettings.Production.json
 
 ---
 apiVersion: v1

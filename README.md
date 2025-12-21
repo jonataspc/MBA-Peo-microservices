@@ -41,7 +41,7 @@ O projeto consiste em:
   - MassTransit
   - MediatR
 - **Banco de Dados:** 
-  - SQL Server / SQLite
+  - SQL Server
 - **Mensageria:** 
   - RabbitMQ
 - **Autenticação e Autorização:**
@@ -79,7 +79,7 @@ A estrutura do projeto é organizada da seguinte forma:
 ### **Pré-requisitos**
 
 - .NET SDK 9.0 ou superior
-- SQL Server ou SQLite
+- SQL Server 
 - Docker (ou outra solução de container)
 - Visual Studio 2022 ou superior (ou qualquer IDE de sua preferência)
 - Git
@@ -146,7 +146,7 @@ kubectl apply -k devops/k8s/
    - `cd MBA-Peo`
 
 2. **Configuração do Banco de Dados:**
-   - Por padrão, em ambiente de desenvolvimento, o projeto está configurado para utilizar SQLite.
+   - Por padrão, em ambiente de desenvolvimento, o projeto está configurado para utilizar SQLServer (uma instância/database para cada microsserviço).
    - Caso necessário configure a string de conexão nas aplicações Web-API (`\src\Peo.XXX.WebApi\appsettings.XXX.json`).
    - Rode o projeto para que a configuração do Seed crie o banco e popule com os dados básicos
 
