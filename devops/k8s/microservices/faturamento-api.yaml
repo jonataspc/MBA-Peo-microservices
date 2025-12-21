@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: peo-faturamento-api
-    spec:
+    spec:      
       containers:
       - name: faturamento-api
         image: peo-faturamento-api:latest
@@ -33,25 +33,25 @@ spec:
             configMapKeyRef:
               name: peo-config
               key: ASPNETCORE_URLS
+        # Enable database migrations in Kubernetes
+        - name: ENABLE_MIGRATIONS
+          value: "true"
+        # Enable health checks in Kubernetes
+        - name: ENABLE_HEALTH_CHECKS
+          value: "true"
+        # Database configuration
         - name: ConnectionStrings__faturamento-db
-          value: "Server=peo-faturamento-sqlserver;Database=faturamento-db;User Id=sa;Password=$(SA_PASSWORD);TrustServerCertificate=true;"
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: FATURAMENTO_CONNECTION_STRING
+        # RabbitMQ configuration
         - name: ConnectionStrings__messaging
-          value: "amqp://$(RABBITMQ_USER):$(RABBITMQ_PASSWORD)@peo-rabbitmq:5672/"
-        - name: SA_PASSWORD
           valueFrom:
             secretKeyRef:
               name: peo-secrets
-              key: SA_PASSWORD
-        - name: RABBITMQ_USER
-          valueFrom:
-            secretKeyRef:
-              name: peo-secrets
-              key: RABBITMQ_USER
-        - name: RABBITMQ_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: peo-secrets
-              key: RABBITMQ_PASSWORD
+              key: RABBITMQ_CONNECTION_STRING
+        # JWT configuration
         - name: Jwt__Key
           valueFrom:
             secretKeyRef:
