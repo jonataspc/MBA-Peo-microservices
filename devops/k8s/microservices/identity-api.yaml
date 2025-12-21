@@ -16,6 +16,37 @@ spec:
       labels:
         app: peo-identity-api
     spec:
+      # Init containers para aguardar dependências
+      initContainers:
+      - name: wait-for-sqlserver
+        image: mcr.microsoft.com/mssql-tools:latest
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for Identity SQL Server to be ready..."
+            until /opt/mssql-tools/bin/sqlcmd -S peo-identity-sqlserver -U sa -P "${SA_PASSWORD}" -C -Q "SELECT 1" -l 30 -t 30 > /dev/null 2>&1; do
+              echo "Identity SQL Server is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Identity SQL Server is ready!"
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD            
+      - name: wait-for-rabbitmq
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for RabbitMQ to be ready..."
+            until nc -z peo-rabbitmq 5672; do
+              echo "RabbitMQ is not ready yet. Retrying in 3 seconds..."
+              sleep 3
+            done
+            echo "RabbitMQ is ready!"
+            echo "All dependencies are ready. Starting Identity API..."
       containers:
       - name: identity-api
         image: peo-identity-api:latest

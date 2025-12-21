@@ -16,6 +16,37 @@ spec:
       labels:
         app: peo-gestaoalunos-api
     spec:      
+      # Init containers para aguardar dependências
+      initContainers:
+      - name: wait-for-sqlserver
+        image: mcr.microsoft.com/mssql-tools:latest
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for Gestao Alunos SQL Server to be ready..."
+            until /opt/mssql-tools/bin/sqlcmd -S peo-gestaoalunos-sqlserver -U sa -P "${SA_PASSWORD}" -C -Q "SELECT 1" -l 30 -t 30 > /dev/null 2>&1; do
+              echo "Gestao Alunos SQL Server is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Gestao Alunos SQL Server is ready!"
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD
+      - name: wait-for-rabbitmq
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for RabbitMQ to be ready..."
+            until nc -z peo-rabbitmq 5672; do
+              echo "RabbitMQ is not ready yet. Retrying in 3 seconds..."
+              sleep 3
+            done
+            echo "RabbitMQ is ready!"
+            echo "All dependencies are ready. Starting Gestao Alunos API..."
       containers:
       - name: gestaoalunos-api
         image: peo-gestaoalunos-api:latest

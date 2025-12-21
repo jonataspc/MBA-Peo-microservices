@@ -16,6 +16,37 @@ spec:
       labels:
         app: peo-gestaoconteudo-api
     spec:
+      # Init containers para aguardar dependências
+      initContainers:
+      - name: wait-for-sqlserver
+        image: mcr.microsoft.com/mssql-tools:latest
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for Gestao Conteudo SQL Server to be ready..."
+            until /opt/mssql-tools/bin/sqlcmd -S peo-gestaoconteudo-sqlserver -U sa -P "${SA_PASSWORD}" -Q "select 1" -C -N -l 1 -t 1 > /dev/null 2>&1; do
+              echo "Gestao Conteudo SQL Server is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Gestao Conteudo SQL Server is ready!"
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: peo-secrets
+              key: SA_PASSWORD            
+      - name: wait-for-rabbitmq
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for RabbitMQ to be ready..."
+            until nc -z peo-rabbitmq 5672; do
+              echo "RabbitMQ is not ready yet. Retrying in 3 seconds..."
+              sleep 3
+            done
+            echo "RabbitMQ is ready!"
+            echo "All dependencies are ready. Starting Gestao Conteudo API..."
       containers:
       - name: gestaoconteudo-api
         image: peo-gestaoconteudo-api:latest

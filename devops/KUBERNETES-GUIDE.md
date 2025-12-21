@@ -6,6 +6,25 @@ Esta documentação contém todos os manifestos necessários para executar a pla
 
 ## 🏗️ **Arquitetura de Database per Service**
 
+### 🔗 **Dependências entre Pods**
+O deploy está configurado com **dependências rigorosas** usando **Init Containers**:
+
+```mermaid
+graph TD
+    A[SQL Servers + RabbitMQ] --> B[Init Containers das APIs]
+    B --> C[APIs com /health]
+    C --> D[BFF com /health]
+    D --> E[Frontend]
+```
+
+**Ordem garantida:**
+1. **Infraestrutura:** SQL Servers + RabbitMQ sobem primeiro
+2. **APIs:** Só iniciam após suas dependências (banco + RabbitMQ) 
+3. **BFF:** Só inicia após todas as APIs responderem `/health`
+4. **Frontend:** Só inicia após BFF responder `/health`
+
+**📋 Ver guia completo:** [POD-DEPENDENCIES-GUIDE.md](./k8s/POD-DEPENDENCIES-GUIDE.md)
+
 ### 🗄️ **Instâncias de Banco de Dados:**
 | Serviço | Host Interno | Port Externo | Database | PVC |
 |---------|-------------|--------------|----------|-----|
@@ -35,9 +54,24 @@ docker build -t peo-frontend:latest -f src/Peo.Web.Spa/Dockerfile .
 # Deploy usando Kustomize
 kubectl apply -k devops/k8s/
 
-# Verificar se todos os pods estão rodando
+# Verificar ordem de inicialização com dependências
 kubectl get pods -n peo-platform -w
+
+# Ver logs dos init containers (exemplo)
+kubectl logs peo-identity-api-<pod-id> -c wait-for-dependencies -n peo-platform
+kubectl logs peo-bff-<pod-id> -c wait-for-apis -n peo-platform
+kubectl logs peo-frontend-<pod-id> -c wait-for-bff -n peo-platform
 ```
+
+### **🔗 Zero Falhas de Conectividade**
+
+Com as dependências configuradas:
+- ✅ **APIs só sobem** quando bancos e RabbitMQ estão prontos
+- ✅ **BFF só sobe** quando todas as APIs respondem `/health`
+- ✅ **Frontend só sobe** quando BFF responde `/health`
+- ✅ **Sem erros** de "connection refused" durante startup
+
+📋 **Troubleshooting de dependências:** [POD-DEPENDENCIES-GUIDE.md](./k8s/POD-DEPENDENCIES-GUIDE.md)
 
 ### **⚠️ Importante: Configuração Multi-Ambiente**
 O frontend usa **ConfigMap override** para funcionar em diferentes ambientes sem rebuild:

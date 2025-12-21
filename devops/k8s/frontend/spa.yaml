@@ -27,6 +27,19 @@ spec:
       labels:
         app: peo-frontend
     spec:
+      # Init container para aguardar BFF estar pronto
+      initContainers:
+      - name: wait-for-bff
+        image: curlimages/curl:latest
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for BFF to be ready..."
+            until curl -f http://peo-bff/health > /dev/null 2>&1; do
+              echo "BFF is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "BFF is ready! Starting Frontend..."
       containers:
       - name: frontend
         image: peo-frontend:latest

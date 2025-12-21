@@ -16,6 +16,42 @@ spec:
       labels:
         app: peo-bff
     spec:     
+      # Init container para aguardar todas as APIs estarem prontas
+      initContainers:
+      - name: wait-for-apis
+        image: curlimages/curl:latest
+        command: ['sh', '-c']
+        args:
+          - |
+            echo "Waiting for Identity API to be ready..."
+            until curl -f http://peo-identity-api/health > /dev/null 2>&1; do
+              echo "Identity API is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Identity API is ready!"
+            
+            echo "Waiting for Faturamento API to be ready..."
+            until curl -f http://peo-faturamento-api/health > /dev/null 2>&1; do
+              echo "Faturamento API is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Faturamento API is ready!"
+            
+            echo "Waiting for Gestao Alunos API to be ready..."
+            until curl -f http://peo-gestaoalunos-api/health > /dev/null 2>&1; do
+              echo "Gestao Alunos API is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Gestao Alunos API is ready!"
+            
+            echo "Waiting for Gestao Conteudo API to be ready..."
+            until curl -f http://peo-gestaoconteudo-api/health > /dev/null 2>&1; do
+              echo "Gestao Conteudo API is not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Gestao Conteudo API is ready!"
+            
+            echo "All APIs are ready. Starting BFF..."
       containers:
       - name: bff
         image: peo-bff:latest
