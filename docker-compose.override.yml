@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ===============================
   # SQL Server Instances - Development Overrides
