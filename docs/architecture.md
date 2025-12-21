@@ -63,8 +63,7 @@ A Plataforma de Educação Online segue uma arquitetura baseada em Domain-Driven
 - Segurança
 
 ## Design do Banco de Dados
-- SQL Server para produção
-- SQLite para desenvolvimento e testes
+- SQL Server 
 - Entity Framework Core para acesso a dados
 - Abordagem code-first
 - Migrações

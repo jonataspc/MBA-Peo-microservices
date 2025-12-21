@@ -41,7 +41,7 @@ O projeto consiste em:
   - MassTransit
   - MediatR
 - **Banco de Dados:** 
-  - SQL Server / SQLite
+  - SQL Server
 - **Mensageria:** 
   - RabbitMQ
 - **Autenticação e Autorização:**
@@ -79,24 +79,26 @@ A estrutura do projeto é organizada da seguinte forma:
 ### **Pré-requisitos**
 
 - .NET SDK 9.0 ou superior
-- SQL Server ou SQLite
+- SQL Server 
 - Docker (ou outra solução de container)
 - Visual Studio 2022 ou superior (ou qualquer IDE de sua preferência)
 - Git
 
 ### **Passos para Execução**
 
-#### **Opção 1: Docker Compose**
+#### **Opção 1: Docker Compose (arquitetura de microsserviços completa)**
 
 ```bash
 # Clone o repositório
 git clone https://github.com/jonataspc/MBA-Peo-microservices.git
 cd MBA-Peo-microservices
 
-# Copie o arquivo de ambiente (opcional)
+# Copie o arquivo de ambiente (IMPORTANTE!)
 cp .env.example .env
 
-# Inicie toda a plataforma em modo desenvolvimento
+# Edite o .env com suas configurações (opcional para desenvolvimento)
+
+# Inicie toda a plataforma em modo desenvolvimento  
 docker compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
 
 # Ou em modo produção
@@ -108,7 +110,14 @@ docker compose up -d --build
 - **BFF API:** http://localhost:5000
 - **RabbitMQ Management:** http://localhost:15672 (guest/guest)
 
-📖 **Guia completo:** Veja [README.Docker.md](./README.Docker.md) para instruções detalhadas.
+**🏗️ Arquitetura de Banco de Dados:**
+Esta implementação usa o padrão **"Instance/Database per Service"** com instâncias SQL Server dedicadas:
+- **Identity DB:** localhost:1433 (identity-db)
+- **Faturamento DB:** localhost:1434 (faturamento-db) 
+- **Gestão Alunos DB:** localhost:1435 (gestao-alunos-db)
+- **Gestão Conteúdo DB:** localhost:1436 (gestao-conteudo-db)
+
+📖 **Guia completo:** Veja [README.Docker.md](./README.Docker.md) para instruções detalhadas, benefícios da arquitetura e considerações de recursos.
 
 #### **Opção 2: Kubernetes (Recomendado para produção)**
 
@@ -137,7 +146,7 @@ kubectl apply -k devops/k8s/
    - `cd MBA-Peo`
 
 2. **Configuração do Banco de Dados:**
-   - Por padrão, em ambiente de desenvolvimento, o projeto está configurado para utilizar SQLite.
+   - Por padrão, em ambiente de desenvolvimento, o projeto está configurado para utilizar SQLServer (uma instância/database para cada microsserviço).
    - Caso necessário configure a string de conexão nas aplicações Web-API (`\src\Peo.XXX.WebApi\appsettings.XXX.json`).
    - Rode o projeto para que a configuração do Seed crie o banco e popule com os dados básicos
 

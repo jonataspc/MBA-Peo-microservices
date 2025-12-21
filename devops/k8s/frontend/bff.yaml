@@ -7,7 +7,7 @@ metadata:
   labels:
     app: peo-bff
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: peo-bff
@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: peo-bff
-    spec:
+    spec:     
       containers:
       - name: bff
         image: peo-bff:latest
@@ -33,6 +33,9 @@ spec:
             configMapKeyRef:
               name: peo-config
               key: ASPNETCORE_URLS
+        # Enable health checks in Kubernetes
+        - name: ENABLE_HEALTH_CHECKS
+          value: "true"
         - name: Jwt__Key
           valueFrom:
             secretKeyRef:

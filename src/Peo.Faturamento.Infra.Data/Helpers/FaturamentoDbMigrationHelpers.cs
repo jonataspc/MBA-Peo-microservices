@@ -25,7 +25,11 @@ namespace Peo.Faturamento.Infra.Data.Helpers
                                              .CreateScope();
             var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            if (env.IsDevelopment())
+            // Allow migrations in Development or when explicitly enabled via environment variable
+            var enableMigrations = env.IsDevelopment() || 
+                                   Environment.GetEnvironmentVariable("ENABLE_MIGRATIONS")?.ToLowerInvariant() == "true";
+
+            if (enableMigrations)
             {
                 var context = scope.ServiceProvider.GetRequiredService<CobrancaContext>();
 

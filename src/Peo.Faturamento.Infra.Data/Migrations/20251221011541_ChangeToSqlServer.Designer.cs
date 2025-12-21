@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Peo.Faturamento.Infra.Data.Contexts;
@@ -11,8 +12,8 @@ using Peo.Faturamento.Infra.Data.Contexts;
 namespace Peo.Faturamento.Infra.Data.Migrations
 {
     [DbContext(typeof(CobrancaContext))]
-    [Migration("20250929021326_AjustesEstrutura")]
-    partial class AjustesEstrutura
+    [Migration("20251221011541_ChangeToSqlServer")]
+    partial class ChangeToSqlServer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,39 +23,42 @@ namespace Peo.Faturamento.Infra.Data.Migrations
                 .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
-                .HasAnnotation("Proxies:LazyLoading", true);
+                .HasAnnotation("Proxies:LazyLoading", true)
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Peo.Faturamento.Domain.Entities.Pagamento", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasPrecision(0)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<DateTime?>("DataPagamento")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Detalhes")
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("IdTransacao")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<Guid>("MatriculaId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasPrecision(0)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2(0)");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("Pendente");
 
                     b.Property<decimal>("Valor")
@@ -73,11 +77,11 @@ namespace Peo.Faturamento.Infra.Data.Migrations
                     b.OwnsOne("Peo.Faturamento.Domain.ValueObjects.DadosDoCartaoCredito", "DadosCartao", b1 =>
                         {
                             b1.Property<Guid>("PagamentoId")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("Hash")
                                 .HasMaxLength(2048)
-                                .HasColumnType("TEXT");
+                                .HasColumnType("nvarchar(2048)");
 
                             b1.HasKey("PagamentoId");
 

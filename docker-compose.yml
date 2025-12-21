@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ===============================
   # Infrastructure Services
@@ -24,9 +22,14 @@ services:
       timeout: 10s
       retries: 5
 
-  sqlserver:
+  # ===================
+  # SEPARATE SQL SERVER INSTANCES FOR EACH MICROSERVICE
+  # ===================
+
+  # Identity SQL Server Instance
+  identity-sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: peo-sqlserver
+    container_name: peo-identity-sqlserver
     environment:
       SA_PASSWORD: "${SA_PASSWORD}"
       ACCEPT_EULA: "Y"
@@ -34,7 +37,70 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - identity_sqlserver_data:/var/opt/mssql
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${SA_PASSWORD}' -Q 'SELECT 1' -C -N -l 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Faturamento SQL Server Instance
+  faturamento-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: peo-faturamento-sqlserver
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1434:1433"
+    volumes:
+      - faturamento_sqlserver_data:/var/opt/mssql
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${SA_PASSWORD}' -Q 'SELECT 1' -C -N -l 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Gestao Alunos SQL Server Instance
+  gestao-alunos-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: peo-gestao-alunos-sqlserver
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1435:1433"
+    volumes:
+      - gestao_alunos_sqlserver_data:/var/opt/mssql
+    networks:
+      - peo-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${SA_PASSWORD}' -Q 'SELECT 1' -C -N -l 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Gestao Conteudo SQL Server Instance
+  gestao-conteudo-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: peo-gestao-conteudo-sqlserver
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1436:1433"
+    volumes:
+      - gestao_conteudo_sqlserver_data:/var/opt/mssql
     networks:
       - peo-network
     healthcheck:
@@ -56,7 +122,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoIdentity;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__identity-db: "Server=identity-sqlserver;Database=identity-db;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
       ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
       Jwt__Key: "${JWT_KEY}"
       Jwt__Issuer: "https://peo-identity-api/"
@@ -64,7 +130,7 @@ services:
     ports:
       - "5001:80"
     depends_on:
-      sqlserver:
+      identity-sqlserver:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -85,7 +151,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoGestaoConteudo;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__gestao-conteudo-db: "Server=gestao-conteudo-sqlserver;Database=gestao-conteudo-db;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
       ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
       Jwt__Key: "${JWT_KEY}"
       Jwt__Issuer: "https://peo-gestaoconteudo-api/"
@@ -93,7 +159,7 @@ services:
     ports:
       - "5002:80"
     depends_on:
-      sqlserver:
+      gestao-conteudo-sqlserver:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -116,7 +182,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoGestaoAlunos;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__gestao-alunos-db: "Server=gestao-alunos-sqlserver;Database=gestao-alunos-db;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
       ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
       Jwt__Key: "${JWT_KEY}"
       Jwt__Issuer: "https://peo-gestaoalunos-api/"
@@ -124,7 +190,7 @@ services:
     ports:
       - "5003:80"
     depends_on:
-      sqlserver:
+      gestao-alunos-sqlserver:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -147,7 +213,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__SqlServerConnection: "Server=sqlserver;Database=PeoFaturamento;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
+      ConnectionStrings__faturamento-db: "Server=faturamento-sqlserver;Database=faturamento-db;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;"
       ConnectionStrings__messaging: "amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/"
       Jwt__Key: "${JWT_KEY}"
       Jwt__Issuer: "https://peo-faturamento-api/"
@@ -155,7 +221,7 @@ services:
     ports:
       - "5004:80"
     depends_on:
-      sqlserver:
+      faturamento-sqlserver:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -241,7 +307,13 @@ networks:
     name: peo-network
 
 volumes:
-  rabbitmq_data:
-    name: peo_rabbitmq_data
-  sqlserver_data:
-    name: peo_sqlserver_data
+    rabbitmq_data:
+      name: peo_rabbitmq_data
+    identity_sqlserver_data:
+      name: peo_identity_sqlserver_data
+    faturamento_sqlserver_data:
+      name: peo_faturamento_sqlserver_data
+    gestao_alunos_sqlserver_data:
+      name: peo_gestao_alunos_sqlserver_data
+    gestao_conteudo_sqlserver_data:
+      name: peo_gestao_conteudo_sqlserver_data

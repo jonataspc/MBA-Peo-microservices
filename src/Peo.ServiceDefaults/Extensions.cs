@@ -102,7 +102,12 @@ public static class Extensions
     {
         // Adding health checks endpoints to applications in non-development environments has security implications.
         // See https://aka.ms/dotnet/aspire/healthchecks for details before enabling these endpoints in non-development environments.
-        if (app.Environment.IsDevelopment())
+        
+        // Enable health checks in Development OR when explicitly enabled via environment variable
+        var enableHealthChecks = app.Environment.IsDevelopment() || 
+                                  Environment.GetEnvironmentVariable("ENABLE_HEALTH_CHECKS")?.ToLowerInvariant() == "true";
+
+        if (enableHealthChecks)
         {
             // All health checks must pass for app to be considered ready to accept traffic after starting
             app.MapHealthChecks("/health");
