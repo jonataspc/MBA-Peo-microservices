@@ -96,7 +96,7 @@ docker compose up -d --build
 - Email: `admin@admin.com`
 - Senha: `@dmin!`
 
-### 📝 Configuração Important para Produção
+### 📝 Configuração importante para produção
 
 **URL da API:** O frontend Blazor está configurado automaticamente para:
 - **Desenvolvimento (Aspire):** `https://localhost:7276/`
