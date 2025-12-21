@@ -12,29 +12,12 @@ namespace Peo.GestaoAlunos.Infra.Data.DependencyInjectionConfiguration
     {
         public static IServiceCollection AddDataDependenciesForGestaoAlunos(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
-            string connectionString;
-
-            if (hostEnvironment.IsDevelopment())
-            {
-                connectionString = configuration.GetConnectionString("SQLiteConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de desenvolvimento (SQLite)");
-            }
-            else
-            {
-                connectionString = configuration.GetConnectionString("SqlServerConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de produção (SQL Server)");
-            }
-
+            string connectionString = configuration.GetConnectionString("gestao-alunos-db") ?? throw new InvalidOperationException("Não localizada connection string");
+            
             // Alunos
             services.AddDbContext<GestaoAlunosContext>(options =>
             {
-                if (hostEnvironment.IsDevelopment())
-                {
-                    options.UseSqlite(connectionString);
-                }
-                else
-                {
-                    options.UseSqlServer(connectionString);
-                }
-
+                options.UseSqlServer(connectionString);
                 options.UseLazyLoadingProxies();
 
                 if (hostEnvironment.IsDevelopment())

@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Peo.GestaoConteudo.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class ChangeToSqlServer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,16 +15,16 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                 name: "Curso",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Titulo = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    Descricao = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: true),
-                    InstrutorNome = table.Column<string>(type: "TEXT", nullable: true),
-                    Preco = table.Column<decimal>(type: "decimal(12, 2)", precision: 10, scale: 2, nullable: false),
-                    EstaPublicado = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DataPublicacao = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Tags = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Titulo = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
+                    InstrutorNome = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Preco = table.Column<decimal>(type: "decimal(12,2)", precision: 10, scale: 2, nullable: false),
+                    EstaPublicado = table.Column<bool>(type: "bit", nullable: false),
+                    DataPublicacao = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -34,14 +35,14 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                 name: "Aula",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Titulo = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    Descricao = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: true),
-                    UrlVideo = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: false),
-                    Duracao = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    CursoId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Titulo = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
+                    UrlVideo = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    Duracao = table.Column<TimeSpan>(type: "time", nullable: false),
+                    CursoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,8 +59,8 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                 name: "ConteudoProgramatico",
                 columns: table => new
                 {
-                    CursoId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Conteudo = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: true)
+                    CursoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Conteudo = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -76,12 +77,12 @@ namespace Peo.GestaoConteudo.Infra.Data.Migrations
                 name: "ArquivoAula",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Titulo = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    Url = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: false),
-                    AulaId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Titulo = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    AulaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {

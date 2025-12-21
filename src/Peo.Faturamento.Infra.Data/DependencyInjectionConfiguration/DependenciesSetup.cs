@@ -13,28 +13,11 @@ namespace Peo.Faturamento.Infra.Data.DependencyInjectionConfiguration
     {
         public static IServiceCollection AddDataDependenciesForFaturamento(this IServiceCollection services, IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
-            string connectionString;
-
-            if (hostEnvironment.IsDevelopment())
-            {
-                connectionString = configuration.GetConnectionString("SQLiteConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de desenvolvimento (SQLite)");
-            }
-            else
-            {
-                connectionString = configuration.GetConnectionString("SqlServerConnection") ?? throw new InvalidOperationException("Não localizada connection string para ambiente de produção (SQL Server)");
-            }
+            string connectionString = configuration.GetConnectionString("faturamento-db") ?? throw new InvalidOperationException("Não localizada connection string");
 
             services.AddDbContext<CobrancaContext>(options =>
             {
-                if (hostEnvironment.IsDevelopment())
-                {
-                    options.UseSqlite(connectionString);
-                }
-                else
-                {
-                    options.UseSqlServer(connectionString);
-                }
-
+                options.UseSqlServer(connectionString);
                 options.UseLazyLoadingProxies();
 
                 if (hostEnvironment.IsDevelopment())

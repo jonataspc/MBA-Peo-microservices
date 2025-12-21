@@ -43,8 +43,11 @@ docker compose up -d --build
 
 ##  Arquitetura dos Serviços
 
-### Infraestrutura
-- **SQL Server** (porta 1433) - Banco de dados principal
+### Infraestrutura - Instâncias Separadas de Banco de Dados
+- **Identity SQL Server** (porta 1433) - Banco dedicado ao serviço de identidade
+- **Faturamento SQL Server** (porta 1434) - Banco dedicado ao serviço de faturamento  
+- **Gestão Alunos SQL Server** (porta 1435) - Banco dedicado ao serviço de gestão de alunos
+- **Gestão Conteúdo SQL Server** (porta 1436) - Banco dedicado ao serviço de gestão de conteúdo
 - **RabbitMQ** (porta 5672, UI: 15672) - Message broker
 
 ### Microserviços
@@ -68,7 +71,10 @@ docker compose up -d --build
 | Gestão Alunos | http://localhost:5003 | API de gestão de alunos |
 | Faturamento | http://localhost:5004 | API de faturamento |
 | RabbitMQ UI | http://localhost:15672 | Interface de gerenciamento |
-| SQL Server | localhost:1433 | Banco de dados |
+| Identity DB | localhost:1433 | Banco de dados do serviço de identidade |
+| Faturamento DB | localhost:1434 | Banco de dados do serviço de faturamento |
+| Gestão Alunos DB | localhost:1435 | Banco de dados do serviço de gestão de alunos |
+| Gestão Conteúdo DB | localhost:1436 | Banco de dados do serviço de gestão de conteúdo |
 
 ### Credenciais Padrão
 
@@ -76,9 +82,15 @@ docker compose up -d --build
 - Usuário: `guest` (configurável via .env)
 - Senha: `guest` (configurável via .env)
 
-**SQL Server:**
+**SQL Server (Todas as Instâncias):**
 - Usuário: `sa`
 - Senha: `MyStr0ngP@ssw0rd123` (configurável via .env)
+
+**Strings de Conexão para Ferramentas Externas:**
+- Identity: `Server=localhost,1433;Database=identity-db;User Id=sa;Password=SuaSenha;TrustServerCertificate=true;`
+- Faturamento: `Server=localhost,1434;Database=faturamento-db;User Id=sa;Password=SuaSenha;TrustServerCertificate=true;`
+- Gestão Alunos: `Server=localhost,1435;Database=gestao-alunos-db;User Id=sa;Password=SuaSenha;TrustServerCertificate=true;`
+- Gestão Conteúdo: `Server=localhost,1436;Database=gestao-conteudo-db;User Id=sa;Password=SuaSenha;TrustServerCertificate=true;`
 
 **Aplicação (usuário admin):**
 - Email: `admin@admin.com`
@@ -137,8 +149,11 @@ docker compose logs -f peo-identity-api peo-gestaoconteudo-api peo-gestaoalunos-
 # Logs do frontend e BFF
 docker compose logs -f peo-bff peo-frontend
 
-# Logs do banco de dados
-docker compose logs -f sqlserver
+# Logs do banco de dados (cada instância separadamente)
+docker compose logs -f identity-sqlserver
+docker compose logs -f faturamento-sqlserver
+docker compose logs -f gestao-alunos-sqlserver
+docker compose logs -f gestao-conteudo-sqlserver
 
 # Logs do RabbitMQ
 docker compose logs -f rabbitmq
@@ -156,17 +171,23 @@ curl http://localhost:5001/health  # Identity API
 
 ##  Persistência de Dados
 
-Os dados são persistidos em volumes Docker:
-- `peo_sqlserver_data` - Dados do SQL Server
+Os dados são persistidos em volumes Docker separados por serviço:
+- `peo_identity_sqlserver_data` - Dados do SQL Server Identity
+- `peo_faturamento_sqlserver_data` - Dados do SQL Server Faturamento
+- `peo_gestao_alunos_sqlserver_data` - Dados do SQL Server Gestão Alunos
+- `peo_gestao_conteudo_sqlserver_data` - Dados do SQL Server Gestão Conteúdo
 - `peo_rabbitmq_data` - Dados do RabbitMQ
 
 ### Backup e Restauração
 ```bash
-# Backup dos volumes
-docker run --rm -v peo_sqlserver_data:/data -v $(pwd):/backup alpine tar czf /backup/sqlserver-backup.tar.gz -C /data .
+# Backup de todas as instâncias SQL Server
+docker run --rm -v peo_identity_sqlserver_data:/data -v $(pwd):/backup alpine tar czf /backup/identity-sqlserver-backup.tar.gz -C /data .
+docker run --rm -v peo_faturamento_sqlserver_data:/data -v $(pwd):/backup alpine tar czf /backup/faturamento-sqlserver-backup.tar.gz -C /data .
+docker run --rm -v peo_gestao_alunos_sqlserver_data:/data -v $(pwd):/backup alpine tar czf /backup/gestao-alunos-sqlserver-backup.tar.gz -C /data .
+docker run --rm -v peo_gestao_conteudo_sqlserver_data:/data -v $(pwd):/backup alpine tar czf /backup/gestao-conteudo-sqlserver-backup.tar.gz -C /data .
 
-# Restauração
-docker run --rm -v peo_sqlserver_data:/data -v $(pwd):/backup alpine tar xzf /backup/sqlserver-backup.tar.gz -C /data
+# Restauração (exemplo para Identity)
+docker run --rm -v peo_identity_sqlserver_data:/data -v $(pwd):/backup alpine tar xzf /backup/identity-sqlserver-backup.tar.gz -C /data
 ```
 
 ## Solução de Problemas

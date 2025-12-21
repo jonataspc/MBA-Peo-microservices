@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Peo.GestaoAlunos.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class ChangeToSqlServer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,11 +15,11 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 name: "Aluno",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UsuarioId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    EstaAtivo = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EstaAtivo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,15 +30,15 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 name: "Matricula",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    AlunoId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CursoId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    DataMatricula = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DataConclusao = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Status = table.Column<string>(type: "TEXT", nullable: false, defaultValue: "PendentePagamento"),
-                    PercentualProgresso = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AlunoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CursoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DataMatricula = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataConclusao = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "PendentePagamento"),
+                    PercentualProgresso = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,13 +55,13 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 name: "Certificado",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    MatriculaId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Conteudo = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: false),
-                    DataEmissao = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    NumeroCertificado = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MatriculaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Conteudo = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NumeroCertificado = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,13 +78,13 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 name: "ProgressoMatricula",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    MatriculaId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    AulaId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    DataInicio = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DataConclusao = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", precision: 0, nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MatriculaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AulaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DataInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataConclusao = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2(0)", precision: 0, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -111,7 +112,8 @@ namespace Peo.GestaoAlunos.Infra.Data.Migrations
                 name: "IX_Certificado_NumeroCertificado",
                 table: "Certificado",
                 column: "NumeroCertificado",
-                unique: true);
+                unique: true,
+                filter: "[NumeroCertificado] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Matricula_AlunoId_CursoId",
