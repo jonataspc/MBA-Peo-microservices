@@ -38,6 +38,9 @@ devops/
 ```bash
 # Deploy completo
 kubectl apply -k devops/k8s-production/
+
+# Destroi namespace (e respectivos pods)
+kubectl delete namespace peo-platform-production
 ```
 
 ## 🗄️ **Instâncias de Banco de Dados**

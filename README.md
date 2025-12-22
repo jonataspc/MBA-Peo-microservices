@@ -133,10 +133,13 @@ cd MBA-Peo-microservices
 
 # Deploy usando kubectl
 kubectl apply -k devops/k8s-production/
+
+# Destroi namespace (e respectivos pods)
+kubectl delete namespace peo-platform-production
 ```
 
 
-##### Imagens locais (necessário build local - ver: [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md)): 
+##### Imagens locais (necessário build local - ver: [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md#-deploy-com-imagens-locais-ambiente-de-desenvolvimento)): 
 
 ```bash
 # Clone o repositório
@@ -148,6 +151,9 @@ cd MBA-Peo-microservices
 
 # Deploy usando kubectl
 kubectl apply -k devops/k8s/
+
+# Destroi namespace (e respectivos pods)
+kubectl delete namespace peo-platform
 ```
 
 **URLs após deploy:**

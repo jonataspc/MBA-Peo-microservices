@@ -55,6 +55,9 @@ kubectl get pods -n peo-platform-production -w
 kubectl logs peo-identity-api-<pod-id> -c wait-for-dependencies -n peo-platform-production
 kubectl logs peo-bff-<pod-id> -c wait-for-apis -n peo-platform-production
 kubectl logs peo-frontend-<pod-id> -c wait-for-bff -n peo-platform-production
+
+# Destroi namespace (e respectivos pods)
+kubectl delete namespace peo-platform-production
 ```
 
 ## 🚀 **Deploy com imagens locais (ambiente de desenvolvimento)**
@@ -78,6 +81,9 @@ kubectl get pods -n peo-platform -w
 kubectl logs peo-identity-api-<pod-id> -c wait-for-dependencies -n peo-platform
 kubectl logs peo-bff-<pod-id> -c wait-for-apis -n peo-platform
 kubectl logs peo-frontend-<pod-id> -c wait-for-bff -n peo-platform
+
+# Destroi namespace (e respectivos pods)
+kubectl delete namespace peo-platform
 ```
 
 **URLs após deploy:**
