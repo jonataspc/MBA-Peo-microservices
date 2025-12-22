@@ -1,0 +1,81 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: peo-platform-production
+
+# Herda da configuração base (sintaxe moderna)
+resources:
+  - ../k8s/
+
+# Configurações específicas para produção
+images:
+  - name: peo-identity-api
+    newName: jonataspc/peo-identity-webapi
+    newTag: latest
+  - name: peo-gestaoconteudo-api
+    newName: jonataspc/peo-gestaoconteudo-webapi
+    newTag: latest
+  - name: peo-gestaoalunos-api
+    newName: jonataspc/peo-gestaoalunos-webapi
+    newTag: latest
+  - name: peo-faturamento-api
+    newName: jonataspc/peo-faturamento-webapi
+    newTag: latest
+  - name: peo-bff
+    newName: jonataspc/peo-web-bff
+    newTag: latest
+  - name: peo-frontend
+    newName: jonataspc/peo-web-spa
+    newTag: latest
+
+# Patches inline (sintaxe moderna e mais confiável)
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+    target:
+      kind: Deployment
+      name: peo-identity-api
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+    target:
+      kind: Deployment
+      name: peo-gestaoconteudo-api
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+    target:
+      kind: Deployment
+      name: peo-gestaoalunos-api
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+    target:
+      kind: Deployment
+      name: peo-faturamento-api
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+    target:
+      kind: Deployment
+      name: peo-bff
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+    target:
+      kind: Deployment
+      name: peo-frontend
+
+# Labels específicos para produção
+labels:
+  - includeSelectors: false
+    pairs:
+      environment: production
+      deployment: dockerhub

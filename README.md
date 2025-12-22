@@ -3,6 +3,7 @@
 [![Docker Deploy](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/docker-deploy.yml/badge.svg)](https://github.com/jonataspc/MBA-Peo-microservices/actions/workflows/docker-deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jonataspc_MBA-Peo-microservices)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jonataspc_MBA-Peo-microservices&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jonataspc_MBA-Peo-microservices)
+[![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://hub.docker.com/repositories/jonataspc?search=peo)
 
 # **PEO - Plataforma de Educação Online**
 
@@ -26,6 +27,8 @@ O projeto consiste em:
 - **API RESTful:** Exposição dos endpoints necessários para os casos de uso.
 - **Autenticação e Autorização:** Implementação de controle de acesso, diferenciando administradores e alunos.
 - **Acesso a Dados:** Implementação de acesso ao banco de dados através de ORM.
+- **CI:** Build automatizado de geração e push de imagens para o DockerHub através de GitHub Actions; análise de código estática através do SonarQube Cloud.
+- **CD:** Automação de deploy através de kubernetes e docker-compose.
 
 ## **Tecnologias Utilizadas**
 
@@ -50,12 +53,12 @@ O projeto consiste em:
 - **Documentação da API:** 
   - Swagger
 - **Devops:** 
-- Kubernetes (manifestos e scripts completos)
-- Docker e Docker Compose
-- Aspir8 (geração automatizada dos manifestos)
-- SonarQube
-- GitHub Actions
-- Imagens ASPNET e SDK Alpine
+  - Kubernetes (manifestos e scripts completos)
+  - Docker e Docker Compose
+  - Aspir8 (geração automatizada dos manifestos)
+  - SonarQube
+  - GitHub Actions
+  - Imagens ASPNET e SDK Alpine
 	 
 	 
 ## **Estrutura do Projeto**
@@ -65,7 +68,7 @@ A estrutura do projeto é organizada da seguinte forma:
 - src: códigos-fonte da solução  
 - tests: testes de integração e de unidade.
 - docs: [documentação do projeto](./docs/README.md) e requisitos
-- devops: scripts e manifestos para deploy (kubernetes/Docker)
+- devops: scripts e manifestos para deploy (kubernetes)
 	
 - README.md: Arquivo de Documentação do Projeto
 - FEEDBACK.md: Arquivo para Consolidação dos Feedbacks
@@ -86,7 +89,7 @@ A estrutura do projeto é organizada da seguinte forma:
 
 ### **Passos para Execução**
 
-#### **Opção 1: Docker Compose (arquitetura de microsserviços completa)**
+#### **Opção 1: :whale: Docker Compose**
 
 ```bash
 # Clone o repositório
@@ -119,14 +122,29 @@ Esta implementação usa o padrão **"Instance/Database per Service"** com inst�
 
 📖 **Guia completo:** Veja [README.Docker.md](./README.Docker.md) para instruções detalhadas, benefícios da arquitetura e considerações de recursos.
 
-#### **Opção 2: Kubernetes (Recomendado para produção)**
+#### **Opção 2: ☸ Kubernetes (Recomendado para produção)**
 
-Para execução em cluster Kubernetes:
+##### Imagens hospedadas no Dockerhub container registry (https://hub.docker.com/repositories/jonataspc?search=peo): 
 
 ```bash
 # Clone o repositório
 git clone https://github.com/jonataspc/MBA-Peo-microservices.git
 cd MBA-Peo-microservices
+
+# Deploy usando kubectl
+kubectl apply -k devops/k8s-production/
+```
+
+
+##### Imagens locais (necessário build local - ver: [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md)): 
+
+```bash
+# Clone o repositório
+git clone https://github.com/jonataspc/MBA-Peo-microservices.git
+cd MBA-Peo-microservices
+
+# Realizar build das imagens (docker build...)
+# ...
 
 # Deploy usando kubectl
 kubectl apply -k devops/k8s/
@@ -139,7 +157,7 @@ kubectl apply -k devops/k8s/
 
 📖 **Guia completo:** Veja [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md) para instruções detalhadas.
 
-#### **Opção 3: Desenvolvimento Local com Aspire**
+#### **Opção 3: :hammer: Desenvolvimento Local com Aspire**
 
 1. **Clone o Repositório:**
    - `git clone https://github.com/jonataspc/MBA-Peo-microservices.git`
@@ -186,25 +204,6 @@ No repositório GitHub a action de compilação executa a compilação e os test
  
 
 ## **DevOps e Deploy**
-
-### **Kubernetes (Recomendado para Produção)**
-
-A plataforma inclui manifestos completos para Kubernetes:
-
-```bash
-# Deploy rápido usando scripts
-./devops/scripts/deploy.sh full
-
-# Deploy manual
-kubectl apply -k devops/k8s/
-
-# URLs após deploy
-# Frontend: http://localhost:30000
-# BFF API: http://localhost:30001
-# RabbitMQ UI: http://localhost:30002
-```
-
-📖 **Guia completo de Kubernetes:** Veja [devops/KUBERNETES-GUIDE.md](./devops/KUBERNETES-GUIDE.md)
 
 ### **Aspir8 (Geração Automática de Manifestos)**
 

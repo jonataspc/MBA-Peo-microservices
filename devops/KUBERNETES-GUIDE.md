@@ -40,7 +40,24 @@ graph TD
 - **Docker** para build das imagens
 - **Kustomize** (incluído no kubectl v1.14+)
 
-## 🚀 **Deploy**
+## 🚀 **Deploy com imagens do container registry público (DockerHub)**
+
+URL: https://hub.docker.com/repositories/jonataspc?search=peo
+
+```bash
+# Deploy usando Kustomize
+kubectl apply -k devops/k8s-production/
+
+# Verificar ordem de inicialização com dependências
+kubectl get pods -n peo-platform-production -w
+
+# Ver logs dos init containers (exemplo)
+kubectl logs peo-identity-api-<pod-id> -c wait-for-dependencies -n peo-platform-production
+kubectl logs peo-bff-<pod-id> -c wait-for-apis -n peo-platform-production
+kubectl logs peo-frontend-<pod-id> -c wait-for-bff -n peo-platform-production
+```
+
+## 🚀 **Deploy com imagens locais (ambiente de desenvolvimento)**
 
 ```bash
 # Build imagens primeiro
@@ -62,6 +79,11 @@ kubectl logs peo-identity-api-<pod-id> -c wait-for-dependencies -n peo-platform
 kubectl logs peo-bff-<pod-id> -c wait-for-apis -n peo-platform
 kubectl logs peo-frontend-<pod-id> -c wait-for-bff -n peo-platform
 ```
+
+**URLs após deploy:**
+- **Frontend Blazor:** http://localhost:30000
+- **BFF API:** http://localhost:30001  
+- **RabbitMQ Management:** http://localhost:30002
 
 ### **🔗 Zero Falhas de Conectividade**
 

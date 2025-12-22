@@ -37,7 +37,7 @@ devops/
 
 ```bash
 # Deploy completo
-kubectl apply -k devops/k8s/
+kubectl apply -k devops/k8s-production/
 ```
 
 ## 🗄️ **Instâncias de Banco de Dados**
