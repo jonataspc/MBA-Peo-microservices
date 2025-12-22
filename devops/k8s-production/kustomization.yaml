@@ -3,7 +3,7 @@ kind: Kustomization
 
 namespace: peo-platform-production
 
-# Herda da configuração base (sintaxe moderna)
+# Herda da configuração base
 resources:
   - ../k8s/
 
